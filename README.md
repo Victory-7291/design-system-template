@@ -3,7 +3,7 @@
 > **A production-grade, Code-as-Design infrastructure for modern software engineering teams and autonomous AI coding agents.**
 > Designed to unify brand aesthetics, eliminate AI hallucinations, and enforce mathematical and visual consistency across all web products, applications, and content surfaces.
 
-[![Author](https://img.shields.io/badge/Author-Vic%20(Co--founder%20%26%20CTO%20at%20Phanvic%20Inc.)-blue)](https://github.com)
+[![Author](https://img.shields.io/badge/Author-Vic%20(Co--founder%20%26%20CTO%20at%20Phanvic%20Inc.)-blue)](https://github.com/Victory-7291/design-system-template)
 [![Turborepo](https://img.shields.io/badge/Turborepo-2.x-blue)](https://turbo.build)
 [![Bun](https://img.shields.io/badge/Bun-1.3+-black)](https://bun.sh)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-38bdf8)](https://tailwindcss.com)
@@ -16,34 +16,61 @@
 
 ## 👨‍💻 Author & Architecture Attribution
 
-**Created & Maintained by:**
+**Created & Architected by:**
 **Vic** — Co-founder & CTO at Phanvic Inc.
 
 ---
 
-## 一、 核心架构哲学：Code-as-Design 与 AI-Native 治理
+## Table of Contents
 
-在全面以 AI（Cursor, Codex, Claude Code, Antigravity 等）辅助编码的技术团队中，传统的“Figma 设计稿切图交付”模式面临三大断层：
+1. [Core Philosophy: Code-as-Design & AI-Native Governance](#1-core-philosophy-code-as-design--ai-native-governance)
+2. [Deep Architectural Decisions](#2-deep-architectural-decisions)
+   - [Why Split into Multiple Packages?](#why-split-into-multiple-packages)
+   - [Why Tokens Alone Fail: The Necessity of Components](#why-tokens-alone-fail-the-necessity-of-components)
+3. [3-Tier Component Encapsulation Model](#3-3-tier-component-encapsulation-model)
+   - [Placement Decision Matrix](#placement-decision-matrix)
+   - [Where to Maintain Complex Page Compositions & Mockups](#where-to-maintain-complex-page-compositions--mockups)
+4. [Repository & Directory Architecture](#4-repository--directory-architecture)
+5. [Technology Stack Standards](#5-technology-stack-standards)
+6. [Downstream Application Integration Guide](#6-downstream-application-integration-guide)
+   - [Package Installation](#1-package-installation)
+   - [Global CSS & Tailwind v4 Integration](#2-global-css--tailwind-v4-integration)
+   - [Root Layout & ThemeProvider Setup](#3-root-layout--themeprovider-setup)
+   - [Consuming UI Primitives](#4-consuming-ui-primitives)
+   - [Editorial & Content Rendering](#5-editorial--content-rendering)
+7. [The AI Coding Agent UI Contract](#7-the-ai-coding-agent-ui-contract)
+   - [Binding Rules](#binding-rules-for-ai-agents)
+   - [Anti-Patterns & Banned Behaviors](#anti-patterns-checklist)
+8. [Extending shadcn/ui Primitives](#8-extending-shadcnui-primitives)
+9. [CLI & Workflow Reference](#9-cli--workflow-reference)
+10. [Future Multi-App Roadmap (`apps/`)](#10-future-multi-app-roadmap-apps)
+11. [License](#license)
 
-| 传统痛点 | 目标机制 | 可验证结果 |
+---
+
+## 1. Core Philosophy: Code-as-Design & AI-Native Governance
+
+In an era where software development is heavily augmented by AI agents (Cursor, Codex, Claude Code, Antigravity, etc.), traditional "Figma mockups to hand-written CSS" workflows break down across three critical chasms:
+
+| Traditional Breakdown | Target Mechanism | Verifiable Outcome |
 | :--- | :--- | :--- |
-| **AI 审美疲劳与自由漂移** | 命名 Token、受限组件、范例故事与强类型合同 | AI 只能在权威组件目录与白名单 API 内组合，不得自由发明 UI |
-| **样式多头割裂** | 官网、产品、内容站各自维护 `globals.css` | 单一版本化设计系统包，所有下游应用显式依赖并拥有回滚点 |
-| **写完代码肉眼排查** | 组件隔离渲染、双分辨率 Golden Snapshot 门禁 | 每次改动自动化高亮“哪个像素 / 哪个状态变了” |
+| **AI Aesthetic Fatigue & Hallucinations** | Machine-readable tokens, typed primitives, golden stories, and agent contracts | AI models compose exclusively within authoritative catalogs instead of inventing ad-hoc UI |
+| **Multi-Repo CSS Divergence** | Single versioned design system package consumed across all applications | Every design token or primitive change has an audit trail, version number, and rollback point |
+| **Visual Regression by Human Guesswork** | Isolated component rendering + dual-viewport golden screenshots in CI | Every pull request pinpoints exact pixel-level diffs and broken states automatically |
 
-### 单向权威流通管线 (The Unidirectional Pipeline)
+### The Unidirectional Flow Pipeline
 
 ```mermaid
 flowchart LR
   DTCG["DTCG JSON<br/>(tokens/*.tokens.json)"]
-  Compiler["Token 编译器<br/>(@design-system/tokens)"]
+  Compiler["Token Compiler<br/>(@design-system/tokens)"]
   CSS["CSS Vars &<br/>Tailwind v4 @theme"]
-  TS["TypeScript<br/>强类型定义"]
-  UI["核心交互基元<br/>(@design-system/ui)"]
-  ContentUI["内容营销排版<br/>(@design-system/content-ui)"]
-  SB["Storybook 8 沙盒<br/>(视觉审查 & MCP)"]
-  PW["Playwright 测试<br/>(桌面+移动端 Golden Diff)"]
-  Apps["下游应用消费<br/>(Next.js / Vite / 产品站)"]
+  TS["TypeScript<br/>Strict Types"]
+  UI["Core UI Primitives<br/>(@design-system/ui)"]
+  ContentUI["Content Primitives<br/>(@design-system/content-ui)"]
+  SB["Storybook 8 Sandbox<br/>(Review Surface & MCP)"]
+  PW["Playwright Visual Gates<br/>(Desktop & Mobile Golden Diff)"]
+  Apps["Downstream Applications<br/>(Next.js / Vite / Web Apps)"]
 
   DTCG -->|bun run build:tokens| Compiler
   Compiler --> CSS
@@ -57,130 +84,152 @@ flowchart LR
   ContentUI --> Apps
 ```
 
-> **核心法则**：**代码、版本化 Token 和组件 API 是唯一的视觉真理源；Storybook 是人工审美审查面；Playwright 视觉回归是防倒退门禁；AI 只能在权威组件目录内组装。**
+> **The Sovereign Rule**: **Code, versioned tokens, and component APIs are the sole source of visual truth. Storybook provides the human aesthetic review surface; Playwright visual regression acts as the automated CI gatekeeper; AI agents compose strictly within the authoritative catalog.**
 
 ---
 
-## 二、 架构深度剖析 (Deep Architectural Decisions)
+## 2. Deep Architectural Decisions
 
-### 1. 为什么拆分为多个 Packages，而不是一个单一的大杂烩包？
+### Why Split into Multiple Packages?
 
-很多初创模版习惯把所有组件、Token、Hook 塞进一个庞大的 `packages/design-system` 或 `packages/common`。本模版坚持将它们拆分为 `@design-system/tokens`、`@design-system/ui`、`@design-system/content-ui`，原因在于三大工程原则：
+Many starter repositories combine tokens, components, and utilities into a single monolithic package. This template enforces a clean separation into `@design-system/tokens`, `@design-system/ui`, and `@design-system/content-ui` based on three fundamental software engineering principles:
 
-1. **运行时依赖彻底隔离 (Zero-Dependency Tokens)**：
-   - `@design-system/tokens` 是纯静态样式资产（仅包含 CSS 变量、Tailwind v4 `@theme` 和 TypeScript 常量），**运行时依赖为 0**。
-   - 当你需要编写原生 HTML 落地页、EDM 营销邮件模板或微前端页面时，只需引入 `@design-system/tokens/css`，完全无需安装 `React 19`、`Radix UI` 等体积庞大的依赖。
-2. **发布生命周期与变更频率隔离**：
-   - `@design-system/ui`（Button, Dialog, Input）高度稳定，极少变动；
-   - `@design-system/content-ui`（ArticleShell, Callout, Prose）敏捷迭代，高频配合社媒内容发布。
-   - 拆分后，修改文章排版模块时，绝不影响核心业务后台的构建与稳定性。
-3. **杜绝“分布式单体与垃圾抽屉”**：
-   - 专一的包职责让每个依赖清晰可追溯，杜绝代码无人敢删、参数无限膨胀的顽疾。
+#### 1. Zero-Dependency Token Distribution
+- **`@design-system/tokens` is 100% static styling assets** (CSS custom properties, Tailwind v4 `@theme`, and TypeScript constants). Its runtime dependency footprint is **zero**.
+- When generating static HTML landing pages, transactional email templates, or non-React micro-frontends, you can import `@design-system/tokens/css` directly.
+- Consuming applications avoid bundling megabytes of unnecessary dependencies like React 19, Radix UI, or animation engines just to access brand colors and typography scales.
 
----
+#### 2. Lifecycle & Release Frequency Isolation
+- **`@design-system/ui` (Core Primitives)**: Highly stable. Once an accessible `Button`, `Dialog`, or `Input` is verified, its API rarely changes.
+- **`@design-system/content-ui` (Editorial & Marketing Blocks)**: Rapid iteration. Content teams frequently introduce new editorial elements (e.g., `Callout`, `Figure`, `TweetCard`, `NewsletterCTA`).
+- **Decoupling Benefit**: Updating an editorial callout component only releases `@design-system/content-ui`, never risking breaking core application dashboards or triggering unnecessary full-workspace builds.
 
-### 2. 灵魂拷问：Design System 必须维护组件吗？只维护 Tokens 够不够？
-
-> **结论：如果 Design System 只维护 Tokens，对于以 AI 编码为主的团队，整套系统不出两周必将彻底崩溃。**
-
-1. **无法约束可访问性 (a11y) 与复杂交互手感**：
-   - 一个符合标准的按钮需要键盘 `focus-visible` 焦点环、`:active:scale-[0.98]` 微物理反馈、加载态 `aria-busy` 与防重复点击；
-   - 弹窗与下拉框涉及 `Esc` 关闭、焦点陷阱（Focus Trap）、点击外部关闭与移动端触摸滚动穿透防护。
-   - 只给 Tokens，各应用各自手写实现，必然导致交互手感割裂、Bug 丛生。
-2. **AI 编码的致命灾难：失去边界与审美漂移**：
-   - **AI 是无法仅靠 Tokens 保持自律的**。只提供颜色变量，AI 在每个页面都会自由拼装类名（一会儿加无名渐变，一会儿内边距失衡）。
-   - **强类型组件是 AI 的防盗门**：只有把交互封装为 `<Button variant="default" size="default">`，AI 的生成空间才会被收窄在受控 API 之中。
-3. **视觉迭代无法全局传播**：
-   - 集中维护组件，品牌微调（如调整圆角或焦点环阴影）只需改动一行代码，全公司成百上千个页面瞬间完成无缝升级。
+#### 3. Prevention of the "Monolithic Garbage Drawer" Anti-Pattern
+- Lumping all shared code into a generic package creates an unmaintainable grab-bag where components accumulate undocumented boolean props and zombie code. Small, purposeful packages enforce clean boundary checks.
 
 ---
 
-## 三、 组件封装三层模型与归属判据 (3-Tier Encapsulation Model)
+### Why Tokens Alone Fail: The Necessity of Components
 
-为了防止组件库膨胀为“万能组件垃圾场”，严格执行 **“默认私有，共享是显式决策”**：
+> **Warning**: A design system that maintains only tokens without components will inevitably lead to aesthetic chaos in an AI-driven codebase.
+
+Relying solely on CSS variables and expecting applications to hand-roll their own HTML elements produces three critical failures:
+
+1. **Accessibility (a11y) & Tactile Quality Cannot Live in Tokens**:
+   - A compliant button requires focus-visible ring styles, `:active:scale-[0.98]` tactile spring physics, loading state `aria-busy` indicators, and click-duplication prevention.
+   - A modal dialog requires `Esc` key dismissal, focus trap management, outside-click detection, and mobile viewport scroll-locking. Tokens cannot enforce these behaviors.
+2. **AI Agents Hallucinate Without Component Bounds**:
+   - Given raw Tailwind classes and CSS variables, an LLM will assemble arbitrary combinations on every page (e.g., mismatched padding, competing drop shadows, inconsistent rounded corners).
+   - Typed components (`<Button variant="default" size="default">`) constrain the agent's generative surface to validated, accessible combinations.
+3. **Loss of Global Visual Propagation**:
+   - With shared components, updating brand corner radiuses or active states requires modifying a single component file to update hundreds of instances across all apps simultaneously.
+   - Without components, developers and AI agents must execute error-prone global search-and-replace operations across disparate Tailwind classes.
+
+---
+
+## 3. 3-Tier Component Encapsulation Model
+
+To maintain a lean design system, follow the principle of **"Default Private, Sharing is an Explicit Decision"**:
 
 ```mermaid
 flowchart TD
-  subgraph L1["第一层：路由同址 (默认私有)"]
-    PageComp["页面私有构图 (如 app/(marketing)/_components/Hero.tsx)"]
+  subgraph L1["Tier 1: Colocation (Default Private)"]
+    PageComp["Route-Local Components<br/>(e.g., app/(marketing)/_components/Hero.tsx)"]
   end
 
-  subgraph L2["第二层：应用级共享 (单应用内共享)"]
-    AppComp["跨页面共享组件 (如 apps/web/components/Sidebar.tsx, Header.tsx)"]
+  subgraph L2["Tier 2: App-Level Shared (Single App Scope)"]
+    AppComp["App-Wide Shared Components<br/>(e.g., apps/web/components/Sidebar.tsx, Header.tsx)"]
   end
 
-  subgraph L3["第三层：平台设计系统 (跨项目唯一权威)"]
-    DS_Tokens["@design-system/tokens (色彩, 字阶, 间距, 动效)"]
-    DS_UI["@design-system/ui (Button, Text, Dialog, Input, Surface)"]
+  subgraph L3["Tier 3: Platform Design System (Cross-Project Authority)"]
+    DS_Tokens["@design-system/tokens (Colors, Spacing, Typography)"]
+    DS_UI["@design-system/ui (Button, Dialog, Input, Surface)"]
     DS_Content["@design-system/content-ui (ArticleShell, Prose, Callout)"]
   end
 
-  PageComp -->|单应用内第二次复用| AppComp
-  AppComp -->|跨两个以上独立App且领域中立| L3
+  PageComp -->|Reused second time within app| AppComp
+  AppComp -->|Needed by 2+ apps & Domain-neutral| L3
 ```
 
-### 1. 组件归属判据表 (Placement Decision Matrix)
+### Placement Decision Matrix
 
-| 组件类别 | 典型示例 | 存放位置 | 判定理由 |
+| Component Category | Typical Examples | Target Location | Rationale |
 | :--- | :--- | :--- | :--- |
-| **纯基础基元 (Primitives)** | `Button`, `Input`, `Dialog`, `Text`, `Surface`, `Badge` | **`@design-system/ui` (设计系统)** | 零业务逻辑、领域中立、跨所有项目高频复用。 |
-| **内容排版块 (Editorial Blocks)** | `ArticleShell`, `Callout`, `Prose`, `CodeBlock` | **`@design-system/content-ui` (设计系统)** | 专用于 Markdown / 营销长文内容渲染。 |
-| **应用级外壳 (App Shells)** | `AppSidebar`, `MainNavbar`, `GlobalFooter` | **`apps/web/components/` (业务应用内)** | 深度绑定了当前应用的路由结构、用户状态与导航配置。 |
-| **页面具体构图 (Compositions)** | `HomeHeroSection`, `PricingTable`, `FeatureBento` | **路由同址 (如 `app/.../_components/`)** | 强业务相关、单页专用、变动极快，严禁过早下沉。 |
+| **Core Primitives** | `Button`, `Input`, `Dialog`, `Text`, `Surface`, `Badge` | **`@design-system/ui`** | Zero business logic, domain-neutral, universally reused. |
+| **Editorial Blocks** | `ArticleShell`, `Callout`, `Prose`, `CodeBlock` | **`@design-system/content-ui`** | Specialized for Markdown/MDX content and documentation rendering. |
+| **App Shells** | `AppSidebar`, `MainNavbar`, `GlobalFooter` | **`apps/web/components/`** | Tightly coupled to the application's specific routes, auth state, and navigation structure. |
+| **Page Compositions** | `HomeHeroSection`, `PricingTable`, `FeatureBento` | **Colocation (`app/.../_components/`)** | Domain-heavy, single-page use, fast-evolving layout experiments. |
 
-### 2. 复杂“设计稿 / 页面构图”维护法则 (Storybook Templates)
-- **源码留在业务应用中**：具体页面的构图直接用原子基元（`Button`, `Text`, `Surface`）在业务仓库中就近组装。
-- **黄金范例收录在 Storybook 的 `Templates/` 目录**：
-  - 在 `apps/storybook/src/stories/templates/` 中维护诸如 `HeroSection.stories.tsx`、`PricingGrid.stories.tsx`。
-  - **设计师与审查者**：通过 Storybook 直观审视经过批准的构图标杆；
-  - **AI Coding Agent**：通过 Storybook MCP 读取黄金范例故事作为参考上下文（Context），直接在业务仓库中组装输出，既保证了顶级审美，又保持了设计系统包的纯净。
+### Where to Maintain Complex Page Compositions & Mockups
+
+Complex page sections (e.g., animated hero headers, multi-tier pricing calculators, bento grids) should **not** be forced into rigid React components in `@design-system/ui` with dozens of props.
+
+**The Golden Industry Pattern (Storybook Templates & Recipes)**:
+1. **Source Code Lives Locally**: Keep the composition code in the application's route directory, assembled from atomic primitives (`Button`, `Text`, `Surface`).
+2. **Golden Patterns Documented in Storybook**:
+   - Maintain canonical templates in `apps/storybook/src/stories/templates/` (e.g., `HeroSection.stories.tsx`, `PricingGrid.stories.tsx`).
+   - **Reviewers**: Inspect and approve the layout and responsive behavior in Storybook.
+   - **AI Coding Agents**: Query the Storybook MCP server or inspect template stories as in-context examples, generating pixel-perfect compositions in application routes without bloating the component library.
 
 ---
 
-## 四、 仓库目录架构规范 (Repository Structure)
+## 4. Repository & Directory Architecture
 
 ```text
 design-system-template/
-├── tokens/                         # W3C DTCG 标准设计变量源 (JSON)
-│   ├── foundation.tokens.json      # 底层变量：色相、间距(4px节奏)、圆角、字体
-│   └── semantic.tokens.json        # 语义映射：surface, text, border, action
+├── tokens/                         # W3C DTCG Standard Design Tokens (JSON)
+│   ├── foundation.tokens.json      # Base tokens: colors, 4px spacing scale, radius, fonts
+│   └── semantic.tokens.json        # Semantic aliases: surface, text, border, action
 ├── packages/
-│   ├── design-tokens/              # 【Token 编译器】DTCG -> CSS / Tailwind v4 / TS
-│   │   ├── src/build.ts            # 递归解析别名引用，生成深浅色变量与 @theme
-│   │   └── dist/                   # 输出：tokens.css, index.js, index.d.ts
-│   ├── ui/                         # 【核心交互组件库】(@design-system/ui)
-│   │   ├── components.json         # shadcn/ui 配置
+│   ├── design-tokens/              # [Token Compiler] DTCG JSON -> CSS / Tailwind v4 / TS
+│   │   ├── src/build.ts            # Recursive alias resolver, light/dark themes, @theme generator
+│   │   └── dist/                   # Emitted artifacts: tokens.css, index.js, index.d.ts
+│   ├── ui/                         # [Core UI Library] (@design-system/ui)
+│   │   ├── components.json         # shadcn/ui CLI configuration
 │   │   ├── src/
-│   │   │   ├── components/ui/      # shadcn 最新基元 (Button, Dialog, Sheet, Tabs...)
-│   │   │   ├── components/         # ModeToggle (日/夜间主题切换下拉菜单)
-│   │   │   ├── hooks/              # use-mobile.ts (响应式断点检测)
-│   │   │   ├── providers/          # theme.tsx (NextThemesProvider 上下文注入)
-│   │   │   ├── lib/                # utils.ts (cn), fonts.ts (纯 CSS 变量映射)
-│   │   │   ├── text.tsx            # 排版字阶基元 (display, h1~h3, body)
-│   │   │   └── surface.tsx         # 语义化背景与卡片容器
-│   │   └── dist/                   # 编译后独立可发布的包产物
-│   └── content-ui/                 # 【内容营销排版库】(@design-system/content-ui)
+│   │   │   ├── components/ui/      # Latest shadcn primitives (Button, Dialog, Sheet, Tabs...)
+│   │   │   ├── components/         # ModeToggle (light/dark theme toggle dropdown)
+│   │   │   ├── hooks/              # use-mobile.ts (responsive breakpoint detection)
+│   │   │   ├── providers/          # theme.tsx (NextThemesProvider wrapper)
+│   │   │   ├── lib/                # utils.ts (cn), fonts.ts (pure CSS variable font mapping)
+│   │   │   ├── text.tsx            # Typography primitive (display, h1~h3, body max-65ch)
+│   │   │   └── surface.tsx         # Semantic card and background container
+│   │   └── dist/                   # Compiled ES modules and TypeScript definitions
+│   └── content-ui/                 # [Editorial Content Library] (@design-system/content-ui)
 │       └── src/                    # ArticleShell (max-w-[68ch]), Callout, Prose
 ├── apps/
-│   ├── storybook/                  # 【视觉审查与 AI MCP 沙盒】Storybook 8 + Vite
-│   │   └── src/stories/            # Button, Text, EditorialDemo 等极限状态故事
-│   ├── docs/                       # 【未来规划】设计规范官方站点 (Fumadocs/Nextra)
-│   └── playground/                 # 【未来规划】页面模板在线组装工作台
+│   ├── storybook/                  # [Visual Review & AI Sandbox] Storybook 8 + Vite 6
+│   │   └── src/stories/            # State-coverage stories for all primitives and templates
+│   ├── docs/                       # [Planned] Official design guideline portal (Fumadocs/Nextra)
+│   └── playground/                 # [Planned] Interactive browser-based layout workbench
 ├── tests/
-│   └── visual/                     # 【Playwright 视觉回归测试套件】
-│       ├── __snapshots__/          # Desktop Chrome (1280x800) & Mobile Chrome (390x844)
-│       └── components.spec.ts      # 覆盖关键基元与长文排版截图对比
-├── AGENTS.md                       # AI 编程助手专属 UI 契约与防伪劣硬门禁
-├── turbo.json                      # Turborepo 任务编排配置
-└── package.json                    # 根项目编排 (Bun workspaces)
+│   └── visual/                     # [Playwright Visual Regression Suite]
+│       ├── __snapshots__/          # Desktop Chrome (1280x800) & Mobile Chrome (390x844) baselines
+│       └── components.spec.ts      # Automated screenshot comparison specs
+├── AGENTS.md                       # Binding AI agent UI contract and governance rules
+├── turbo.json                      # Turborepo task pipeline configuration
+└── package.json                    # Workspace root configuration (Bun workspaces)
 ```
 
 ---
 
-## 五、 下游应用消费与集成指南 (Usage Guide)
+## 5. Technology Stack Standards
 
-### 1. 安装与依赖引入
-在业务应用（如 Next.js / Vite 应用）的 `package.json` 中安装：
+- **Runtime & Package Manager**: [Bun](https://bun.sh) 1.3+ for ultra-fast dependency resolution and native TypeScript script execution.
+- **Task Orchestration**: [Turborepo](https://turbo.build) 2.x for topological dependency ordering (`dependsOn: ["^build"]`) and local/remote build caching.
+- **Styling Engine**: [Tailwind CSS v4](https://tailwindcss.com) utilizing native `@theme` directives without legacy PostCSS baggage.
+- **Type System**: [TypeScript 5+](https://www.typescriptlang.org) in strict mode across all workspaces.
+- **Accessible Primitives**: [shadcn/ui](https://ui.shadcn.com) built atop [Radix UI](https://www.radix-ui.com) unstyled primitives.
+- **Visual Sandbox**: [Storybook 8](https://storybook.js.org) with `@storybook/react-vite` and `@storybook/addon-a11y`.
+- **Regression Gates**: [Playwright](https://playwright.dev) testing visual snapshots across both desktop and mobile viewports.
+- **Font Policy**: Decoupled from framework-specific runtimes (no hard dependency on `next/font`). Font variables `--font-sans` and `--font-mono` are declared by `@design-system/tokens`.
+
+---
+
+## 6. Downstream Application Integration Guide
+
+### 1. Package Installation
+In your downstream application (Next.js, Vite, Remix, etc.), declare workspace dependencies:
 
 ```json
 {
@@ -192,16 +241,17 @@ design-system-template/
 }
 ```
 
-### 2. 全局样式引入 (Tailwind v4)
-在全局样式入口（如 `globals.css`）顶部引入：
+### 2. Global CSS & Tailwind v4 Integration
+In your application's global CSS entry point (`app/globals.css` or `src/styles.css`):
 
 ```css
-/* 1. 注入 CSS 变量与 Tailwind v4 @theme 规则 */
+/* 1. Import design system tokens & Tailwind v4 @theme rules */
 @import "@design-system/tokens/css";
 
-/* 2. 引入 Tailwind v4 引擎 */
+/* 2. Import Tailwind v4 base utilities */
 @import "tailwindcss";
 
+/* 3. Base layout defaults */
 body {
   background-color: var(--color-surface-canvas);
   color: var(--color-text-primary);
@@ -210,10 +260,11 @@ body {
 }
 ```
 
-### 3. 根布局与深浅色主题配置
-在 `layout.tsx` 中使用 `ThemeProvider`：
+### 3. Root Layout & ThemeProvider Setup
+Wrap your root layout using the design system's `ThemeProvider` to support light/dark modes without hydration mismatch:
 
 ```tsx
+// app/layout.tsx
 import "@design-system/tokens/css";
 import "./globals.css";
 import { ThemeProvider, ModeToggle } from "@design-system/ui";
@@ -221,13 +272,13 @@ import { ThemeProvider, ModeToggle } from "@design-system/ui";
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="antialiased min-h-[100dvh]">
+      <body className="antialiased min-h-[100dvh] flex flex-col">
         <ThemeProvider>
           <header className="px-6 py-4 border-b border-[var(--color-border-default)] flex justify-between items-center">
-            <span className="font-bold">App</span>
+            <span className="font-bold tracking-tight">Application</span>
             <ModeToggle />
           </header>
-          <main>{children}</main>
+          <main className="flex-1">{children}</main>
         </ThemeProvider>
       </body>
     </html>
@@ -235,22 +286,28 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 }
 ```
 
-### 4. 消费核心基元与长文排版
+### 4. Consuming UI Primitives
 ```tsx
-import { Button, Dialog, DialogTrigger, DialogContent, Text, Surface } from "@design-system/ui";
-import { ArticleShell, Prose, Callout } from "@design-system/content-ui";
+import { Button, Dialog, DialogTrigger, DialogContent, Input, Text, Surface } from "@design-system/ui";
 
-// 交互界面
-export function ActionCard() {
+export function SettingsSection() {
   return (
     <Surface variant="raised" className="max-w-md mx-auto space-y-4">
-      <Text variant="h2">系统设置</Text>
+      <Text variant="h2">Account Settings</Text>
+      <Text variant="body">Manage your profile and communication preferences.</Text>
+
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-[var(--color-text-secondary)]">Username</label>
+        <Input placeholder="Enter username" />
+      </div>
+
       <Dialog>
         <DialogTrigger asChild>
-          <Button variant="default">打开弹窗</Button>
+          <Button variant="default">Save Changes</Button>
         </DialogTrigger>
         <DialogContent>
-          <Text variant="h3">确认操作</Text>
+          <Text variant="h3">Confirm Updates</Text>
+          <Text variant="body">Are you sure you want to commit these changes?</Text>
         </DialogContent>
       </Dialog>
     </Surface>
@@ -258,54 +315,118 @@ export function ActionCard() {
 }
 ```
 
+### 5. Editorial & Content Rendering
+For blog posts, articles, and documentation generated by content engines, use `@design-system/content-ui`:
+
+```tsx
+import { ArticleShell, Prose, Callout } from "@design-system/content-ui";
+
+export default function DocumentationPage() {
+  return (
+    <ArticleShell
+      title="Engineering an AI-Native Architecture"
+      subtitle="How code-as-design and automated visual testing eliminate quality decay."
+      category="Architecture"
+      author="Engineering Team"
+      publishedAt="2026-09-13"
+    >
+      <Prose>
+        <p>AI-assisted coding requires strict architectural boundaries to prevent style divergence.</p>
+        <Callout variant="tip" title="Best Practice">
+          Never hardcode hex values. Always consume semantic tokens.
+        </Callout>
+      </Prose>
+    </ArticleShell>
+  );
+}
+```
+
 ---
 
-## 六、 AI Coding Agent 行为契约 (The Agent UI Contract)
+## 7. The AI Coding Agent UI Contract
 
-所有参与编码的 AI Agent 必须严格遵守以下 5 条铁律：
+All AI Coding Agents generating or modifying UI across the codebase must adhere to these five binding rules:
 
-1. **查阅优先 (Query First)**：使用任何组件前必须先查阅 Storybook 或类型，严禁臆造不存在的 Prop；
-2. **状态全覆盖 (State Coverage)**：修改/新增组件必须补齐 `default`, `loading`, `disabled`, `empty`, `mobile` 的 Storybook 故事；
-3. **Token 单向权威 (Token Authority)**：业务代码严禁手写十六进制颜色或未定义的 box-shadow，必须使用 Semantic Token；
-4. **组合优先 (Composition Over Proliferation)**：优先组合已有基元，单页构图留在业务目录，严禁随意在设计系统中增加一次性组件；
-5. **门禁全绿 (All Gates Pass)**：提交前必须通过 `bun run typecheck`、`bun run build` 和 `bun run test:visual`。
+### Binding Rules for AI Agents
+1. **Query Before Generating**: Always query the Storybook catalog or inspect `@design-system/ui` exports before writing UI components. Never hallucinate non-existent props or variants.
+2. **Mandatory State Coverage**: When introducing or modifying components, corresponding Storybook stories must be provided covering: `default`, `hover/active`, `focus`, `loading`, `disabled`, `empty`, `error`, `long-content`, and `mobile`.
+3. **Token Authority**: Never write raw hex/rgb codes, inline box-shadows, or uncalibrated animations in business code.
+4. **Composition Over Proliferation**: Prefer assembling existing primitives. Do not create one-off components in the shared library for single-page layouts.
+5. **All Gates Must Pass**: Verify changes with `bun run typecheck`, `bun run build`, and `bun run test:visual`.
+
+### Anti-Patterns Checklist
+
+| Banned Pattern | Incorrect (Don't) | Correct (Do) |
+| :--- | :--- | :--- |
+| **Hardcoding Raw Hex Values** | `<div className="bg-[#09090b] text-[#fafafa]">` | `<div className="bg-[var(--color-surface-canvas)] text-[var(--color-text-primary)]">` or `<Surface>` |
+| **AI Hallucinated Props** | `<Button color="purple" isAwesome={true}>` | Consult `@design-system/ui` exported props and variants |
+| **Multiple Primary CTAs** | Two equal primary buttons in the same viewport | Exactly one primary action; use secondary/outline for others |
+| **Custom Uncalibrated Shadows** | `shadow-[0_10px_30px_rgba(120,50,255,0.3)]` | Use standard elevation variables from `@design-system/tokens` |
+| **Overriding a11y Focus Rings** | `outline-none focus:outline-none` | Preserve `focus-visible:ring-2` accessible focus states |
 
 ---
 
-## 七、 常用维护与构建指令 (CLI Reference)
+## 8. Extending shadcn/ui Primitives
+
+To add additional primitives from the shadcn registry into `@design-system/ui`:
 
 ```bash
-# 1. 编译 DTCG Token (自动解析别名并生成 Tailwind v4 @theme 与 TS 定义)
-bun run build:tokens
+# 1. Navigate to the UI package
+cd packages/ui
 
-# 2. 全工作区增量编译与类型检查 (Turborepo 缓存加速)
-bun run typecheck
+# 2. Add the component using the CLI (e.g., accordion)
+bunx shadcn@latest add accordion --yes
+
+# 3. Export the newly added primitive in packages/ui/src/index.ts
+# export * from "./components/ui/accordion.js";
+
+# 4. Add a Storybook story in apps/storybook/src/stories/Accordion.stories.tsx
+
+# 5. Verify the build and update visual snapshots
 bun run build
-
-# 3. 启动本地 Storybook 交互沙盒 (默认端口 6006)
-bun run storybook
-
-# 4. 构建 Storybook 静态站点
-bun run storybook:build
-
-# 5. 执行 Playwright 跨分辨率视觉回归对比
-bun run test:visual
-
-# 6. 人工审查确认有意的视觉改动后，更新基线截图
 bun run test:visual:update
 ```
 
 ---
 
-## 八、 为什么使用 `apps/` 目录（未来多应用规划）
+## 9. CLI & Workflow Reference
 
-在 Turborepo 规范中，`packages/*` 存放供导入的模块，`apps/*` 存放具有独立服务入口的应用。未来仓库可横向扩展：
-1. **`apps/storybook`**：开发者与 AI 专用的组件交互沙盒与视觉测试中枢；
-2. **`apps/docs`**：基于 Fumadocs/Nextra 搭建的设计规范官方门户网站；
-3. **`apps/playground`**：页面级模板在线组装与实时预览工作台。
+Run commands from the repository root:
+
+```bash
+# Compile DTCG JSON tokens to CSS variables and TypeScript definitions
+bun run build:tokens
+
+# Run workspace-wide TypeScript type checking
+bun run typecheck
+
+# Build all packages and applications via Turborepo
+bun run build
+
+# Launch the interactive Storybook sandbox (http://localhost:6006)
+bun run storybook
+
+# Build the static Storybook production site
+bun run storybook:build
+
+# Execute Playwright dual-viewport visual regression tests
+bun run test:visual
+
+# Update visual golden baseline snapshots after verified design updates
+bun run test:visual:update
+```
 
 ---
 
-## 📄 License
+## 10. Future Multi-App Roadmap (`apps/`)
 
-MIT License. Designed with excellence for modern AI-native engineering teams.
+The repository leverages an `apps/` directory to facilitate future modular expansion:
+1. **`apps/storybook`**: The active component sandbox and Playwright test harness for engineers and AI agents.
+2. **`apps/docs`**: A planned documentation portal (built on Fumadocs or Nextra) for designers, product managers, and non-technical stakeholders to explore design principles, brand voice, and token references.
+3. **`apps/playground`**: An upcoming interactive canvas for assembling and testing full-page templates in real time.
+
+---
+
+## License
+
+MIT License. Designed and architected with precision for modern AI-native engineering teams.

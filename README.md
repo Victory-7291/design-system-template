@@ -1,7 +1,7 @@
 # AI-Native Design System Template
 
-> **A production-grade, Code-as-Design infrastructure for modern software engineering teams and autonomous AI coding agents.**
-> Designed to unify brand aesthetics, eliminate AI hallucinations, and enforce mathematical and visual consistency across all web products, applications, and content surfaces.
+> **AI-Native Design System with code as the single source of truth to unify AI-driven UI/UX design in production.**
+> Powered by W3C DTCG tokens, Tailwind CSS v4, shadcn/ui, Storybook 8, Playwright visual regression, Bun, and Turborepo.
 
 [![Author](https://img.shields.io/badge/Author-Vic%20(Co--founder%20%26%20CTO%20at%20Phanvic%20Inc.)-blue)](https://github.com/Victory-7291/design-system-template)
 [![Turborepo](https://img.shields.io/badge/Turborepo-2.x-blue)](https://turbo.build)

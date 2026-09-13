@@ -1,0 +1,27 @@
+{
+  "name": "design-system-template",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "packageManager": "bun@1.3.5",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "turbo build",
+    "build:tokens": "turbo run build:tokens",
+    "dev": "turbo dev",
+    "storybook": "bun --filter @design-system/storybook dev",
+    "storybook:build": "bun --filter @design-system/storybook build",
+    "test:visual": "playwright test",
+    "test:visual:update": "playwright test --update-snapshots",
+    "typecheck": "turbo typecheck",
+    "clean": "git clean -xdf dist node_modules .turbo"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.50.0",
+    "turbo": "^2.4.4",
+    "typescript": "^5.8.2"
+  }
+}

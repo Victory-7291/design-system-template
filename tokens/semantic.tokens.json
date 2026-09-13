@@ -1,0 +1,42 @@
+{
+  "$schema": "https://designtokens.org/tr/drafts/format/",
+  "semantic": {
+    "color": {
+      "surface": {
+        "canvas": { "$value": "{foundation.color.neutral.0}", "$type": "color", "$description": "Base background for light mode" },
+        "canvas-dark": { "$value": "{foundation.color.neutral.950}", "$type": "color", "$description": "Base background for dark mode" },
+        "subtle": { "$value": "{foundation.color.neutral.100}", "$type": "color" },
+        "subtle-dark": { "$value": "{foundation.color.neutral.900}", "$type": "color" },
+        "raised": { "$value": "{foundation.color.neutral.0}", "$type": "color" },
+        "raised-dark": { "$value": "{foundation.color.neutral.900}", "$type": "color" }
+      },
+      "text": {
+        "primary": { "$value": "{foundation.color.neutral.950}", "$type": "color", "$description": "High contrast text" },
+        "primary-dark": { "$value": "{foundation.color.neutral.50}", "$type": "color" },
+        "secondary": { "$value": "{foundation.color.neutral.600}", "$type": "color", "$description": "Readable secondary text (WCAG AA)" },
+        "secondary-dark": { "$value": "{foundation.color.neutral.400}", "$type": "color" },
+        "muted": { "$value": "{foundation.color.neutral.400}", "$type": "color" },
+        "muted-dark": { "$value": "{foundation.color.neutral.500}", "$type": "color" },
+        "inverse": { "$value": "{foundation.color.neutral.0}", "$type": "color" },
+        "inverse-dark": { "$value": "{foundation.color.neutral.950}", "$type": "color" }
+      },
+      "border": {
+        "default": { "$value": "{foundation.color.neutral.200}", "$type": "color" },
+        "default-dark": { "$value": "{foundation.color.neutral.800}", "$type": "color" },
+        "subtle": { "$value": "{foundation.color.neutral.100}", "$type": "color" },
+        "subtle-dark": { "$value": "{foundation.color.neutral.900}", "$type": "color" },
+        "strong": { "$value": "{foundation.color.neutral.300}", "$type": "color" },
+        "strong-dark": { "$value": "{foundation.color.neutral.700}", "$type": "color" }
+      },
+      "action": {
+        "primary": { "$value": "{foundation.color.neutral.950}", "$type": "color" },
+        "primary-hover": { "$value": "{foundation.color.neutral.800}", "$type": "color" },
+        "primary-text": { "$value": "{foundation.color.neutral.0}", "$type": "color" },
+        "primary-dark": { "$value": "{foundation.color.neutral.50}", "$type": "color" },
+        "primary-hover-dark": { "$value": "{foundation.color.neutral.200}", "$type": "color" },
+        "primary-text-dark": { "$value": "{foundation.color.neutral.950}", "$type": "color" },
+        "accent": { "$value": "{foundation.color.brand-skeleton.500}", "$type": "color", "$description": "Calibrated single accent per design-taste-frontend" }
+      }
+    }
+  }
+}

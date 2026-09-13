@@ -1,0 +1,10 @@
+@import "@design-system/tokens/css";
+@import "tailwindcss";
+
+body {
+  background-color: var(--color-surface-canvas);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  margin: 0;
+  padding: 0;
+}

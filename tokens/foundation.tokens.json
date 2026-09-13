@@ -1,0 +1,69 @@
+{
+  "$schema": "https://designtokens.org/tr/drafts/format/",
+  "foundation": {
+    "color": {
+      "neutral": {
+        "0": { "$value": "#ffffff", "$type": "color", "$description": "Absolute white" },
+        "50": { "$value": "#fafafa", "$type": "color" },
+        "100": { "$value": "#f4f4f5", "$type": "color" },
+        "200": { "$value": "#e4e4e7", "$type": "color" },
+        "300": { "$value": "#d4d4d8", "$type": "color" },
+        "400": { "$value": "#a1a1aa", "$type": "color" },
+        "500": { "$value": "#71717a", "$type": "color" },
+        "600": { "$value": "#52525b", "$type": "color" },
+        "700": { "$value": "#3f3f46", "$type": "color" },
+        "800": { "$value": "#27272a", "$type": "color" },
+        "900": { "$value": "#18181b", "$type": "color" },
+        "950": { "$value": "#09090b", "$type": "color" },
+        "1000": { "$value": "#000000", "$type": "color", "$description": "Absolute black" }
+      },
+      "brand-skeleton": {
+        "50": { "$value": "#f0fdf4", "$type": "color" },
+        "500": { "$value": "#16a34a", "$type": "color", "$description": "Placeholder accent, to be replaced during brand token phase" },
+        "600": { "$value": "#15803d", "$type": "color" },
+        "700": { "$value": "#166534", "$type": "color" }
+      }
+    },
+    "spacing": {
+      "0": { "$value": "0px", "$type": "dimension" },
+      "1": { "$value": "4px", "$type": "dimension" },
+      "2": { "$value": "8px", "$type": "dimension" },
+      "3": { "$value": "12px", "$type": "dimension" },
+      "4": { "$value": "16px", "$type": "dimension" },
+      "5": { "$value": "20px", "$type": "dimension" },
+      "6": { "$value": "24px", "$type": "dimension" },
+      "8": { "$value": "32px", "$type": "dimension" },
+      "10": { "$value": "40px", "$type": "dimension" },
+      "12": { "$value": "48px", "$type": "dimension" },
+      "16": { "$value": "64px", "$type": "dimension" },
+      "20": { "$value": "80px", "$type": "dimension" },
+      "24": { "$value": "96px", "$type": "dimension" }
+    },
+    "radius": {
+      "none": { "$value": "0px", "$type": "dimension" },
+      "xs": { "$value": "4px", "$type": "dimension" },
+      "sm": { "$value": "6px", "$type": "dimension" },
+      "md": { "$value": "8px", "$type": "dimension" },
+      "lg": { "$value": "12px", "$type": "dimension" },
+      "xl": { "$value": "16px", "$type": "dimension" },
+      "full": { "$value": "9999px", "$type": "dimension" }
+    },
+    "font": {
+      "family": {
+        "sans": { "$value": "Geist, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif", "$type": "fontFamily" },
+        "mono": { "$value": "Geist Mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace", "$type": "fontFamily" }
+      },
+      "size": {
+        "xs": { "$value": "12px", "$type": "dimension" },
+        "sm": { "$value": "14px", "$type": "dimension" },
+        "base": { "$value": "16px", "$type": "dimension" },
+        "lg": { "$value": "18px", "$type": "dimension" },
+        "xl": { "$value": "20px", "$type": "dimension" },
+        "2xl": { "$value": "24px", "$type": "dimension" },
+        "3xl": { "$value": "30px", "$type": "dimension" },
+        "4xl": { "$value": "36px", "$type": "dimension" },
+        "5xl": { "$value": "48px", "$type": "dimension" }
+      }
+    }
+  }
+}

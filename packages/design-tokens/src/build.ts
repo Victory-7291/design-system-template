@@ -127,9 +127,42 @@ for (const token of tokensList) {
       tailwindThemeVars.push(`  --font-sans: var(${token.cssVar});`);
     } else if (token.key === "foundation-font-family-mono") {
       tailwindThemeVars.push(`  --font-mono: var(${token.cssVar});`);
+    } else if (token.key.startsWith("foundation-motion-duration-")) {
+      const step = token.key.replace("foundation-motion-duration-", "");
+      tailwindThemeVars.push(`  --duration-${step}: var(${token.cssVar});`);
+    } else if (token.key.startsWith("foundation-motion-easing-")) {
+      const step = token.key.replace("foundation-motion-easing-", "");
+      tailwindThemeVars.push(`  --ease-${step}: var(${token.cssVar});`);
     }
   }
 }
+
+// Standard shadcn/ui & Application Tailwind v4 @theme dynamic token bindings (Zero hardcoding)
+tailwindThemeVars.push(`  --color-background: var(--ds-semantic-color-surface-canvas);`);
+tailwindThemeVars.push(`  --color-foreground: var(--ds-semantic-color-text-primary);`);
+tailwindThemeVars.push(`  --color-card: var(--ds-semantic-color-surface-raised);`);
+tailwindThemeVars.push(`  --color-card-foreground: var(--ds-semantic-color-text-primary);`);
+tailwindThemeVars.push(`  --color-popover: var(--ds-semantic-color-surface-overlay);`);
+tailwindThemeVars.push(`  --color-popover-foreground: var(--ds-semantic-color-text-primary);`);
+tailwindThemeVars.push(`  --color-primary: var(--ds-semantic-color-action-primary);`);
+tailwindThemeVars.push(`  --color-primary-foreground: var(--ds-semantic-color-action-primary-text);`);
+tailwindThemeVars.push(`  --color-secondary: var(--ds-semantic-color-surface-subtle);`);
+tailwindThemeVars.push(`  --color-secondary-foreground: var(--ds-semantic-color-text-primary);`);
+tailwindThemeVars.push(`  --color-muted: var(--ds-semantic-color-surface-subtle);`);
+tailwindThemeVars.push(`  --color-muted-foreground: var(--ds-semantic-color-text-muted);`);
+tailwindThemeVars.push(`  --color-accent: var(--ds-semantic-color-surface-subtle);`);
+tailwindThemeVars.push(`  --color-accent-foreground: var(--ds-semantic-color-text-primary);`);
+tailwindThemeVars.push(`  --color-destructive: var(--ds-semantic-color-status-destructive);`);
+tailwindThemeVars.push(`  --color-destructive-foreground: var(--ds-semantic-color-status-destructive-foreground);`);
+tailwindThemeVars.push(`  --color-warning: var(--ds-semantic-color-status-warning);`);
+tailwindThemeVars.push(`  --color-warning-foreground: var(--ds-semantic-color-status-warning-foreground);`);
+tailwindThemeVars.push(`  --color-success: var(--ds-semantic-color-status-success);`);
+tailwindThemeVars.push(`  --color-success-foreground: var(--ds-semantic-color-status-success-foreground);`);
+tailwindThemeVars.push(`  --color-info: var(--ds-semantic-color-status-info);`);
+tailwindThemeVars.push(`  --color-info-foreground: var(--ds-semantic-color-status-info-foreground);`);
+tailwindThemeVars.push(`  --color-border: var(--ds-semantic-color-border-default);`);
+tailwindThemeVars.push(`  --color-input: var(--ds-semantic-color-border-default);`);
+tailwindThemeVars.push(`  --color-ring: var(--ds-semantic-color-action-accent);`);
 
 const cssContent = `/**
  * DO NOT EDIT MANUALLY
@@ -147,6 +180,16 @@ ${darkVars.join("\n")}
 
 @theme {
 ${tailwindThemeVars.join("\n")}
+}
+
+/* WCAG 2.1 Criteria 2.3.3 Accessibility Motion Guardrail */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 `;
 

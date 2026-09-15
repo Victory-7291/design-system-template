@@ -22,6 +22,51 @@
         "500": { "$value": "#16a34a", "$type": "color", "$description": "Placeholder accent, to be replaced during brand token phase" },
         "600": { "$value": "#15803d", "$type": "color" },
         "700": { "$value": "#166534", "$type": "color" }
+      },
+      "status": {
+        "red": {
+          "50": { "$value": "#fef2f2", "$type": "color" },
+          "500": { "$value": "#ef4444", "$type": "color" },
+          "600": { "$value": "#dc2626", "$type": "color" },
+          "700": { "$value": "#b91c1c", "$type": "color" }
+        },
+        "amber": {
+          "50": { "$value": "#fffbeb", "$type": "color" },
+          "500": { "$value": "#f59e0b", "$type": "color" },
+          "600": { "$value": "#d97706", "$type": "color" },
+          "700": { "$value": "#b45309", "$type": "color" }
+        },
+        "green": {
+          "50": { "$value": "#f0fdf4", "$type": "color" },
+          "500": { "$value": "#22c55e", "$type": "color" },
+          "600": { "$value": "#16a34a", "$type": "color" },
+          "700": { "$value": "#15803d", "$type": "color" }
+        },
+        "blue": {
+          "50": { "$value": "#eff6ff", "$type": "color" },
+          "500": { "$value": "#3b82f6", "$type": "color" },
+          "600": { "$value": "#2563eb", "$type": "color" },
+          "700": { "$value": "#1d4ed8", "$type": "color" }
+        }
+      }
+    },
+    "motion": {
+      "duration": {
+        "instant": { "$value": "100ms", "$type": "duration" },
+        "fast": { "$value": "150ms", "$type": "duration" },
+        "base": { "$value": "200ms", "$type": "duration" },
+        "moderate": { "$value": "300ms", "$type": "duration" },
+        "deliberate": { "$value": "500ms", "$type": "duration" }
+      },
+      "easing": {
+        "default": { "$value": "cubic-bezier(0.16, 1, 0.3, 1)", "$type": "cubicBezier" },
+        "out": { "$value": "cubic-bezier(0, 0, 0.2, 1)", "$type": "cubicBezier" },
+        "in-out": { "$value": "cubic-bezier(0.65, 0, 0.35, 1)", "$type": "cubicBezier" },
+        "spring": { "$value": "cubic-bezier(0.175, 0.885, 0.32, 1.275)", "$type": "cubicBezier" }
+      },
+      "scale": {
+        "press": { "$value": "0.97", "$type": "number" },
+        "hover": { "$value": "1.02", "$type": "number" }
       }
     },
     "spacing": {

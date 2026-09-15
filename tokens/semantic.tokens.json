@@ -5,10 +5,14 @@
       "surface": {
         "canvas": { "$value": "{foundation.color.neutral.0}", "$type": "color", "$description": "Base background for light mode" },
         "canvas-dark": { "$value": "{foundation.color.neutral.950}", "$type": "color", "$description": "Base background for dark mode" },
+        "sunken": { "$value": "{foundation.color.neutral.50}", "$type": "color", "$description": "Recessed areas (code blocks, sunken inputs)" },
+        "sunken-dark": { "$value": "{foundation.color.neutral.1000}", "$type": "color" },
         "subtle": { "$value": "{foundation.color.neutral.100}", "$type": "color" },
         "subtle-dark": { "$value": "{foundation.color.neutral.900}", "$type": "color" },
         "raised": { "$value": "{foundation.color.neutral.0}", "$type": "color" },
-        "raised-dark": { "$value": "{foundation.color.neutral.900}", "$type": "color" }
+        "raised-dark": { "$value": "{foundation.color.neutral.900}", "$type": "color" },
+        "overlay": { "$value": "{foundation.color.neutral.0}", "$type": "color", "$description": "Floating panels, popovers, modals" },
+        "overlay-dark": { "$value": "{foundation.color.neutral.800}", "$type": "color" }
       },
       "text": {
         "primary": { "$value": "{foundation.color.neutral.950}", "$type": "color", "$description": "High contrast text" },
@@ -35,7 +39,31 @@
         "primary-dark": { "$value": "{foundation.color.neutral.50}", "$type": "color" },
         "primary-hover-dark": { "$value": "{foundation.color.neutral.200}", "$type": "color" },
         "primary-text-dark": { "$value": "{foundation.color.neutral.950}", "$type": "color" },
-        "accent": { "$value": "{foundation.color.brand-skeleton.500}", "$type": "color", "$description": "Calibrated single accent per design-taste-frontend" }
+        "accent": { "$value": "{foundation.color.brand-skeleton.500}", "$type": "color", "$description": "Calibrated single accent per design-taste-frontend" },
+        "destructive": { "$value": "{foundation.color.status.red.600}", "$type": "color" },
+        "destructive-hover": { "$value": "{foundation.color.status.red.700}", "$type": "color" },
+        "destructive-text": { "$value": "{foundation.color.neutral.0}", "$type": "color" },
+        "destructive-dark": { "$value": "{foundation.color.status.red.500}", "$type": "color" },
+        "destructive-hover-dark": { "$value": "{foundation.color.status.red.600}", "$type": "color" },
+        "destructive-text-dark": { "$value": "{foundation.color.neutral.0}", "$type": "color" }
+      },
+      "status": {
+        "destructive": { "$value": "{foundation.color.status.red.600}", "$type": "color" },
+        "destructive-dark": { "$value": "{foundation.color.status.red.500}", "$type": "color" },
+        "destructive-foreground": { "$value": "{foundation.color.neutral.0}", "$type": "color" },
+        "destructive-foreground-dark": { "$value": "{foundation.color.neutral.0}", "$type": "color" },
+        "warning": { "$value": "{foundation.color.status.amber.600}", "$type": "color" },
+        "warning-dark": { "$value": "{foundation.color.status.amber.500}", "$type": "color" },
+        "warning-foreground": { "$value": "{foundation.color.neutral.0}", "$type": "color" },
+        "warning-foreground-dark": { "$value": "{foundation.color.neutral.950}", "$type": "color" },
+        "success": { "$value": "{foundation.color.status.green.600}", "$type": "color" },
+        "success-dark": { "$value": "{foundation.color.status.green.500}", "$type": "color" },
+        "success-foreground": { "$value": "{foundation.color.neutral.0}", "$type": "color" },
+        "success-foreground-dark": { "$value": "{foundation.color.neutral.950}", "$type": "color" },
+        "info": { "$value": "{foundation.color.status.blue.600}", "$type": "color" },
+        "info-dark": { "$value": "{foundation.color.status.blue.500}", "$type": "color" },
+        "info-foreground": { "$value": "{foundation.color.neutral.0}", "$type": "color" },
+        "info-foreground-dark": { "$value": "{foundation.color.neutral.0}", "$type": "color" }
       }
     }
   }

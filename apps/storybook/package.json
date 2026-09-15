@@ -8,11 +8,20 @@
     "build": "storybook build -o dist"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.9.1",
+    "@design-system/content-ui": "workspace:*",
     "@design-system/tokens": "workspace:*",
     "@design-system/ui": "workspace:*",
-    "@design-system/content-ui": "workspace:*",
+    "cmdk": "^1.1.1",
+    "date-fns": "^4.4.0",
+    "input-otp": "^1.5.0",
+    "lucide-react": "^1.45.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-hook-form": "^7.88.0",
+    "recharts": "^3.10.1",
+    "sonner": "^2.0.8",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@storybook/addon-a11y": "^8.6.4",

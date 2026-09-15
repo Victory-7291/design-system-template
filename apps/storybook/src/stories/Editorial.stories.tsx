@@ -13,13 +13,13 @@ export const SampleArticle: StoryObj = {
     <ArticleShell
       title="Building an AI-Native Design System"
       subtitle="How code-as-design, strict token compilation, and visual sandboxes unlock autonomous consistency."
-      category="Engineering & Architecture"
+      category="Engineering & Taste"
       author="Design Systems Team"
       publishedAt="2026-09-13"
     >
       <Prose>
         <p>
-          A design system for an AI-native organization is not an archive of Figma frames.
+          A design system for an AI-native company is not an archive of Figma frames.
           It is an executable pipeline where tokens, typed primitives, and regression tests act as hard boundaries for coding agents.
         </p>
 
@@ -29,7 +29,7 @@ export const SampleArticle: StoryObj = {
 
         <h2>The Architecture Boundary</h2>
         <p>
-          Instead of scattering unconstrained CSS or letting AI invent arbitrary purple glows, our agent UI contract enforces strict design discipline:
+          Instead of scattering unconstrained CSS or letting AI invent arbitrary purple glows, our agent UI contract enforces strict design taste:
         </p>
         <ul>
           <li><strong>Zero Uncalibrated Gradients:</strong> Color carries semantic intent rather than generic decorative noise.</li>
@@ -42,7 +42,7 @@ export const SampleArticle: StoryObj = {
         </Callout>
 
         <div className="pt-6">
-          <Button variant="default" size="lg">
+          <Button variant="primary" size="lg">
             Explore Documentation
           </Button>
         </div>

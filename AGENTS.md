@@ -1,71 +1,104 @@
-# Design System: Agent Building & Maintenance Specification (UI Contract)
+# AI Agent UI Specification & Governance Contract (UI Contract & Rules)
 
-> **Target Audience**: All AI Coding Agents (Cursor, Codex, Claude Code, Antigravity, etc.) and human engineers contributing to the design system or consuming it in downstream applications.
-> **Core Tech Stack**: **Tailwind CSS v4** + **TypeScript (Strict Mode)** + **shadcn/ui (Radix UI Primitives)** + **Bun Workspaces** + **Turborepo**.
-> **Core Principle**: Code, versioned tokens, and component APIs are the sole source of truth; Storybook is the visual review surface; Playwright visual regression is the automated quality gate; AI agents MUST compose within the authoritative catalog.
-
----
-
-## 1. Core Technical Conventions
-
-- **UI Primitives**: Built on **shadcn/ui** (Radix UI accessible primitives), located in `@design-system/ui/components/ui/*`.
-- **Styling**: **Tailwind CSS v4** native syntax. CSS variables are compiled and injected into `@theme` via `@design-system/tokens`.
-- **Type System**: **TypeScript 5+** in strict mode. All components export strong prop types.
-- **Runtime & Build**: Unified on **Bun Workspaces** and **Turborepo** for topological task orchestration and caching.
-- **Font Policy**: Decoupled from framework-specific runtimes (no hard dependency on `next/font`). Font variables `--font-sans` and `--font-mono` are declared by `@design-system/tokens`.
+> **Audience**: All AI Coding Agents (Cursor, Codex, Claude Code, Antigravity, etc.) and human engineers developing, extending, or consuming the design system.  
+> **Core Principle**: Code, versioned tokens, and component APIs are the sole source of truth; Storybook is the visual review surface; Playwright is the automated regression gate. Hallucinated UI and arbitrary styling are strictly prohibited.
 
 ---
 
-## 2. Binding UI Contract for AI Agents
-
-When writing or modifying UI code, agents must strictly follow these 5 rules:
-
-1. **Query Before Generating (Query First)**
-   - Always query the Storybook catalog or inspect `@design-system/ui` exports before writing UI components. Never hallucinate non-existent props or variants.
-2. **Mandatory State Coverage**
-   - When introducing or altering a component in the design system, corresponding Storybook stories must be added/updated.
-   - Must cover edge states: `default`, `hover/active`, `focus`, `loading`, `disabled`, `empty`, `error`, `long-content`, and `mobile`.
-   - **UI changes without stories must not be merged.**
-3. **Token Authority (No Raw Values)**
-   - Never hardcode arbitrary hex/rgb color codes, inline box-shadows, arbitrary font sizes, or uncalibrated animations.
-   - Always compose using Semantic Tokens or primitives exposed by the design system.
-4. **Composition Over Proliferation**
-   - When faced with a new design requirement, compose from existing primitives first. Do not abstract one-off marketing blocks into system components prematurely.
-5. **Automated Verification Before Commit**
-   - Run `bun run typecheck`, `bun run build`, and `bun run test:visual` locally.
-   - Snapshot updates (`bun run test:visual:update`) require human design approval; automated CI must never silently overwrite golden baselines.
+## 1. Technical Conventions & Standards
+- **UI Primitives**: Built on **shadcn/ui** (Radix UI unstyled primitives), located in `packages/ui`.
+- **Styling Architecture**: **Tailwind CSS v4** native syntax. Design tokens are compiled and injected directly into `@theme` via `@design-system/tokens`.
+- **Type Safety**: **TypeScript Strict Mode** across all packages. Every component must export typed prop interfaces.
+- **Monorepo Tooling**: **Bun Workspaces** + **Turborepo** for topological task execution and caching.
+- **Font Policy**: Decoupled from runtime framework loaders, exposing CSS variables `--font-sans` and `--font-mono`.
 
 ---
 
-## 3. Token Hierarchy & Consumption Permissions
-
-| Layer | Examples | Source Location | Allowed Consumers |
-| :--- | :--- | :--- | :--- |
-| **1. Foundation** | `foundation.color.neutral.950`<br/>`foundation.spacing.4` | `tokens/foundation.tokens.json` | Token compiler & internal primitive implementations only. |
-| **2. Semantic** | `color.text.primary`<br/>`color.surface.canvas`<br/>`color.action.primary` | `tokens/semantic.tokens.json` | Consuming applications, component variants, and theme definitions. |
-| **3. Component** | `button.primary.bg`<br/>`callout.warning.border` | Component internal implementation | Private to that specific component and its story. |
+## 2. Component Placement & 3-Step Promotion Pipeline for `reference/`
+1. **No Cross-App Demand, No Upstream Promotion**:
+   - Views, layouts, or mockups specific to a single application must remain in that application's codebase. Never bloat shared system packages with single-use components.
+2. **Package Responsibilities**:
+   - **`@design-system/ui`**: Contains 53 standard shadcn/ui primitives. Zero business logic, accessible by construction, driven by design tokens.
+   - **`@design-system/content-ui`**: Dedicated editorial content layout blocks (`ArticleShell`, `Callout`, `Prose`).
+3. **External Reference Isolation (`reference/`) & 3-Step Promotion Rule**:
+   - Code in `reference/` (e.g., `galaxy`, `react-bits`) is strictly read-only reference material. Direct imports into application code are prohibited.
+   - Promoting external components into the design system requires passing a three-step pipeline:
+     1. **Token Cleanse**: Strip all raw hardcoded hex/rgb colors and arbitrary dimensions, rebinding them to DTCG Semantic Tokens (`var(--color-...)`).
+     2. **Accessibility & Tactile Re-engineering**: Add keyboard Tab focus indicators, ARIA roles, Escape-key dismiss, `active:scale-[0.97]` tactile feedback, and `@media (prefers-reduced-motion: reduce)` fallbacks.
+     3. **Storybook 1-to-1 Story & Visual Regression Baseline**: Create a dedicated story in `apps/storybook/src/stories/` passing `@storybook/addon-a11y` and Playwright visual snapshot tests.
 
 ---
 
-## 4. Standard Commands (CLI)
+## 3. Three-Tier Design Constraint Pyramid
+When generating or modifying UI, agents must adhere to the three-tier constraint hierarchy:
+1. **Tier 1: `DESIGN.md` (Design Rationale & Aesthetic Baseline)**:
+   - Plain-text Google Stitch specification. Defines visual DNA, palettes, typography scales, elevation tiers, and the Anti-Slop checklist. Injected as system context for new product generation to ensure aesthetic fidelity.
+2. **Tier 2: `AGENTS.md` (Operational Contract)**:
+   - Governs developer and AI behavior: prohibits hallucinated props, forbids raw color values, mandates edge-case story coverage, and requires checklist verification.
+3. **Tier 3: Automated Quality Gates (Machine Enforcement)**:
+   - `build:tokens` enforces unidirectional token compilation;
+   - `lint:design` (@google/design.md CLI) validates specification syntax and WCAG contrast compliance;
+   - TypeScript 5+ enforces strict type contracts;
+   - `@storybook/addon-a11y` (axe-core) halts accessibility violations;
+   - Playwright automated visual diffs prevent unintended pixel regressions.
 
+---
+
+## 4. Accessibility, Contrast & Motion Guidelines
+1. **High-Contrast Text**:
+   - Normal text must guarantee ≥ 4.5:1 contrast against its background in both light and dark modes.
+2. **Multi-Tier Surface Elevation**:
+   - In dark mode, depth is expressed through calibrated surface lightness steps (`surface.canvas-dark` → `surface.subtle-dark` → `surface.raised-dark` → `surface.overlay-dark`) combined with subtle borders, rather than heavy drop shadows.
+3. **Reduced-Motion Compliance**:
+   - All animations must respect `prefers-reduced-motion: reduce`. When active, transition durations collapse to `0.01ms`.
+
+---
+
+## 5. Storybook 1-to-1 Mapping & Token Consumption
+1. **Storybook 1-to-1 Coverage**:
+   - Every component must have an individual story file in `apps/storybook/src/stories/` named `[ComponentName].stories.tsx`.
+   - Grouping: UI primitives under `title: "ui/<ComponentName>"`, editorial blocks under `title: "Content/<ComponentName>"`.
+   - Stories must enable `tags: ["autodocs"]` and cover Default, Variants, Sizes, and Disabled/Loading states.
+2. **Token Layering Permissions**:
+   - **Foundation** (`tokens/foundation.tokens.json`): Private to the compiler and primitive implementations.
+   - **Semantic** (`tokens/semantic.tokens.json`): The sole authorized layer for application pages and component variants.
+
+---
+
+## 6. Binding Agent Rules
+1. **No Hallucinated Props**: Inspect Storybook or component type exports before writing JSX. Never invent non-existent props or variants.
+2. **No Hardcoded Raw Values**: Never hardcode hex/rgb strings, inline box-shadows, or arbitrary pixel font sizes. Use semantic tokens or system primitives.
+3. **Composition Over Abstraction**: Compose interfaces from existing primitives before requesting new components in the design system.
+4. **All Gates Must Pass**: Code must pass `lint:design`, `typecheck`, `build`, and `test:visual` prior to review.
+
+---
+
+## 7. Component Creation Workflow & Checklist
+### Execution Workflow
+1. **Verify Reuse**: Confirm the component satisfies cross-application utility criteria.
+2. **Implement Primitive**: Add component to `packages/ui` using relative internal imports (e.g., `../../lib/utils.js`).
+3. **Export Types**: Export the component and its prop types in `packages/ui/src/index.ts`.
+4. **Write Story**: Create a dedicated 1-to-1 story in `apps/storybook/src/stories/` with autodocs.
+5. **Verify Gates**: Run `bun run build:tokens && bun run lint:design && bun run typecheck && bun run build && bun run test:visual`.
+
+### Self-Checklist
+- [ ] Primitive is domain-neutral with no application-specific logic.
+- [ ] Internal imports use pure relative paths (`../../lib/utils.js`).
+- [ ] Component is exported in `packages/ui/src/index.ts`.
+- [ ] Storybook story exists with proper namespace and autodocs.
+- [ ] Story covers Default, Variants, Sizes, and Disabled/Loading states.
+- [ ] Local `lint:design`, `typecheck`, and `test:visual` pass with 0 errors.
+
+---
+
+## 8. CLI Command Reference
 ```bash
-# 1. Compile DTCG JSON tokens to CSS variables and TypeScript types
-bun run build:tokens
-
-# 2. Workspace-wide typecheck and build
-bun run typecheck
-bun run build
-
-# 3. Launch local Storybook sandbox (port 6006)
-bun run storybook
-
-# 4. Build static Storybook site
-bun run storybook:build
-
-# 5. Run Playwright visual regression tests
-bun run test:visual
-
-# 6. Update visual golden snapshots after approved visual changes
-bun run test:visual:update
+bun run build:tokens       # Compile DTCG JSON tokens to CSS / Tailwind v4 / TS
+bun run lint:design        # Validate Google Stitch DESIGN.md & contrast compliance
+bun run typecheck          # Run workspace-wide TypeScript type checking
+bun run build              # Build all packages and applications via Turborepo
+bun run storybook          # Launch local Storybook sandbox (port 6006)
+bun run storybook:build    # Build static Storybook site
+bun run test:visual        # Run Playwright dual-viewport visual regression tests
+bun run test:visual:update # Update visual golden snapshots after approved updates
 ```

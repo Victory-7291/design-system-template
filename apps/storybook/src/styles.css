@@ -1,5 +1,9 @@
-@import "@design-system/tokens/css";
 @import "tailwindcss";
+@import "@design-system/tokens/styles/tokens.css";
+@import "@design-system/tokens/styles/utilities.css";
+@import "tw-animate-css";
+
+@source "../src/**/*.{ts,tsx}";
 
 body {
   background-color: var(--color-surface-canvas);

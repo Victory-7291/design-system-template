@@ -1,5 +1,5 @@
 import * as React from "react";
-import { cn } from "./lib/utils.js";
+import { cn } from "./lib/utils";
 
 export interface SurfaceProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: "canvas" | "raised" | "subtle";

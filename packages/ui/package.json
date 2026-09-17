@@ -15,7 +15,6 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@design-system/tokens": "workspace:*",
     "@hookform/resolvers": "^5.9.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

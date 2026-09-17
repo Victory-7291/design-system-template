@@ -1,13 +1,13 @@
 import * as React from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { Button } from "./ui/button.js";
+import { Button } from "./ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu.js";
+} from "./ui/dropdown-menu";
 
 const themes = [
   { label: "Light", value: "light" },

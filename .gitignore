@@ -20,3 +20,7 @@ storybook-static/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Generated artifacts (interchange exports / pregenerated utilities)
+packages/design-tokens/styles/utilities.css
+dtcg/

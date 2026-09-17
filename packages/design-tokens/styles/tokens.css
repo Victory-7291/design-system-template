@@ -1,0 +1,242 @@
+/* ═══════════════════════════════════════════════════════════════════════
+ * DESIGN TOKENS — SINGLE SOURCE OF TRUTH (hand-edited)
+ * ═══════════════════════════════════════════════════════════════════════
+ * This file IS the design system's token definition:
+ *   foundation vars → semantic vars (light / fixed dark / .dark overrides)
+ *   → Tailwind v4 @theme bindings → reduced-motion guardrail.
+ *
+ * Interchange:
+ *   bun run tokens:export  → DTCG JSON (dtcg/) for Figma / Swift / Kotlin / RN
+ *   bun run tokens:import  → DTCG JSON → CSS variable blocks
+ * Consumed as: @import "@design-system/tokens/styles/index.css"
+ * ═══════════════════════════════════════════════════════════════════════ */
+
+:root {
+  --ds-foundation-color-neutral-0: #ffffff;
+  --ds-foundation-color-neutral-50: #fafafa;
+  --ds-foundation-color-neutral-100: #f4f4f5;
+  --ds-foundation-color-neutral-200: #e4e4e7;
+  --ds-foundation-color-neutral-300: #d4d4d8;
+  --ds-foundation-color-neutral-400: #a1a1aa;
+  --ds-foundation-color-neutral-500: #71717a;
+  --ds-foundation-color-neutral-600: #52525b;
+  --ds-foundation-color-neutral-700: #3f3f46;
+  --ds-foundation-color-neutral-800: #27272a;
+  --ds-foundation-color-neutral-900: #18181b;
+  --ds-foundation-color-neutral-950: #09090b;
+  --ds-foundation-color-neutral-1000: #000000;
+  --ds-foundation-color-brand-skeleton-50: #f0fdf4;
+  --ds-foundation-color-brand-skeleton-500: #16a34a;
+  --ds-foundation-color-brand-skeleton-600: #15803d;
+  --ds-foundation-color-brand-skeleton-700: #166534;
+  --ds-foundation-color-status-red-50: #fef2f2;
+  --ds-foundation-color-status-red-500: #ef4444;
+  --ds-foundation-color-status-red-600: #dc2626;
+  --ds-foundation-color-status-red-700: #b91c1c;
+  --ds-foundation-color-status-amber-50: #fffbeb;
+  --ds-foundation-color-status-amber-500: #f59e0b;
+  --ds-foundation-color-status-amber-600: #d97706;
+  --ds-foundation-color-status-amber-700: #b45309;
+  --ds-foundation-color-status-green-50: #f0fdf4;
+  --ds-foundation-color-status-green-500: #22c55e;
+  --ds-foundation-color-status-green-600: #16a34a;
+  --ds-foundation-color-status-green-700: #15803d;
+  --ds-foundation-color-status-blue-50: #eff6ff;
+  --ds-foundation-color-status-blue-500: #3b82f6;
+  --ds-foundation-color-status-blue-600: #2563eb;
+  --ds-foundation-color-status-blue-700: #1d4ed8;
+  --ds-foundation-motion-duration-instant: 100ms;
+  --ds-foundation-motion-duration-fast: 150ms;
+  --ds-foundation-motion-duration-base: 200ms;
+  --ds-foundation-motion-duration-moderate: 300ms;
+  --ds-foundation-motion-duration-deliberate: 500ms;
+  --ds-foundation-motion-easing-default: cubic-bezier(0.16, 1, 0.3, 1);
+  --ds-foundation-motion-easing-out: cubic-bezier(0, 0, 0.2, 1);
+  --ds-foundation-motion-easing-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ds-foundation-motion-easing-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --ds-foundation-motion-scale-press: 0.97;
+  --ds-foundation-motion-scale-hover: 1.02;
+  --ds-foundation-spacing-0: 0px;
+  --ds-foundation-spacing-1: 4px;
+  --ds-foundation-spacing-2: 8px;
+  --ds-foundation-spacing-3: 12px;
+  --ds-foundation-spacing-4: 16px;
+  --ds-foundation-spacing-5: 20px;
+  --ds-foundation-spacing-6: 24px;
+  --ds-foundation-spacing-8: 32px;
+  --ds-foundation-spacing-10: 40px;
+  --ds-foundation-spacing-12: 48px;
+  --ds-foundation-spacing-16: 64px;
+  --ds-foundation-spacing-20: 80px;
+  --ds-foundation-spacing-24: 96px;
+  --ds-foundation-radius-none: 0px;
+  --ds-foundation-radius-xs: 4px;
+  --ds-foundation-radius-sm: 6px;
+  --ds-foundation-radius-md: 8px;
+  --ds-foundation-radius-lg: 12px;
+  --ds-foundation-radius-xl: 16px;
+  --ds-foundation-radius-full: 9999px;
+  --ds-foundation-font-family-sans: Geist, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --ds-foundation-font-family-mono: Geist Mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --ds-foundation-font-size-xs: 12px;
+  --ds-foundation-font-size-sm: 14px;
+  --ds-foundation-font-size-base: 16px;
+  --ds-foundation-font-size-lg: 18px;
+  --ds-foundation-font-size-xl: 20px;
+  --ds-foundation-font-size-2xl: 24px;
+  --ds-foundation-font-size-3xl: 30px;
+  --ds-foundation-font-size-4xl: 36px;
+  --ds-foundation-font-size-5xl: 48px;
+  --ds-semantic-color-surface-canvas: #ffffff;
+  --ds-semantic-color-surface-sunken: #fafafa;
+  --ds-semantic-color-surface-subtle: #f4f4f5;
+  --ds-semantic-color-surface-raised: #ffffff;
+  --ds-semantic-color-surface-overlay: #ffffff;
+  --ds-semantic-color-text-primary: #09090b;
+  --ds-semantic-color-text-secondary: #52525b;
+  --ds-semantic-color-text-muted: #a1a1aa;
+  --ds-semantic-color-text-inverse: #ffffff;
+  --ds-semantic-color-border-default: #e4e4e7;
+  --ds-semantic-color-border-subtle: #f4f4f5;
+  --ds-semantic-color-border-strong: #d4d4d8;
+  --ds-semantic-color-action-primary: #09090b;
+  --ds-semantic-color-action-primary-hover: #27272a;
+  --ds-semantic-color-action-primary-text: #ffffff;
+  --ds-semantic-color-action-accent: #16a34a;
+  --ds-semantic-color-action-destructive: #dc2626;
+  --ds-semantic-color-action-destructive-hover: #b91c1c;
+  --ds-semantic-color-action-destructive-text: #ffffff;
+  --ds-semantic-color-status-destructive: #dc2626;
+  --ds-semantic-color-status-destructive-foreground: #ffffff;
+  --ds-semantic-color-status-warning: #d97706;
+  --ds-semantic-color-status-warning-foreground: #ffffff;
+  --ds-semantic-color-status-success: #16a34a;
+  --ds-semantic-color-status-success-foreground: #ffffff;
+  --ds-semantic-color-status-info: #2563eb;
+  --ds-semantic-color-status-info-foreground: #ffffff;
+}
+
+.dark {
+  --ds-semantic-color-surface-canvas: #09090b;
+  --ds-semantic-color-surface-sunken: #000000;
+  --ds-semantic-color-surface-subtle: #18181b;
+  --ds-semantic-color-surface-raised: #18181b;
+  --ds-semantic-color-surface-overlay: #27272a;
+  --ds-semantic-color-text-primary: #fafafa;
+  --ds-semantic-color-text-secondary: #a1a1aa;
+  --ds-semantic-color-text-muted: #71717a;
+  --ds-semantic-color-text-inverse: #09090b;
+  --ds-semantic-color-border-default: #27272a;
+  --ds-semantic-color-border-subtle: #18181b;
+  --ds-semantic-color-border-strong: #3f3f46;
+  --ds-semantic-color-action-primary: #fafafa;
+  --ds-semantic-color-action-primary-hover: #e4e4e7;
+  --ds-semantic-color-action-primary-text: #09090b;
+  --ds-semantic-color-action-destructive: #ef4444;
+  --ds-semantic-color-action-destructive-hover: #dc2626;
+  --ds-semantic-color-action-destructive-text: #ffffff;
+  --ds-semantic-color-status-destructive: #ef4444;
+  --ds-semantic-color-status-destructive-foreground: #ffffff;
+  --ds-semantic-color-status-warning: #f59e0b;
+  --ds-semantic-color-status-warning-foreground: #09090b;
+  --ds-semantic-color-status-success: #22c55e;
+  --ds-semantic-color-status-success-foreground: #09090b;
+  --ds-semantic-color-status-info: #3b82f6;
+  --ds-semantic-color-status-info-foreground: #ffffff;
+}
+
+@theme {
+  --duration-instant: var(--ds-foundation-motion-duration-instant);
+  --duration-fast: var(--ds-foundation-motion-duration-fast);
+  --duration-base: var(--ds-foundation-motion-duration-base);
+  --duration-moderate: var(--ds-foundation-motion-duration-moderate);
+  --duration-deliberate: var(--ds-foundation-motion-duration-deliberate);
+  --ease-default: var(--ds-foundation-motion-easing-default);
+  --ease-out: var(--ds-foundation-motion-easing-out);
+  --ease-in-out: var(--ds-foundation-motion-easing-in-out);
+  --ease-spring: var(--ds-foundation-motion-easing-spring);
+  --spacing-0: var(--ds-foundation-spacing-0);
+  --spacing-1: var(--ds-foundation-spacing-1);
+  --spacing-2: var(--ds-foundation-spacing-2);
+  --spacing-3: var(--ds-foundation-spacing-3);
+  --spacing-4: var(--ds-foundation-spacing-4);
+  --spacing-5: var(--ds-foundation-spacing-5);
+  --spacing-6: var(--ds-foundation-spacing-6);
+  --spacing-8: var(--ds-foundation-spacing-8);
+  --spacing-10: var(--ds-foundation-spacing-10);
+  --spacing-12: var(--ds-foundation-spacing-12);
+  --spacing-16: var(--ds-foundation-spacing-16);
+  --spacing-20: var(--ds-foundation-spacing-20);
+  --spacing-24: var(--ds-foundation-spacing-24);
+  --radius-none: var(--ds-foundation-radius-none);
+  --radius-xs: var(--ds-foundation-radius-xs);
+  --radius-sm: var(--ds-foundation-radius-sm);
+  --radius-md: var(--ds-foundation-radius-md);
+  --radius-lg: var(--ds-foundation-radius-lg);
+  --radius-xl: var(--ds-foundation-radius-xl);
+  --radius-full: var(--ds-foundation-radius-full);
+  --font-sans: var(--ds-foundation-font-family-sans);
+  --font-mono: var(--ds-foundation-font-family-mono);
+  --color-surface-canvas: var(--ds-semantic-color-surface-canvas);
+  --color-surface-sunken: var(--ds-semantic-color-surface-sunken);
+  --color-surface-subtle: var(--ds-semantic-color-surface-subtle);
+  --color-surface-raised: var(--ds-semantic-color-surface-raised);
+  --color-surface-overlay: var(--ds-semantic-color-surface-overlay);
+  --color-text-primary: var(--ds-semantic-color-text-primary);
+  --color-text-secondary: var(--ds-semantic-color-text-secondary);
+  --color-text-muted: var(--ds-semantic-color-text-muted);
+  --color-text-inverse: var(--ds-semantic-color-text-inverse);
+  --color-border-default: var(--ds-semantic-color-border-default);
+  --color-border-subtle: var(--ds-semantic-color-border-subtle);
+  --color-border-strong: var(--ds-semantic-color-border-strong);
+  --color-action-primary: var(--ds-semantic-color-action-primary);
+  --color-action-primary-hover: var(--ds-semantic-color-action-primary-hover);
+  --color-action-primary-text: var(--ds-semantic-color-action-primary-text);
+  --color-action-accent: var(--ds-semantic-color-action-accent);
+  --color-action-destructive: var(--ds-semantic-color-action-destructive);
+  --color-action-destructive-hover: var(--ds-semantic-color-action-destructive-hover);
+  --color-action-destructive-text: var(--ds-semantic-color-action-destructive-text);
+  --color-status-destructive: var(--ds-semantic-color-status-destructive);
+  --color-status-destructive-foreground: var(--ds-semantic-color-status-destructive-foreground);
+  --color-status-warning: var(--ds-semantic-color-status-warning);
+  --color-status-warning-foreground: var(--ds-semantic-color-status-warning-foreground);
+  --color-status-success: var(--ds-semantic-color-status-success);
+  --color-status-success-foreground: var(--ds-semantic-color-status-success-foreground);
+  --color-status-info: var(--ds-semantic-color-status-info);
+  --color-status-info-foreground: var(--ds-semantic-color-status-info-foreground);
+  --color-background: var(--ds-semantic-color-surface-canvas);
+  --color-foreground: var(--ds-semantic-color-text-primary);
+  --color-card: var(--ds-semantic-color-surface-raised);
+  --color-card-foreground: var(--ds-semantic-color-text-primary);
+  --color-popover: var(--ds-semantic-color-surface-overlay);
+  --color-popover-foreground: var(--ds-semantic-color-text-primary);
+  --color-primary: var(--ds-semantic-color-action-primary);
+  --color-primary-foreground: var(--ds-semantic-color-action-primary-text);
+  --color-secondary: var(--ds-semantic-color-surface-subtle);
+  --color-secondary-foreground: var(--ds-semantic-color-text-primary);
+  --color-muted: var(--ds-semantic-color-surface-subtle);
+  --color-muted-foreground: var(--ds-semantic-color-text-muted);
+  --color-accent: var(--ds-semantic-color-surface-subtle);
+  --color-accent-foreground: var(--ds-semantic-color-text-primary);
+  --color-destructive: var(--ds-semantic-color-status-destructive);
+  --color-destructive-foreground: var(--ds-semantic-color-status-destructive-foreground);
+  --color-warning: var(--ds-semantic-color-status-warning);
+  --color-warning-foreground: var(--ds-semantic-color-status-warning-foreground);
+  --color-success: var(--ds-semantic-color-status-success);
+  --color-success-foreground: var(--ds-semantic-color-status-success-foreground);
+  --color-info: var(--ds-semantic-color-status-info);
+  --color-info-foreground: var(--ds-semantic-color-status-info-foreground);
+  --color-border: var(--ds-semantic-color-border-default);
+  --color-input: var(--ds-semantic-color-border-default);
+  --color-ring: var(--ds-semantic-color-action-accent);
+}
+
+/* WCAG 2.1 Criteria 2.3.3 Accessibility Motion Guardrail */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

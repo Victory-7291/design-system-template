@@ -1,7 +1,7 @@
 ---
 version: alpha
 name: design-system-template
-description: "Production-ready, AI-native plain-text design system template. Engineered with accessible neutral palette, strict W3C DTCG token compilation, multi-tier surface elevation, CSS-first micro-motions, and complete 53-component shadcn/ui suite."
+description: "Production-ready, AI-native plain-text design system template. Engineered with accessible neutral palette, CSS-as-source-of-truth design tokens, multi-tier surface elevation, CSS-first micro-motions, and complete 53-component shadcn/ui suite."
 
 colors:
   primary: "#09090b"

@@ -1,3 +1,3 @@
-export * from "./article-shell";
-export * from "./callout";
-export * from "./prose";
+export * from "./article-shell.js";
+export * from "./callout.js";
+export * from "./prose.js";

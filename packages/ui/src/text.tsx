@@ -1,6 +1,6 @@
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "./lib/utils";
+import { cn } from "./lib/utils.js";
 
 const textVariants = cva("text-[var(--color-text-primary)] font-sans antialiased", {
   variants: {

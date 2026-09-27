@@ -24,3 +24,5 @@ yarn-error.log*
 # Generated artifacts (interchange exports / pregenerated utilities)
 packages/design-tokens/styles/utilities.css
 dtcg/
+packages/ui/styles.css
+packages/content-ui/styles.css

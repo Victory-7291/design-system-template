@@ -1,0 +1,11 @@
+/* Content-UI entry: generates packages/content-ui/styles.css — published as
+   `@design-system/content-ui/styles.css`. Covers @design-system/content-ui
+   sources only. Consumers of content-ui ALSO import
+   `@design-system/ui/styles.css` (content-ui sits on top of the shared
+   interaction primitives).
+   Compiled with:
+     bunx @tailwindcss/cli -i ./scripts/styles-entry-content-ui.css -o <tmp>/raw.css
+   then post-processed by scripts/generate-styles.ts. */
+@import "./styles-base.css";
+
+@source "../packages/content-ui/src";

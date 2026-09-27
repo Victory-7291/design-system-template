@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "@phanvic/design-system-root",
+      "name": "design-system-template",
       "devDependencies": {
         "@google/design.md": "^0.4.0",
         "@playwright/test": "^1.50.0",

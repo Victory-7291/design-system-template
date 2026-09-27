@@ -15,7 +15,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 
 const input = process.argv[2];
-const output = process.argv[3] ?? "/tmp/phanvic-dtcg-import.css";
+const output = process.argv[3] ?? "/tmp/ds-dtcg-import.css";
 
 if (!input) {
   console.error("Usage: bun run tokens:import -- <tokens.json> [output.css]");

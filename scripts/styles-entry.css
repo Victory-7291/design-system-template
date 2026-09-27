@@ -1,17 +1,12 @@
-/* Entry for generating styles/utilities.css: the Tailwind utilities
-   referenced by the @design-system/ui and @design-system/content-ui component sources.
+/* Union entry: generates packages/design-tokens/styles/utilities.css — the
+   legacy single-import stylesheet consumed via
+   `@design-system/tokens/styles/index.css`. Contains the utilities of BOTH
+   @design-system/ui and @design-system/content-ui so index.css consumers
+   keep working.
    Compiled with:
-     bunx @tailwindcss/cli -i ./scripts/styles-entry.css -o <tmp>/ds-styles.raw.css
-   then post-processed by scripts/generate-styles.ts.
-   - Importing "tailwindcss/utilities" activates the engine (without it the
-     CLI passes @source through untouched).
-   - ../packages/design-tokens/styles/tokens.css is the token source of truth; it
-     provides @theme so the engine can resolve color utilities. */
-@import "tailwindcss/utilities";
-@import "../packages/design-tokens/styles/tokens.css";
-@import "tw-animate-css";
-
-@custom-variant dark (&:is(.dark *));
+     bunx @tailwindcss/cli -i ./scripts/styles-entry.css -o <tmp>/raw.css
+   then post-processed by scripts/generate-styles.ts. */
+@import "./styles-base.css";
 
 @source "../packages/ui/src";
 @source "../packages/content-ui/src";

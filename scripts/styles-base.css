@@ -1,0 +1,20 @@
+/* Shared base for the utility stylesheet generators: engine + token values.
+   Per-package entry stylesheets add their own @source directives on top.
+   - "tailwindcss/theme.css" supplies the DEFAULT theme (breakpoints, spacing,
+     easings). Without it the engine silently skips every variant that needs a
+     theme value — `md:flex`, `lg:grid-cols-4`, group-data width math, … —
+     which is how component variants can disappear in consumer apps while
+     looking fine in Storybook (Storybook compiles with the full engine). The
+     emitted :root/.dark variable blocks are stripped by the post-processor;
+     consumers get values from @design-system/tokens.
+   - "tailwindcss/utilities" source(none) activates the engine AND disables
+     automatic project-wide detection, so each package stylesheet only picks
+     up classes from its own sources (per-package entries add @source).
+   - ../packages/design-tokens/styles/tokens.css provides @theme so the engine
+     can resolve semantic color utilities. */
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities" source(none);
+@import "../packages/design-tokens/styles/tokens.css";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));

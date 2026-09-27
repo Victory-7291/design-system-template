@@ -9,7 +9,7 @@
 - **UI Primitives**: Built on **shadcn/ui** (Radix UI unstyled primitives), located in `packages/ui`.
 - **Styling Architecture**: **Tailwind CSS v4** native syntax. Design tokens are hand-maintained in `packages/design-tokens/styles/tokens.css` (the single source of truth; no compilation step).
 - **Type Safety**: **TypeScript Strict Mode** across all packages. Every component must export typed prop interfaces.
-- **Monorepo Tooling**: **Bun Workspaces**; `ui`/`content-ui` compile to `dist/` via `tsc`, and component utilities are pre-generated to `packages/design-tokens/styles/utilities.css`.
+- **Monorepo Tooling**: **Bun Workspaces**; `ui`/`content-ui` compile to `dist/` via `tsc`, and component utilities are pre-generated per package — `packages/ui/styles.css`, `packages/content-ui/styles.css`, plus the legacy union `packages/design-tokens/styles/utilities.css`.
 - **Font Policy**: Decoupled from runtime framework loaders, exposing CSS variables `--font-sans` and `--font-mono`.
 
 ---
@@ -36,7 +36,7 @@ When generating or modifying UI, agents must adhere to the three-tier constraint
 2. **Tier 2: `AGENTS.md` (Operational Contract)**:
    - Governs developer and AI behavior: prohibits hallucinated props, forbids raw color values, mandates edge-case story coverage, and requires checklist verification.
 3. **Tier 3: Automated Quality Gates (Machine Enforcement)**:
-   - `generate:styles` enforces the single compilation step (component utilities);
+   - `generate:styles` enforces the single compilation step (per-package component utilities);
    - `lint:design` (@google/design.md CLI) validates specification syntax and WCAG contrast compliance;
    - TypeScript 5+ enforces strict type contracts;
    - `@storybook/addon-a11y` (axe-core) halts accessibility violations;
@@ -94,7 +94,7 @@ When generating or modifying UI, agents must adhere to the three-tier constraint
 
 ## 8. CLI Command Reference
 ```bash
-bun run generate:styles    # Regenerate component utilities (packages/design-tokens/styles/utilities.css)
+bun run generate:styles    # Regenerate component utilities (packages/*/styles.css + design-tokens union)
 bun run tokens:export      # Export tokens.css to DTCG JSON (dtcg/)
 bun run tokens:import      # Import external DTCG JSON to CSS variable blocks
 bun run lint:design        # Validate Google Stitch DESIGN.md & contrast compliance

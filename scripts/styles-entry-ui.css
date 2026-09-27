@@ -1,0 +1,8 @@
+/* UI entry: generates packages/ui/styles.css — published as
+   `@design-system/ui/styles.css`. Covers @design-system/ui sources only.
+   Compiled with:
+     bunx @tailwindcss/cli -i ./scripts/styles-entry-ui.css -o <tmp>/raw.css
+   then post-processed by scripts/generate-styles.ts. */
+@import "./styles-base.css";
+
+@source "../packages/ui/src";

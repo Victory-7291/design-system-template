@@ -1,372 +1,132 @@
----
-version: alpha
-name: design-system-template
-description: "Production-ready, AI-native plain-text design system template. Engineered with accessible neutral palette, CSS-as-source-of-truth design tokens, multi-tier surface elevation, CSS-first micro-motions, and complete 53-component shadcn/ui suite."
+# Design System Charter & Architectural Principles
 
-colors:
-  primary: "#09090b"
-  on-primary: "#ffffff"
-  primary-hover: "#27272a"
-  primary-active: "#18181b"
-  ink: "#fafafa"
-  ink-inverse: "#09090b"
-  ink-muted: "#a1a1aa"
-  ink-subtle: "#71717a"
-  canvas: "#ffffff"
-  canvas-dark: "#09090b"
-  surface-sunken: "#000000"
-  surface-subtle: "#18181b"
-  surface-raised: "#27272a"
-  surface-overlay: "#3f3f46"
-  border-default: "#e4e4e7"
-  border-dark: "#27272a"
-  border-dark-strong: "#3f3f46"
-  accent: "#16a34a"
-  accent-dark: "#15803d"
-  status-destructive: "#dc2626"
-  status-warning: "#d97706"
-  status-success: "#15803d"
-  status-info: "#2563eb"
+**Status:** v1.0 — Foundational specification for design language, token governance, and component primitives. Governs UI structure, layout rhythm, and token boundaries. Visual values (colors, typography, spacing, radius, motion) are codified strictly as tokens. Nothing in `src/` may hardcode visual values.
 
-typography:
-  display-xl:
-    fontFamily: Geist, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif
-    fontSize: 56px
-    fontWeight: 700
-    lineHeight: 0.95
-    letterSpacing: -0.04em
-  display-lg:
-    fontFamily: Geist, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif
-    fontSize: 40px
-    fontWeight: 700
-    lineHeight: 1.1
-    letterSpacing: -0.03em
-  h1:
-    fontFamily: Geist, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif
-    fontSize: 36px
-    fontWeight: 700
-    lineHeight: 1.15
-    letterSpacing: -0.025em
-  h2:
-    fontFamily: Geist, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif
-    fontSize: 28px
-    fontWeight: 600
-    lineHeight: 1.2
-    letterSpacing: -0.02em
-  h3:
-    fontFamily: Geist, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif
-    fontSize: 22px
-    fontWeight: 600
-    lineHeight: 1.3
-    letterSpacing: -0.015em
-  body-lg:
-    fontFamily: Geist, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif
-    fontSize: 18px
-    fontWeight: 400
-    lineHeight: 1.6
-    letterSpacing: 0em
-  body:
-    fontFamily: Geist, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif
-    fontSize: 16px
-    fontWeight: 400
-    lineHeight: 1.6
-    letterSpacing: 0em
-  body-sm:
-    fontFamily: Geist, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif
-    fontSize: 14px
-    fontWeight: 400
-    lineHeight: 1.5
-    letterSpacing: 0em
-  caption:
-    fontFamily: Geist, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif
-    fontSize: 12px
-    fontWeight: 400
-    lineHeight: 1.4
-    letterSpacing: 0.01em
-  button:
-    fontFamily: Geist, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif
-    fontSize: 14px
-    fontWeight: 600
-    lineHeight: 1.0
-    letterSpacing: 0em
-  eyebrow:
-    fontFamily: '"Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace'
-    fontSize: 12px
-    fontWeight: 500
-    lineHeight: 1.0
-    letterSpacing: 0.2em
-  mono:
-    fontFamily: '"Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace'
-    fontSize: 13px
-    fontWeight: 400
-    lineHeight: 1.5
-    letterSpacing: 0em
-
-rounded:
-  none: 0px
-  xs: 4px
-  sm: 6px
-  md: 8px
-  lg: 12px
-  xl: 16px
-  xxl: 24px
-  pill: 9999px
-  full: 9999px
-
-spacing:
-  xxs: 4px
-  xs: 8px
-  sm: 12px
-  md: 16px
-  lg: 24px
-  xl: 32px
-  xxl: 48px
-  3xl: 64px
-  section: 96px
-  section-lg: 128px
-
-components:
-  button-primary:
-    backgroundColor: "{colors.primary}"
-    textColor: "{colors.on-primary}"
-    typography: "{typography.button}"
-    rounded: "{rounded.pill}"
-    padding: 10px 24px
-  button-primary-hover:
-    backgroundColor: "{colors.primary-hover}"
-    textColor: "{colors.on-primary}"
-    typography: "{typography.button}"
-    rounded: "{rounded.pill}"
-  button-primary-active:
-    backgroundColor: "{colors.primary-active}"
-    textColor: "{colors.on-primary}"
-    typography: "{typography.button}"
-    rounded: "{rounded.pill}"
-  button-secondary:
-    backgroundColor: "{colors.surface-raised}"
-    textColor: "{colors.ink}"
-    typography: "{typography.button}"
-    rounded: "{rounded.pill}"
-    padding: 10px 24px
-  button-accent:
-    backgroundColor: "{colors.accent-dark}"
-    textColor: "{colors.on-primary}"
-    typography: "{typography.button}"
-    rounded: "{rounded.pill}"
-    padding: 10px 24px
-  button-destructive:
-    backgroundColor: "{colors.status-destructive}"
-    textColor: "{colors.on-primary}"
-    typography: "{typography.button}"
-    rounded: "{rounded.pill}"
-    padding: 10px 24px
-  card-canvas:
-    backgroundColor: "{colors.canvas}"
-    textColor: "{colors.ink-inverse}"
-    typography: "{typography.body}"
-    rounded: "{rounded.xxl}"
-    padding: 24px 32px
-  card-default:
-    backgroundColor: "{colors.surface-subtle}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body}"
-    rounded: "{rounded.xxl}"
-    padding: 24px 32px
-  card-elevated:
-    backgroundColor: "{colors.surface-raised}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body}"
-    rounded: "{rounded.xxl}"
-    padding: 24px 32px
-  card-overlay:
-    backgroundColor: "{colors.surface-overlay}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body}"
-    rounded: "{rounded.xxl}"
-    padding: 24px 32px
-  card-sunken:
-    backgroundColor: "{colors.surface-sunken}"
-    textColor: "{colors.ink-muted}"
-    typography: "{typography.mono}"
-    rounded: "{rounded.lg}"
-    padding: 16px 20px
-  badge-default:
-    backgroundColor: "{colors.surface-raised}"
-    textColor: "{colors.ink-muted}"
-    typography: "{typography.caption}"
-    rounded: "{rounded.pill}"
-    padding: 4px 10px
-  badge-accent:
-    backgroundColor: "{colors.accent-dark}"
-    textColor: "{colors.on-primary}"
-    typography: "{typography.caption}"
-    rounded: "{rounded.pill}"
-    padding: 4px 10px
-  badge-destructive:
-    backgroundColor: "{colors.status-destructive}"
-    textColor: "{colors.on-primary}"
-    typography: "{typography.caption}"
-    rounded: "{rounded.pill}"
-    padding: 4px 10px
-  badge-warning:
-    backgroundColor: "{colors.status-warning}"
-    textColor: "{colors.primary}"
-    typography: "{typography.caption}"
-    rounded: "{rounded.pill}"
-    padding: 4px 10px
-  badge-success:
-    backgroundColor: "{colors.status-success}"
-    textColor: "{colors.on-primary}"
-    typography: "{typography.caption}"
-    rounded: "{rounded.pill}"
-    padding: 4px 10px
-  badge-info:
-    backgroundColor: "{colors.status-info}"
-    textColor: "{colors.on-primary}"
-    typography: "{typography.caption}"
-    rounded: "{rounded.pill}"
-    padding: 4px 10px
-  text-input:
-    backgroundColor: "{colors.surface-subtle}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body}"
-    rounded: "{rounded.md}"
-    padding: 10px 14px
-  text-input-focus:
-    backgroundColor: "{colors.surface-raised}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body}"
-    rounded: "{rounded.md}"
-    padding: 10px 14px
-  callout-info:
-    backgroundColor: "{colors.surface-subtle}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body}"
-    rounded: "{rounded.lg}"
-    padding: 16px 20px
-  callout-accent:
-    backgroundColor: "{colors.surface-raised}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body}"
-    rounded: "{rounded.lg}"
-    padding: 16px 20px
-  dialog-modal:
-    backgroundColor: "{colors.surface-overlay}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body}"
-    rounded: "{rounded.xxl}"
-    padding: 24px 32px
-  dropdown-menu:
-    backgroundColor: "{colors.surface-overlay}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body-sm}"
-    rounded: "{rounded.md}"
-    padding: 6px 8px
 ---
 
-# Design System Template Specification
+## 1. Scope & Authority
 
-## Overview
+This document is the single source of design truth for human engineers and autonomous AI agents modifying this codebase. 
+Storybook serves as the verification and documentation surface; it records the system, but does not define it. If a code change conflicts with this specification, update this document first through code review, or align the code to match this document.
 
-This document specifies the design tokens, visual grammar, constraints, and component rules for this design system. It is formatted according to the Google Stitch plain-text design system standard (@google/design.md) so that AI coding agents and automated CLI tooling can parse, validate, and enforce design fidelity deterministically.
+---
 
-The design system establishes a minimal, clean, neutral foundation suitable for modern web applications, marketing sites, dashboards, and developer tools.
+## 2. Product Stance & Interface Hierarchy
 
-## Design Principles
+Modern web applications, SaaS dashboards, and developer tools serve operators scanning complex state and making decisions. Every screen should answer three questions in order:
+1. *What is happening right now?*
+2. *Does this require my attention or action?*
+3. *What specific step do I take next?*
 
-1. **Anti-Slop Restraint**: Zero decorative linear gradients across cards, zero rainbow color clutter, zero card-in-a-card nestings. Structure is created through whitespace, subtle borders (border-border), and surface elevation.
-2. **Single Primary Action Signal**: Exactly one high-contrast primary CTA per viewport. All supporting interactions use secondary, ghost, or outline variants.
-3. **Pill Geometry Grammar**: Primary interactive triggers (buttons, badges, tabs, pills) strictly use full border radius (rounded-full). Structured content containers (cards, dialogs, sheets) use calibrated geometric radii (rounded-xl, rounded-2xl).
-4. **Accessible Contrast by Construction**: Every text-to-background pairing strictly satisfies WCAG 2.1 AA (at least 4.5:1 for normal text, at least 3:1 for large text and UI components) and APCA contrast criteria.
-5. **CSS-First Micro-Motion**: High-performance CSS transform animations (active:scale-[0.97], transition-all, duration-fast, ease-default) with full support for accessibility reduced motion (@media (prefers-reduced-motion: reduce)).
+Information density in service of fast scanning takes precedence over decorative whitespace. However, density must originate from meaningful information and data structure—never from cluttered borders, superfluous dividers, or decorative chrome.
 
-## Colors
+---
 
-The color palette is built on a neutral grayscale ladder complemented by a calibrated accent color and semantic status signals.
+## 3. The Token Layer (Where Visual Values Live)
 
-- **Primary Canvas**: Pure white (#ffffff) in light mode; Obsidian Black (#09090b) in dark mode.
-- **Text Ladder**: 
-  - Primary text: High-contrast ink (#09090b light / #fafafa dark) providing > 18:1 contrast.
-  - Secondary text: Readable neutral (#52525b light / #a1a1aa dark) strictly maintaining > 4.5:1 contrast.
-  - Muted text: Supporting captions and metadata (#71717a light / #71717a dark).
-- **Surface Elevation Hierarchy**:
-  - canvas: The foundation surface for pages.
-  - sunken: Recessed areas such as code blocks, inset search inputs, and table footers.
-  - subtle: Background for muted panels and cards in flat layouts.
-  - raised: Primary card and widget elevation layer.
-  - overlay: Floating layer for dropdowns, popovers, and modal dialogs.
-- **Semantic Status Signals**:
-  - destructive: Danger and error states (#dc2626).
-  - warning: Cautionary notices (#d97706).
-  - success: Confirmations and success states (#16a34a).
-  - info: Informational indicators (#2563eb).
+The single token source of truth is **`src/index.css`** powered by Tailwind CSS v4. There is no legacy `tailwind.config.js` file; tokens are CSS custom properties consumed natively via the `@theme` directive.
 
-## Typography
+> [!IMPORTANT]
+> **Tailwind v4 Rule**: `@theme inline` bakes literal values into utility classes at build time. Tokens that require runtime adaptability (such as dark mode overrides, theme switches, or live motion tuning) must be declared in standard CSS `:root` or `.dark` blocks, not in `@theme inline`.
 
-The typography system is built on Geist Sans for clean readability and Geist Mono for code, metrics, and tabular data.
+### Token Tiers:
+1. **Semantic Tier**: Standard UI variables defined in modern OKLCH color space with automatic light/dark switches (`--background`, `--foreground`, `--card`, `--primary`, `--secondary`, `--muted`, `--accent`, `--destructive`, `--border`, `--input`, `--ring`).
+2. **Status Tier**: Semantic status palettes tuned for WCAG AA contrast compliance (`running` / blue, `done` / emerald, `todo` / amber, `blocked` / red).
+3. **Motion & Feedback Tier**: Runtime-tunable duration and easing curves (`--motion-duration-*`, `--motion-ease-*`) declared in `:root`.
 
-- **Display Scales**: High-impact titles (display-xl, display-lg) feature negative letter tracking (-0.04em to -0.03em) and tight line height (0.95 to 1.1).
-- **Headings**: h1, h2, and h3 maintain clear hierarchical contrast with calibrated proportional leading.
-- **Body Hierarchy**: body-lg (18px), body (16px), and body-sm (14px) prioritize sustained reading comfort with 1.5–1.6 line height.
-- **Metadata & Eyebrows**: Set in Geist Mono with uppercase transformation and wide letter-spacing (+0.2em).
+---
 
-## Layout & Spacing Grid
+## 4. Typography & Local Font Infrastructure
 
-- **Base Unit**: 4px base increment (4px, 8px, 12px, 16px, 24px, 32px, 48px, 64px, 96px, 128px).
-- **Container Max-Widths**:
-  - Prose reading column: max-w-3xl (65–75 characters per line).
-  - Standard application view: max-w-7xl.
-  - Full-width responsive canvas with padded gutters (px-4 sm:px-6 lg:px-8).
-- **Bento Grids**: High-density layouts use 12-column or 3-column asymmetric CSS grids with uniform gap (gap-4 to gap-6).
+Detailed specification: [`doc/FONTS.md`](./doc/FONTS.md).
 
-## Elevation & Depth
+1. **Locally Bundled Assets**: The system typeface is `InterVariable.woff2` (Roman) and `InterVariable-Italic.woff2` (Italic), stored statically in `public/fonts/` under the SIL Open Font License 1.1.
+2. **Zero External Network Dependency**: External font CDNs (Google Fonts, Typekit) are strictly banned. The system must remain 100% functional in air-gapped corporate environments and offline development.
+3. **Zero FOIT & FOUT**: Delivered directly from the host application via same-origin static hosting and `font-display: swap`, eliminating invisible text blocks (FOIT) and layout shifts (FOUT).
+4. **Deterministic Visual Regression**: Pinned local font binaries guarantee exact, invariant rasterization across developer laptops, headless CI runners, and Docker containers, ensuring Playwright visual diffs (`maxDiffPixels: 0`) never fail due to network font delays.
+5. **Semantic Scale**: Declared in `src/index.css` via `@font-face` and injected into `--font-sans`. Components must use semantic size classes (`text-xs`, `text-sm`, `text-base`, `text-lg`) rather than inline arbitrary pixel sizes.
 
-- Light mode depth is communicated through crisp 1px borders (border-border) and subtle ambient shadows (shadow-xs, shadow-sm).
-- Dark mode depth is communicated strictly through surface lightness steps (sunken -> canvas -> subtle -> raised -> overlay), avoiding muddy black shadows.
+---
 
-## Shapes
+## 5. Core Architectural Principles
 
-- **Pill (rounded-full)**: Buttons, badges, tags, search bars, segmented pills.
-- **Card & Dialog (rounded-xl to rounded-2xl)**: Modals, large feature cards, callout containers.
-- **Control (rounded-md)**: Text fields, select triggers, checkboxes, popovers.
+### 1. One Way to Say Each Thing
+One component per role: one `Button`, one `Card`, one `Badge`, one `Table`, one `EmptyState`. Variations are expressed as typed component props (`variant`, `size`), never as duplicate components. Before introducing a new component, verify that no existing primitive covers the requirement.
 
-## Components
+### 2. Tokens Are the Only Source of Visual Values
+All color, spacing, radius, typography, shadow, and motion values must originate from the token layer.
+- Zero raw hex values (`#3b82f6`).
+- Zero ad-hoc Tailwind arbitrary brackets (`p-[13px]`, `w-[347px]`).
+- Zero inline style font sizes (`style={{ fontSize: '14px' }}`).
+If a required design value does not exist in tokens, mint the token in `src/index.css` first.
 
-The system provides 53 shadcn/ui primitive components and custom editorial layout components:
+### 3. Single-Knob Radius Architecture
+Component border radiuses are dynamically driven by a single base token:
+```css
+:root {
+  --radius: 0.5rem; /* 8px default */
+}
+```
+All child radiuses derive proportionally:
+- `rounded-lg`: `var(--radius)` (8px)
+- `rounded-md`: `calc(var(--radius) - 2px)` (6px)
+- `rounded-sm`: `calc(var(--radius) - 4px)` (4px)
 
-- **Button**: Supports default, secondary, outline, ghost, destructive, and link variants across default, sm, lg, and icon sizes. Includes tactile active:scale-[0.97] feedback.
-- **Card**: Provides CardHeader, CardTitle, CardDescription, CardContent, and CardFooter with unified elevation tokens.
-- **Dialog & Sheet**: Fully accessible modal and slide-out sheet containers using Radix UI primitives with managed focus traps and backdrop blurs.
-- **Form Controls**: Input, Select, Checkbox, RadioGroup, Switch, Slider, and Textarea with accessible validation ring states.
-- **Data Display**: Table, Chart, Empty, Item, Badge, and Kbd for dense, legible operational dashboards.
+Changing `--radius` dynamically scales the roundness of the entire UI system without code edits.
 
-## Micro-Motion & Interaction
+### 4. One Card, Two Modes
+The `Card` primitive provides two explicit functional modes:
+- **Static Container** (`variant="default"`): Groups related information into a bordered, non-clickable surface.
+- **Interactive Action Tile** (`variant="interactive"`): Renders a clickable card surface with subtle hover elevation, outline feedback, and active state transitions.
 
-- **Duration Tokens**:
-  - instant: 100ms (micro-toggles, press feedback).
-  - fast: 150ms (button hover, tooltip display).
-  - base: 200ms (dropdown open, accordion expand).
-  - moderate: 300ms (drawer slide, dialog scale).
-  - deliberate: 500ms (view transitions, page loading).
-- **Easing**: Exponential decelerate curve (cubic-bezier(0.16, 1, 0.3, 1)).
-- **Accessibility**: When prefers-reduced-motion: reduce is detected, transitions and animations are collapsed to 0.01ms.
+### 5. Hierarchy Through Structure, Not Decoration
+Establish visual hierarchy through position, spacing, and typography weight rather than heavy dividing lines or nested card backgrounds. Every border and divider must justify its existence; when in doubt, remove it.
 
-## Do's and Don'ts
+### 6. Systematic Status Vocabulary
+Operational states (running, completed, queued, blocked) map to consistent semantic tokens across the entire application:
+- `running`: Blue / in-progress pulse.
+- `done`: Emerald / green checkmark.
+- `todo`: Amber / yellow clock indicator.
+- `blocked`: Red / destructive alert.
 
-### Do:
-- Use semantic token classes (bg-background, text-foreground, border-border) instead of raw hex values.
-- Apply active:scale-[0.97] to interactive clickable elements.
-- Ensure all custom text color combinations pass WCAG 2.1 AA (at least 4.5:1).
-- Keep one distinct primary call to action per viewport.
+An operator learns the visual language once and recognizes it consistently across tables, badges, headers, and logs.
 
-### Don't:
-- Do not apply decorative multi-color gradients to card backgrounds or borders.
-- Do not nest cards inside cards inside cards.
-- Do not use arbitrary hardcoded pixel colors in component templates.
-- Do not override prefers-reduced-motion safeguards.
+### 7. Monospace for Machine Values
+Hashes, commit IDs, telemetry counts, timestamps, API keys, and terminal outputs always use the monospace font token (`font-mono`) and consistent formatting helpers. Never format machine data ad-hoc.
 
-## Responsive Behavior
+### 8. Agent-Modifiable by Design
+The architecture is optimized for automated AI agents and developer tooling: a single token file, strict check scripts that validate edits, and no distributed configuration spread across dozens of config files.
 
-- Mobile (< 640px): Single-column stack, edge-to-edge padded containers (px-4), touch-friendly 44px minimum tap targets.
-- Tablet (640px – 1024px): 2-column bento grids, responsive sheet drawers replacing complex modal flyouts.
-- Desktop (at least 1024px): Full multi-column dashboard layouts, sticky navigation sidebars, and fluid typography.
+---
+
+## 6. Motion & Animation Tokens
+
+Motion tokens live in `:root` inside `src/index.css`:
+- **Primitives**: `--motion-duration-fast` (100ms), `--motion-duration-normal` (200ms), `--motion-duration-slow` (350ms).
+- **Easing**: `--motion-ease-standard` (cubic-bezier(0.2, 0, 0, 1)), `--motion-ease-decelerate` (cubic-bezier(0, 0, 0.2, 1)).
+- **Reduced Motion**: A media query `@media (prefers-reduced-motion: reduce)` collapses duration and delay tokens to `0s`, guaranteeing accessibility compliance out of the box.
+
+---
+
+## 7. Automated Token Gates & Governance
+
+Quality is enforced through automated static analysis scripts rather than manual human vigilance:
+
+```bash
+bun run check
+```
+
+The gate script (`scripts/check-token-gates.mjs`) validates four non-negotiable rules:
+- **Gate 1: Zero Hardcoded Hex Colors**: Fails if raw hex codes (`#fff`, `#000000`) appear in `src/components/` or `src/pages/` outside the documented allowlist.
+- **Gate 2: Zero Arbitrary Tailwind Values**: Blocks ad-hoc bracket utilities like `p-[11px]`, `w-[320px]`, or `h-[45px]`.
+- **Gate 3: Zero Arbitrary Font Sizes**: Enforces semantic font utilities (`text-sm`, `text-base`); rejects `text-[13px]`.
+- **Gate 4: Zero Hardcoded Motion Timing**: Bans raw animation timing outside the motion token registry.
+
+---
+
+## 8. Verification Strategy
+
+1. **Static Analysis & Types**: `bun run check && bun run typecheck`
+2. **Unit Tests**: `bun run test` (59 unit tests covering primitives, contexts, and brand validations)
+3. **Storybook Isolation**: `bun run build-storybook` ensures all components compile cleanly in component catalog isolation.
+4. **Visual Regression**: Playwright captures storybook snapshots with `maxDiffPixels: 0` to verify that refactors introduce zero unintended pixel shifts.

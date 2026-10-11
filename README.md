@@ -1,6 +1,6 @@
-# Design System Starter Template & Asset Suite
+# Anti-Slop Design System Starter Template & Asset Suite
 
-An **out-of-the-box, fully autonomous, token-first design system starter template** built on **Tailwind CSS v4, React 19, Radix UI Primitives, and OKLCH color spaces**. Designed as an enterprise-grade foundation for production web applications, SaaS platforms, and developer tooling.
+An **anti-slop, token-first design system starter template** built on **Tailwind CSS v4, React 19, Radix UI Primitives, and OKLCH color spaces**. Engineered with strict design standards and automated static analysis quality gates to eliminate generic AI slop during AI coding and pair programming.
 
 ---
 

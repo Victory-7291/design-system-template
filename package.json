@@ -1,7 +1,7 @@
 {
   "name": "design-system-template",
   "version": "1.0.0",
-  "description": "Autonomous, token-first design system starter template based on Tailwind CSS v4 and React 19.",
+  "description": "Anti-slop design system starter template with standardized design rules and automated quality gates to eliminate AI slop during AI coding.",
   "license": "MIT",
   "type": "module",
   "packageManager": "bun@1.3.5",

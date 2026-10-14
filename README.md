@@ -246,7 +246,10 @@ bun run check:tokens
 # Validate brand SVG vector assets & security
 bun run check:brand
 
-# Run all quality & security gates
+# Run accessibility & color contrast gate (WCAG 2.1 AA mathematical verification + a11y static scan + axe-core DOM audit)
+bun run check:a11y
+
+# Run all quality, security & accessibility gates
 bun run check
 
 # Run unit tests via Vitest

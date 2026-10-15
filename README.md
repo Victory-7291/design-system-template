@@ -99,17 +99,25 @@ To address these challenges, this template enforces two architectural mechanisms
 
 ## 3. How to Use This Template
 
-The template supports four standard integration workflows:
+The recommended way to scaffold a project is using the official CLI, supporting both standalone applications and monorepo shared packages:
 
-### Scenario 1: Standalone Application or Brand Foundation (Recommended Clone)
+```bash
+# Interactive scaffolding
+npx create-design-system-template
+# or
+npm create design-system-template
+# or
+bun create design-system-template
+```
+
+### Scenario 1: Standalone Application Starter (Next.js / Vite)
 
 To create a new product or establish a dedicated brand codebase:
 
-1. **Clone the repository and install dependencies**:
+1. **Scaffold via CLI (or interactive prompt)**:
    ```bash
-   git clone <repo-url> <brand-name>-frontend
+   npx create-design-system-template <brand-name>-frontend --mode standalone --package-manager bun
    cd <brand-name>-frontend
-   bun install
    ```
 2. **Preview the living workshop**:
    ```bash
@@ -125,8 +133,10 @@ To create a new product or establish a dedicated brand codebase:
 
 In projects built on `next-forge`, `pnpm workspaces`, or `turborepo` (such as `saas-template`):
 
-1. **Copy as a workspace package**:
-   Place the template contents into `packages/design-system/`.
+1. **Scaffold directly into packages directory**:
+   ```bash
+   npx create-design-system-template @repo/design-system --mode package --dir packages/design-system
+   ```
 2. **Configure package name**:
    Set `name` in `package.json` to `@repo/design-system`.
 3. **Export components and styles**:

@@ -25,7 +25,8 @@
     "clean": "rm -rf dist storybook-static tsconfig.tsbuildinfo",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "changeset tag"
+    "release": "changeset tag",
+    "build:cli": "cd cli && bun run build"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.3.3",

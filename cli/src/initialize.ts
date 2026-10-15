@@ -1,4 +1,4 @@
-import { join, resolve } from "node:path";
+import { basename, join, relative, resolve } from "node:path";
 import {
   cancel,
   intro,
@@ -35,9 +35,29 @@ const getName = async (): Promise<string> => {
     message: "What is your project named?",
     placeholder: "my-design-system",
     defaultValue: "my-design-system",
-    validate(val: string) {
-      if (val.trim().length === 0) {
+    validate(val?: string) {
+      if (!val || val.trim().length === 0) {
         return "Please enter a valid project name.";
+      }
+    },
+  });
+
+  if (isCancel(value)) {
+    cancel("Operation cancelled.");
+    process.exit(0);
+  }
+
+  return value.trim();
+};
+
+const getPackagePath = async (): Promise<string> => {
+  const value = await text({
+    message: "Where should the package be created?",
+    placeholder: "packages/design-system",
+    defaultValue: "packages/design-system",
+    validate(val?: string) {
+      if (!val || val.trim().length === 0) {
+        return "Please enter a valid directory path.";
       }
     },
   });
@@ -117,20 +137,49 @@ export const initialize = async (
     intro("✨ Welcome to create-design-system-template!");
 
     const cwd = process.cwd();
-    const name = targetName || options.name || (await getName());
     const mode = options.mode || (await getMode());
+
+    let projectDir: string;
+    let projectName: string;
+    let displayDir: string;
+
+    if (mode === "standalone") {
+      const name = targetName || options.name || (await getName());
+      projectDir = options.dir ? resolve(cwd, options.dir) : join(cwd, name);
+      projectName = options.name || name;
+      displayDir = options.dir || name;
+    } else {
+      // Mode: "package"
+      let targetPath: string;
+      if (options.dir) {
+        targetPath = options.dir;
+      } else if (targetName && !targetName.startsWith("@")) {
+        targetPath = targetName;
+      } else {
+        targetPath = await getPackagePath();
+      }
+
+      projectDir = resolve(cwd, targetPath);
+      displayDir = relative(cwd, projectDir) || targetPath;
+
+      if (options.name) {
+        projectName = options.name;
+      } else if (targetName && targetName.startsWith("@")) {
+        projectName = targetName;
+      } else {
+        const folderName = basename(projectDir);
+        projectName = `@repo/${folderName}`;
+      }
+    }
 
     const detectedPM = await detectPM(cwd);
     const packageManager =
-      options.packageManager || (await getPackageManager(detectedPM));
+      options.packageManager ||
+      (mode === "standalone" ? await getPackageManager(detectedPM) : detectedPM);
 
     if (!supportedPackageManagers.includes(packageManager)) {
       throw new Error(`Unsupported package manager: ${packageManager}`);
     }
-
-    const projectDir = options.dir
-      ? resolve(cwd, options.dir)
-      : join(cwd, name);
 
     const s = spinner();
 
@@ -146,7 +195,7 @@ export const initialize = async (
     s.message("Configuring project structure...");
     await transformProject({
       projectDir,
-      projectName: name,
+      projectName,
       mode,
       packageManager,
     });
@@ -171,13 +220,13 @@ export const initialize = async (
 
     if (mode === "standalone") {
       log.step("Next steps:");
-      console.log(`  cd ${name}`);
+      console.log(`  cd ${displayDir}`);
       console.log(`  ${runCmd} dev          # Start local Vite development server`);
       console.log(`  ${runCmd} storybook    # Open Storybook 10 component workshop`);
       console.log(`  ${runCmd} check        # Run 4 automated anti-slop token gates`);
     } else {
       log.step("Next steps for Monorepo package:");
-      console.log(`  cd ${projectDir}`);
+      console.log(`  cd ${displayDir}`);
       console.log(`  ${runCmd} check        # Run quality and token governance checks`);
       console.log(`  ${runCmd} storybook    # Preview components in Storybook`);
     }

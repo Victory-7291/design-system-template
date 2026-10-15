@@ -4,7 +4,7 @@ import { initialize } from "./initialize.js";
 program
   .name("create-design-system-template")
   .description("Official CLI to scaffold an autonomous anti-slop Tailwind CSS v4 design system")
-  .argument("[name]", "Project name or destination directory")
+  .argument("[name]", "Project name (standalone) or destination path (package)")
   .option("-m, --mode <mode>", "Template mode: 'standalone' or 'package'")
   .option(
     "-p, --package-manager <manager>",
@@ -21,7 +21,7 @@ program
 program
   .command("init")
   .description("Initialize a new design system project (alias to root command)")
-  .argument("[name]", "Project name or destination directory")
+  .argument("[name]", "Project name (standalone) or destination path (package)")
   .option("-m, --mode <mode>", "Template mode: 'standalone' or 'package'")
   .option(
     "-p, --package-manager <manager>",

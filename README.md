@@ -99,16 +99,42 @@ To address these challenges, this template enforces two architectural mechanisms
 
 ## 3. How to Use This Template
 
-The recommended way to scaffold a project is using the official CLI, supporting both standalone applications and monorepo shared packages:
+The recommended way to scaffold a project is using the official CLI (`create-design-system-template`), supporting both standalone applications and monorepo shared packages:
 
 ```bash
-# Interactive scaffolding
+# Interactive scaffolding (prompts for mode, name/path, and package manager)
 npx create-design-system-template
 # or
 npm create design-system-template
 # or
 bun create design-system-template
+# or
+pnpm create design-system-template
 ```
+
+### CLI Command Options & Flags
+
+You can also pass arguments and options directly for non-interactive or CI execution:
+
+```bash
+# Standalone application starter (Next.js / Vite)
+npx create-design-system-template my-ds --mode standalone --package-manager bun
+
+# Monorepo shared package (e.g. into packages/design-system)
+npx create-design-system-template packages/design-system --mode package --package-manager pnpm
+```
+
+| Argument / Option | Description | Default |
+| :--- | :--- | :--- |
+| `[name]` | Project name (standalone) or destination path (package) | Interactive prompt |
+| `-m, --mode <mode>` | Template mode: `standalone` or `package` | Interactive prompt |
+| `-p, --package-manager <pm>` | Package manager: `bun`, `pnpm`, `npm`, `yarn` | Auto-detected / `bun` |
+| `-d, --dir <directory>` | Custom destination directory path | `./<name>` or entered path |
+| `--disable-git` | Skip Git repository initialization (standalone only) | `false` |
+| `--skip-install` | Skip automated dependency installation | `false` |
+| `--branch <branch>` | Git branch or tag to download | `main` |
+
+---
 
 ### Scenario 1: Standalone Application Starter (Next.js / Vite)
 
@@ -125,7 +151,7 @@ To create a new product or establish a dedicated brand codebase:
    ```
    Open `http://localhost:5173` in your browser. This showcases all 26 atomic primitives, OKLCH color palettes, status badges, form controls, and card modes.
 3. **Customize brand tokens**:
-   Follow Scenario 3 to adjust OKLCH brand variables and corner radius knobs.
+   Follow [4.1 Brand Customization Workflow](#41-brand-customization-workflow) to adjust OKLCH brand variables and corner radius knobs.
 4. **Develop application views**:
    Add page routes under `src/pages/`, consuming atomic primitives directly from `src/components/ui/`.
 
@@ -135,17 +161,20 @@ In projects built on `next-forge`, `pnpm workspaces`, or `turborepo` (such as `s
 
 1. **Scaffold directly into packages directory**:
    ```bash
-   npx create-design-system-template @repo/design-system --mode package --dir packages/design-system
+   npx create-design-system-template packages/design-system --mode package --package-manager pnpm
    ```
-2. **Configure package name**:
-   Set `name` in `package.json` to `@repo/design-system`.
+   *(Or run `npx create-design-system-template`, select `Monorepo Shared Package`, and enter the target directory `packages/design-system`)*.
+2. **Configured package name**:
+   The CLI automatically sets `"name"` in `package.json` to `@repo/design-system` (or `@repo/<folder-basename>`).
 3. **Export components and styles**:
-   Ensure `package.json` exports styles and component entry points:
+   The generated `package.json` configures standardized exports:
    ```json
    {
      "exports": {
        ".": "./src/main.tsx",
-       "./styles.css": "./src/index.css"
+       "./components/*": "./src/components/ui/*",
+       "./styles.css": "./src/index.css",
+       "./motion.css": "./src/motion-tokens.css"
      }
    }
    ```
@@ -161,7 +190,13 @@ In projects built on `next-forge`, `pnpm workspaces`, or `turborepo` (such as `s
      import { ThemeToggle } from "@repo/design-system/components/ThemeToggle";
      ```
 
-### Scenario 3: Brand Customization Workflow
+---
+
+## 4. How to Build
+
+This chapter details brand token customization, local development and production build commands, automated quality verification gates, and template maintenance/release operations.
+
+### 4.1 Brand Customization Workflow
 
 Customizing brand identity does not require modifying component JSX. It is controlled through two core design knobs:
 
@@ -174,22 +209,28 @@ Customizing brand identity does not require modifying component JSX. It is contr
    - Soft consumer SaaS aesthetic: `--radius: 0.75rem;`
    All buttons, input controls, cards, dialogs, and nested containers recalculate their concentric radii in mathematical harmony.
 
-### Scenario 4: AI Coding Guardrails
-
-When collaborating with Cursor, Claude Code, GitHub Copilot, or autonomous agents:
-
-1. **Provide this README as the core context**: Instruct the model to read the design principles and token rules outlined in this document first.
-2. **Prompt constraints**: Require the model to use existing primitives from `src/components/ui/` with existing `variant` and `size` props. Prohibit inline hex colors and arbitrary bracket classes.
-3. **Local gate verification**: After the model writes code, run `bun run check`. If a gate catches a violation, feed the terminal output directly back to the model for automated refactoring.
-
----
-
-## 4. Available Development & Quality Verification Commands
+### 4.2 Local Development & Production Build Commands
 
 ```bash
 # Start local living kitchen sink workshop (http://localhost:5173)
 bun run dev
 
+# Build production application bundle
+bun run build
+
+# Preview production build locally
+bun run preview
+
+# Start Storybook 10 interactive workshop (http://localhost:6006)
+bun run storybook
+
+# Build static Storybook artifacts to storybook-static/
+bun run build-storybook
+```
+
+### 4.3 Automated Quality & Token Verification Gates
+
+```bash
 # Run automated token hard gates (Gate 1-4: zero hex colors, zero value brackets, zero raw font-size)
 bun run check:tokens
 
@@ -202,27 +243,37 @@ bun run check:a11y
 # Run all quality, security, and accessibility gates in sequence
 bun run check
 
-# Run unit and context state tests via Vitest
+# Run unit and context state tests via Vitest (59 tests)
 bun run test
 
 # Run TypeScript strict type verification
 bun run typecheck
+```
 
-# Build production bundle
-bun run build
+### 4.4 Maintenance & Release Operations (运维与发布)
 
-# Start Storybook 10 interactive workshop (http://localhost:6006)
-bun run storybook
+The repository provides automated maintenance and publishing tooling for the design system template and its companion CLI (`create-design-system-template`):
 
-# Build static Storybook artifacts
-bun run build-storybook
+```bash
+# Build standalone CLI distribution bundle (bundles cli/src to cli/dist/index.js)
+bun run build:cli
 
-# Generate Changeset entry
+# Generate Changeset versioning entry for changes
 bun run changeset
 
-# Bump version numbers and update CHANGELOG via Changeset
+# Bump version numbers and update CHANGELOG.md via Changeset
 bun run version-packages
+
+# Tag git release commit
+bun run release
+
+# Clean build artifacts and TypeScript cache
+bun run clean
 ```
+
+#### Automated CLI & Package Publishing
+- **NPM Package**: `create-design-system-template`
+- **Release Automation**: GitHub Actions ([`.github/workflows/release.yml`](.github/workflows/release.yml)) automatically builds the template and CLI on pushes to `main`. When `cli/package.json` version is incremented relative to npm, the workflow automatically publishes the new version with `--provenance` and `--access public`.
 
 ---
 

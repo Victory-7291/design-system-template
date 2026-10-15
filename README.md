@@ -99,30 +99,54 @@ To address these challenges, this template enforces two architectural mechanisms
 
 ## 3. How to Use This Template
 
-The recommended way to scaffold a project is using the official CLI (`create-design-system-template`), supporting both standalone applications and monorepo shared packages:
+The recommended way to scaffold a project is using the official `create-design-system-template` CLI initializer. It supports both **interactive guided prompts** and **one-shot command-line execution** for standalone applications and monorepo shared packages.
+
+### 3.1 Quick Start
+
+#### Option A: Interactive Guided Mode (交互式引导创建)
+
+Run without arguments to launch the step-by-step terminal wizard:
 
 ```bash
-# Interactive scaffolding (prompts for mode, name/path, and package manager)
-npx create-design-system-template
-# or
-npm create design-system-template
-# or
+# Bun (recommended)
 bun create design-system-template
-# or
+
+# npm
+npm create design-system-template@latest
+
+# pnpm
 pnpm create design-system-template
+
+# or npx (zero-install)
+npx -y create-design-system-template@latest
 ```
 
-### CLI Command Options & Flags
+The wizard will interactively ask:
+1. **Template Mode**: Choose between `Standalone Application (Next.js / Vite)` or `Monorepo Shared Package`.
+2. **Project Name / Path**:
+   - In *Standalone Mode*: Enter your project directory name (default: `my-design-system`).
+   - In *Monorepo Package Mode*: Enter the target package directory path (default: `packages/design-system`).
+3. **Package Manager** *(Standalone only)*: Select `bun`, `pnpm`, `npm`, or `yarn`. (Package mode automatically detects and reuses your repository's existing package manager).
 
-You can also pass arguments and options directly for non-interactive or CI execution:
+#### Option B: Command-Line Arguments Mode (命令行直接指定参数)
+
+Provide target names and options directly for non-interactive or CI execution:
 
 ```bash
 # Standalone application starter (Next.js / Vite)
-npx create-design-system-template my-ds --mode standalone --package-manager bun
+bun create design-system-template my-ds --mode standalone --package-manager bun
+# or using pnpm / npm
+pnpm create design-system-template my-ds --mode standalone --package-manager pnpm
+npx -y create-design-system-template@latest my-ds --mode standalone --package-manager npm
 
 # Monorepo shared package (e.g. into packages/design-system)
-npx create-design-system-template packages/design-system --mode package --package-manager pnpm
+bun create design-system-template packages/design-system --mode package
+# or using pnpm / npm
+pnpm create design-system-template packages/design-system --mode package
+npx -y create-design-system-template@latest packages/design-system --mode package
 ```
+
+### CLI Command Options & Flags
 
 | Argument / Option | Description | Default |
 | :--- | :--- | :--- |
@@ -140,13 +164,22 @@ npx create-design-system-template packages/design-system --mode package --packag
 
 To create a new product or establish a dedicated brand codebase:
 
-1. **Scaffold via CLI (or interactive prompt)**:
+1. **Scaffold via CLI**:
+   - **Interactive Prompt (交互式创建)**:
+     ```bash
+     bun create design-system-template
+     # or: npm create design-system-template@latest
+     ```
+     *(Select `Standalone Application` -> enter `<brand-name>-frontend` -> select package manager)*.
+   - **Command-line Arguments (命令行一键创建)**:
+     ```bash
+     bun create design-system-template <brand-name>-frontend --mode standalone --package-manager bun
+     # or
+     pnpm create design-system-template <brand-name>-frontend --mode standalone --package-manager pnpm
+     ```
+2. **Navigate and preview living workshop**:
    ```bash
-   npx create-design-system-template <brand-name>-frontend --mode standalone --package-manager bun
    cd <brand-name>-frontend
-   ```
-2. **Preview the living workshop**:
-   ```bash
    bun run dev
    ```
    Open `http://localhost:5173` in your browser. This showcases all 26 atomic primitives, OKLCH color palettes, status badges, form controls, and card modes.
@@ -155,15 +188,26 @@ To create a new product or establish a dedicated brand codebase:
 4. **Develop application views**:
    Add page routes under `src/pages/`, consuming atomic primitives directly from `src/components/ui/`.
 
+---
+
 ### Scenario 2: Autonomous Sub-package in a Full-stack Monorepo
 
 In projects built on `next-forge`, `pnpm workspaces`, or `turborepo` (such as `saas-template`):
 
-1. **Scaffold directly into packages directory**:
-   ```bash
-   npx create-design-system-template packages/design-system --mode package --package-manager pnpm
-   ```
-   *(Or run `npx create-design-system-template`, select `Monorepo Shared Package`, and enter the target directory `packages/design-system`)*.
+1. **Scaffold into packages directory**:
+   - **Interactive Prompt (交互式创建)**:
+     ```bash
+     # Run inside your monorepo root
+     bun create design-system-template
+     # or: pnpm create design-system-template
+     ```
+     *(Select `Monorepo Shared Package` -> enter insertion path `packages/design-system` -> automatically reuses your repo's package manager)*.
+   - **Command-line Arguments (命令行一键创建)**:
+     ```bash
+     bun create design-system-template packages/design-system --mode package
+     # or
+     pnpm create design-system-template packages/design-system --mode package
+     ```
 2. **Configured package name**:
    The CLI automatically sets `"name"` in `package.json` to `@repo/design-system` (or `@repo/<folder-basename>`).
 3. **Export components and styles**:

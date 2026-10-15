@@ -63,7 +63,7 @@ export function InlineBanner({
         </div>
       </div>
       {actions && (
-        <div className="flex shrink-0 flex-wrap items-center gap-2 pl-6 sm:pl-0">{actions}</div>
+        <div className="flex shrink-0 flex-wrap items-center gap-2 ps-6 sm:ps-0">{actions}</div>
       )}
     </div>
   );

@@ -4,7 +4,11 @@
   "commit": false,
   "fixed": [],
   "linked": [],
-  "access": "public",
+  "access": "restricted",
   "baseBranch": "main",
-  "updateInternalDependents": "always"
+  "updateInternalDependents": "always",
+  "privatePackages": {
+    "version": true,
+    "tag": true
+  }
 }

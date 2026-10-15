@@ -211,6 +211,15 @@ This automatically executes:
 - Rejects any SVG containing `<script>`, `<foreignObject>`, `<iframe|object|embed>`, `onload=`, or `javascript:` URI vectors.
 - Rejects external resource links, ensuring 100% offline security.
 
+### Unit & Context Testing (`vitest.config.ts`)
+- Powered by Vitest and Happy-DOM/JSDOM.
+- Executes 59 automated unit tests across 12 test suites, verifying application contexts (`ThemeContext`, `DialogContext`, `ToastContext`, `SidebarContext`, `BreadcrumbContext`), interactive primitives (`ThemeToggle`, `ToggleSwitch`, `StatusBadge`, `StatusGlyph`, `StatusIcon`), and temporal utilities (`useSecondTick`, `timeAgo`).
+
+### Accessibility & Contrast Hard Gate (`scripts/check-a11y-wcag.mjs`)
+- Enforces WCAG 2.1 AA mathematical relative luminance verification ($\ge 4.5:1$ text, $\ge 3.0:1$ graphics) and APCA $L_c$ calculations across all light/dark token pairs.
+- Scans component source code for accessibility anti-patterns (`alt` tags, clickable roles, `aria-label`).
+- Runs headless axe-core DOM accessibility audit to catch non-compliant markup.
+
 ### Visual Regression Testing (`tests/storybook-visual/`)
 - Powered by Playwright headless Chromium.
 - Enforces `animations: "disabled"`, `caret: "hide"`, and `reducedMotion: "reduce"`.

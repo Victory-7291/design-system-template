@@ -10,6 +10,10 @@
     "url": "git+https://github.com/Victory-7291/design-system-template.git",
     "directory": "cli"
   },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "keywords": [
     "design-system",
     "tailwind",

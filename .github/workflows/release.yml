@@ -14,6 +14,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      id-token: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -26,13 +27,42 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      - name: Build
+      - name: Build template
         run: bun run build
 
-      - name: Create version PR or publish
+      - name: Create version PR or tag
         uses: changesets/action@v1
         with:
           version: bun run version-packages
           publish: bun run release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Publish CLI to NPM
+        run: |
+          if [ -z "${{ secrets.NPM_TOKEN }}" ]; then
+            echo "::notice ::Skipping CLI publish to npm: NPM_TOKEN secret is not configured in repository secrets."
+            exit 0
+          fi
+
+          echo "Configuring npm authentication..."
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+
+          cd cli
+          bun install --frozen-lockfile
+          bun run build
+
+          CLI_NAME=$(node -p "require('./package.json').name")
+          CLI_VERSION=$(node -p "require('./package.json').version")
+          PUBLISHED_VERSION=$(npm view "$CLI_NAME" version 2>/dev/null || echo "none")
+
+          if [ "$CLI_VERSION" = "$PUBLISHED_VERSION" ]; then
+            echo "Notice: $CLI_NAME@$CLI_VERSION is already published on npm. Skipping publish."
+          else
+            echo "Publishing $CLI_NAME@$CLI_VERSION to npm..."
+            npm publish --access public --provenance
+            echo "Successfully published $CLI_NAME@$CLI_VERSION to npm! 🎉"
+          fi
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -14,7 +14,7 @@ body {
   color: var(--foreground);
 }
 
-.paperclip-story {
+.ds-story {
   min-height: 100vh;
   background:
     linear-gradient(180deg, color-mix(in oklab, var(--muted) 28%, transparent), transparent 340px),
@@ -23,18 +23,18 @@ body {
   padding: 24px;
 }
 
-.paperclip-story__inner {
+.ds-story__inner {
   margin: 0 auto;
   max-width: 1180px;
 }
 
-.paperclip-story__frame {
+.ds-story__frame {
   border: 1px solid var(--border);
   background: color-mix(in oklab, var(--card) 86%, transparent);
   box-shadow: 0 24px 90px color-mix(in oklab, black 16%, transparent);
 }
 
-.paperclip-story__label {
+.ds-story__label {
   color: var(--muted-foreground);
   font-size: 11px;
   font-weight: 700;
@@ -43,7 +43,7 @@ body {
 }
 
 @media (max-width: 640px) {
-  .paperclip-story {
+  .ds-story {
     padding: 16px;
   }
 }

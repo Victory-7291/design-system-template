@@ -1,6 +1,6 @@
 {
   "name": "design-system-template",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Anti-slop design system starter template with standardized design rules and automated quality gates to eliminate AI slop during AI coding.",
   "license": "MIT",
   "type": "module",

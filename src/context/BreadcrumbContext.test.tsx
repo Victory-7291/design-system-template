@@ -83,40 +83,40 @@ describe("BreadcrumbContext", () => {
     expect(renderCounts).toHaveLength(1);
 
     act(() => {
-      updateBreadcrumbs?.([{ label: "First task prompt", identifier: "PAP-1204" }]);
+      updateBreadcrumbs?.([{ label: "First task prompt", identifier: "TASK-1204" }]);
     });
 
     expect(renderCounts).toHaveLength(2);
 
     // Same everything but a new identifier must produce a fresh render.
     act(() => {
-      updateBreadcrumbs?.([{ label: "First task prompt", identifier: "PAP-1205" }]);
+      updateBreadcrumbs?.([{ label: "First task prompt", identifier: "TASK-1205" }]);
     });
 
     expect(renderCounts).toHaveLength(3);
 
     // Identical identifier is a no-op.
     act(() => {
-      updateBreadcrumbs?.([{ label: "First task prompt", identifier: "PAP-1205" }]);
+      updateBreadcrumbs?.([{ label: "First task prompt", identifier: "TASK-1205" }]);
     });
 
     expect(renderCounts).toHaveLength(3);
   });
 
-  it("builds page titles with the selected company name before Paperclip", () => {
-    expect(buildDocumentTitle([{ label: "Inbox" }], "Anachronist Wiki")).toBe(
-      "Inbox • Anachronist Wiki • Paperclip",
+  it("builds page titles with the selected company name before app title", () => {
+    expect(buildDocumentTitle([{ label: "Inbox" }], "Acme Corp")).toBe(
+      "Inbox • Acme Corp • App",
     );
     expect(
       buildDocumentTitle(
-        [{ label: "Issues", href: "/issues" }, { label: "PAP-3515" }],
-        "Anachronist Wiki",
+        [{ label: "Issues", href: "/issues" }, { label: "TASK-3515" }],
+        "Acme Corp",
       ),
-    ).toBe("PAP-3515 • Issues • Anachronist Wiki • Paperclip");
+    ).toBe("TASK-3515 • Issues • Acme Corp • App");
   });
 
   it("omits blank company names from page titles", () => {
-    expect(buildDocumentTitle([{ label: "Inbox" }], "  ")).toBe("Inbox • Paperclip");
-    expect(buildDocumentTitle([], null)).toBe("Paperclip");
+    expect(buildDocumentTitle([{ label: "Inbox" }], "  ")).toBe("Inbox • App");
+    expect(buildDocumentTitle([], null)).toBe("App");
   });
 });

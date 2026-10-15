@@ -24,20 +24,37 @@ export interface InitializeOptions {
   name?: string;
   mode?: TemplateMode;
   packageManager?: PackageManagerName;
+  pm?: PackageManagerName;
+  path?: string;
   dir?: string;
   disableGit?: boolean;
   skipInstall?: boolean;
   branch?: string;
 }
 
-const getName = async (): Promise<string> => {
+const resolveProjectDirectory = (
+  cwd: string,
+  parentOrFullPath: string,
+  folderName: string
+): string => {
+  const trimmed = parentOrFullPath.trim().replace(/[/\\]+$/, "");
+  if (!trimmed || trimmed === ".") {
+    return resolve(cwd, folderName);
+  }
+  if (basename(trimmed) === folderName) {
+    return resolve(cwd, trimmed);
+  }
+  return resolve(cwd, trimmed, folderName);
+};
+
+const getStandalonePath = async (): Promise<string> => {
   const value = await text({
-    message: "What is your project named?",
-    placeholder: "my-design-system",
-    defaultValue: "my-design-system",
+    message: "Where should the design-system project be created?",
+    placeholder: "./",
+    defaultValue: "./",
     validate(val?: string) {
       if (!val || val.trim().length === 0) {
-        return "Please enter a valid project name.";
+        return "Please enter a valid directory path.";
       }
     },
   });
@@ -52,9 +69,9 @@ const getName = async (): Promise<string> => {
 
 const getPackagePath = async (): Promise<string> => {
   const value = await text({
-    message: "Where should the package be created?",
-    placeholder: "packages/design-system",
-    defaultValue: "packages/design-system",
+    message: "Where should the package be created? (parent directory)",
+    placeholder: "packages",
+    defaultValue: "packages",
     validate(val?: string) {
       if (!val || val.trim().length === 0) {
         return "Please enter a valid directory path.";
@@ -130,7 +147,7 @@ const initializeGit = (projectDir: string) => {
 };
 
 export const initialize = async (
-  targetName?: string,
+  targetArg?: string,
   options: InitializeOptions = {}
 ) => {
   try {
@@ -143,29 +160,46 @@ export const initialize = async (
     let projectName: string;
     let displayDir: string;
 
+    const inputPath = options.path || options.dir;
+
     if (mode === "standalone") {
-      const name = targetName || options.name || (await getName());
-      projectDir = options.dir ? resolve(cwd, options.dir) : join(cwd, name);
-      projectName = options.name || name;
-      displayDir = options.dir || name;
-    } else {
-      // Mode: "package"
-      let targetPath: string;
-      if (options.dir) {
-        targetPath = options.dir;
-      } else if (targetName && !targetName.startsWith("@")) {
-        targetPath = targetName;
+      const explicitName = options.name || (targetArg && !targetArg.includes("/") && !targetArg.startsWith(".") ? targetArg : undefined);
+      const folderName = explicitName || "design-system";
+
+      let rawPath: string;
+      if (inputPath) {
+        rawPath = inputPath;
+      } else if (targetArg && (targetArg.includes("/") || targetArg.startsWith("."))) {
+        rawPath = targetArg;
+      } else if (explicitName) {
+        rawPath = "./";
       } else {
-        targetPath = await getPackagePath();
+        rawPath = await getStandalonePath();
       }
 
-      projectDir = resolve(cwd, targetPath);
-      displayDir = relative(cwd, projectDir) || targetPath;
+      projectDir = resolveProjectDirectory(cwd, rawPath, folderName);
+      projectName = explicitName || basename(projectDir);
+      const rel = relative(cwd, projectDir);
+      displayDir = rel && !rel.startsWith("..") ? rel : projectDir;
+    } else {
+      // Mode: "package"
+      let rawPath: string;
+      if (inputPath) {
+        rawPath = inputPath;
+      } else if (targetArg && !targetArg.startsWith("@")) {
+        rawPath = targetArg;
+      } else {
+        rawPath = await getPackagePath();
+      }
+
+      projectDir = resolveProjectDirectory(cwd, rawPath, "design-system");
+      const rel = relative(cwd, projectDir);
+      displayDir = rel && !rel.startsWith("..") ? rel : projectDir;
 
       if (options.name) {
         projectName = options.name;
-      } else if (targetName && targetName.startsWith("@")) {
-        projectName = targetName;
+      } else if (targetArg && targetArg.startsWith("@")) {
+        projectName = targetArg;
       } else {
         const folderName = basename(projectDir);
         projectName = `@repo/${folderName}`;
@@ -173,8 +207,9 @@ export const initialize = async (
     }
 
     const detectedPM = await detectPM(cwd);
+    const pmChoice = options.packageManager || options.pm;
     const packageManager =
-      options.packageManager ||
+      pmChoice ||
       (mode === "standalone" ? await getPackageManager(detectedPM) : detectedPM);
 
     if (!supportedPackageManagers.includes(packageManager)) {

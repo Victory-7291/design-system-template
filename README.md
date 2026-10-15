@@ -123,37 +123,40 @@ npx -y create-design-system-template@latest
 
 The wizard will interactively ask:
 1. **Template Mode**: Choose between `Standalone Application (Next.js / Vite)` or `Monorepo Shared Package`.
-2. **Project Name / Path**:
-   - In *Standalone Mode*: Enter your project directory name (default: `my-design-system`).
-   - In *Monorepo Package Mode*: Enter the target package directory path (default: `packages/design-system`).
+2. **Destination Path**:
+   - In *Standalone Mode*: Enter the directory where `design-system` will be created (default: `./`, automatically creates `./design-system`).
+   - In *Monorepo Package Mode*: Enter the parent directory where `design-system` will be stored (default: `packages`, automatically creates `packages/design-system`).
 3. **Package Manager** *(Standalone only)*: Select `bun`, `pnpm`, `npm`, or `yarn`. (Package mode automatically detects and reuses your repository's existing package manager).
 
 #### Option B: Command-Line Arguments Mode (命令行直接指定参数)
 
-Provide target names and options directly for non-interactive or CI execution:
+Provide target paths and options directly for non-interactive or CI execution:
 
 ```bash
-# Standalone application starter (Next.js / Vite)
-bun create design-system-template my-ds --mode standalone --package-manager bun
+# Standalone application starter (automatically creates <dir>/design-system)
+bun create design-system-template -p <dir> --mode standalone --pm bun
+# or specifying a custom project name:
+bun create design-system-template -n <project-name> --mode standalone --pm bun
 # or using pnpm / npm
-pnpm create design-system-template my-ds --mode standalone --package-manager pnpm
-npx -y create-design-system-template@latest my-ds --mode standalone --package-manager npm
+pnpm create design-system-template -n <project-name> --mode standalone --pm pnpm
+npx -y create-design-system-template@latest -n <project-name> --mode standalone --pm npm
 
-# Monorepo shared package (e.g. into packages/design-system)
-bun create design-system-template packages/design-system --mode package
+# Monorepo shared package (automatically creates <dir>/design-system)
+bun create design-system-template -p packages --mode package
 # or using pnpm / npm
-pnpm create design-system-template packages/design-system --mode package
-npx -y create-design-system-template@latest packages/design-system --mode package
+pnpm create design-system-template -p packages --mode package
+npx -y create-design-system-template@latest -p packages --mode package
 ```
 
 ### CLI Command Options & Flags
 
-| Argument / Option | Description | Default |
+| Flag | Description | Default |
 | :--- | :--- | :--- |
-| `[name]` | Project name (standalone) or destination path (package) | Interactive prompt |
+| `-p, --path <path>` | Destination directory path where `design-system` is stored (auto-creates `design-system` subdirectory) | `./` (standalone) / `packages` (package) |
+| `-n, --name <name>` | Project name (standalone) or package name (package) | `design-system` or `@repo/<dirname>` |
+| `-d, --dir <dir>` | Alias for `-p, --path` | Same as `--path` |
 | `-m, --mode <mode>` | Template mode: `standalone` or `package` | Interactive prompt |
-| `-p, --package-manager <pm>` | Package manager: `bun`, `pnpm`, `npm`, `yarn` | Auto-detected / `bun` |
-| `-d, --dir <directory>` | Custom destination directory path | `./<name>` or entered path |
+| `--pm, --package-manager <pm>` | Package manager: `bun`, `pnpm`, `npm`, `yarn` | Auto-detected / `bun` |
 | `--disable-git` | Skip Git repository initialization (standalone only) | `false` |
 | `--skip-install` | Skip automated dependency installation | `false` |
 | `--branch <branch>` | Git branch or tag to download | `main` |
@@ -170,16 +173,18 @@ To create a new product or establish a dedicated brand codebase:
      bun create design-system-template
      # or: npm create design-system-template@latest
      ```
-     *(Select `Standalone Application` -> enter `<brand-name>-frontend` -> select package manager)*.
+     *(Select `Standalone Application` -> enter destination directory e.g. `./` -> select package manager -> automatically creates `./design-system`)*.
    - **Command-line Arguments (命令行一键创建)**:
      ```bash
-     bun create design-system-template <brand-name>-frontend --mode standalone --package-manager bun
-     # or
-     pnpm create design-system-template <brand-name>-frontend --mode standalone --package-manager pnpm
+     # Specify destination directory (automatically creates <dir>/design-system):
+     bun create design-system-template -p <dir> --mode standalone --pm bun
+
+     # Or specify custom project name:
+     bun create design-system-template -n <project-name> --mode standalone --pm bun
      ```
 2. **Navigate and preview living workshop**:
    ```bash
-   cd <brand-name>-frontend
+   cd design-system # or cd <project-name>
    bun run dev
    ```
    Open `http://localhost:5173` in your browser. This showcases all 26 atomic primitives, OKLCH color palettes, status badges, form controls, and card modes.
@@ -201,12 +206,12 @@ In projects built on `next-forge`, `pnpm workspaces`, or `turborepo` (such as `s
      bun create design-system-template
      # or: pnpm create design-system-template
      ```
-     *(Select `Monorepo Shared Package` -> enter insertion path `packages/design-system` -> automatically reuses your repo's package manager)*.
+     *(Select `Monorepo Shared Package` -> enter parent path `packages` -> automatically creates `packages/design-system` and reuses monorepo package manager)*.
    - **Command-line Arguments (命令行一键创建)**:
      ```bash
-     bun create design-system-template packages/design-system --mode package
+     bun create design-system-template -p packages --mode package
      # or
-     pnpm create design-system-template packages/design-system --mode package
+     pnpm create design-system-template -p packages --mode package
      ```
 2. **Configured package name**:
    The CLI automatically sets `"name"` in `package.json` to `@repo/design-system` (or `@repo/<folder-basename>`).

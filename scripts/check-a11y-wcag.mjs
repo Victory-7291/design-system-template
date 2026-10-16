@@ -21,7 +21,7 @@ import axe from "axe-core";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(__dirname, "..");
 const CSS_PATH = resolve(REPO_ROOT, "src/index.css");
-const SCAN_DIRS = [resolve(REPO_ROOT, "src/components"), resolve(REPO_ROOT, "src/pages")];
+const SCAN_DIRS = [resolve(REPO_ROOT, "src/components"), resolve(REPO_ROOT, "src/pages"), resolve(REPO_ROOT, "src/app")];
 
 // ── Color Space & Contrast Math ─────────────────────────────────────────────
 

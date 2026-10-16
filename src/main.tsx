@@ -4,7 +4,7 @@ import { ThemeProvider } from "./context/ThemeContext";
 import { TooltipProvider } from "./components/ui/tooltip";
 import { ToastProvider } from "./context/ToastContext";
 import { ToastViewport } from "./components/ToastViewport";
-import { DesignGuide } from "./pages/DesignGuide";
+import DesignGuide from "./app/brand/page";
 import "./index.css";
 
 const rootElement = document.getElementById("root");

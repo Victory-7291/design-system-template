@@ -77,7 +77,7 @@ import { fileURLToPath } from "node:url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(__dirname, "..");
 const UI_SRC = existsSync(resolve(REPO_ROOT, "src")) ? resolve(REPO_ROOT, "src") : resolve(REPO_ROOT, "ui/src");
-const SCAN_DIRS = ["components", "pages"];
+const SCAN_DIRS = ["components", "app"];
 const CSS_PATH = resolve(UI_SRC, "index.css");
 
 // ── Allowlist parsing ────────────────────────────────────────────────────

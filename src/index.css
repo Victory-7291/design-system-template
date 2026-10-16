@@ -531,8 +531,6 @@
   body {
     @apply antialiased bg-background text-foreground;
     font-family: var(--font-sans);
-    height: 100%;
-    overflow: hidden;
   }
   h1,
   h2,

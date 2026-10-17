@@ -201,9 +201,10 @@ function runTokenContrastCheck() {
 
 function getAllSourceFiles(dirs) {
   const files = [];
-  // src/components/ui is upstream-managed shadcn/ui code (updated via the
-  // shadcn CLI); the static a11y scan governs template-authored surfaces.
-  const EXCLUDED = "components/ui/";
+  // Scans everything, including src/components/ui: stock shadcn/ui code is
+  // held to the same accessibility bar as template-authored code (verified —
+  // the full registry passes with zero violations). Only the TOKEN gates are
+  // scoped to template-authored surfaces.
   function walk(dir) {
     if (!existsSync(dir)) return;
     for (const item of readdirSync(dir)) {
@@ -212,8 +213,7 @@ function getAllSourceFiles(dirs) {
       if (stat.isDirectory()) {
         walk(full);
       } else if (/\.(tsx|jsx)$/.test(item) && !/\.(test|spec)\./.test(item)) {
-        const rel = relative(REPO_ROOT, full).split("\\").join("/");
-        if (!rel.includes(EXCLUDED)) files.push(full);
+        files.push(full);
       }
     }
   }

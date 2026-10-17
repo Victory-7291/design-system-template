@@ -111,14 +111,14 @@ The component library is layered; only the top layer is Paperclip-specific.
 
 **ai-elements**: the agentic-interface primitives (`message`, `message-scroller`, `bubble`, `attachment`, `spinner`, `code-block`-style building blocks) ship as part of the registry injection. The higher-level ai-elements *patterns* (chain-of-thought, plan, prompt-input, tool, …) are copy-paste compositions built on these primitives per the official docs — grab them from the ai-elements docs pages when a surface needs them.
 
-Deliberate divergences in the 26 extended files (kept on purpose; the gates no longer scan `ui/`, so these are documented rather than enforced):
+Deliberate divergences in the 26 extended files (kept on purpose; the token gates do not scan `ui/`, so these are documented rather than enforced — the a11y gates still cover them):
 
 - All arbitrary values are tokenized — `ring-[3px]` → `ring-(length:--rad-3)`, `transition-[color,box-shadow]` → `transition-(--tp-color-box-shadow)`, and geometry (`top-(--pct-50)`, `max-w-(--sz-calc-25)`) resolves through `src/index.css` tokens. Upstream class *order* may differ; the API does not.
 - Component microcopy is parameterized and RTL-safe (logical properties), per the i18n pass.
 - Logical RTL properties (`ps-8` / `pe-2` / `start-2` / `end-2`) replace physical directions, per the i18n/RTL pass.
 - Interactive surfaces carry explicit `motion-reduce:` fallbacks and mobile-safe typography (`text-base md:text-sm` on editable controls).
 
-**Updating shadcn/ui components:** `src/components/ui/` is managed through the shadcn CLI — re-run `npx shadcn@latest add <component> --overwrite` (or `--all`) at any time; refresh existing installs with `npx shadcn@latest init --reinstall`, preview with `--dry-run` / `--diff`. The token and a11y quality gates deliberately do NOT scan `src/components/ui/` (upstream-managed code) — they govern template-authored surfaces (`src/app/**`, `src/components/*.tsx`, `src/lib`, `src/hooks`). The files below carry template-local extensions, so after an `--overwrite` re-check `git diff` and re-apply: `button.tsx`, `badge.tsx`, `card.tsx`, `avatar.tsx`, `select.tsx`, `tabs.tsx`, `alert-dialog.tsx`, `dialog.tsx`, `sheet.tsx`, `command.tsx` (RTL logical properties, reduced-motion fallbacks, mobile-safe typography).
+**Updating shadcn/ui components:** `src/components/ui/` is managed through the shadcn CLI — re-run `npx shadcn@latest add <component> --overwrite` (or `--all`) at any time; refresh existing installs with `npx shadcn@latest init --reinstall`, preview with `--dry-run` / `--diff`. The **token** quality gates deliberately do NOT scan `src/components/ui/` (upstream-managed code keeps its upstream form) — they govern template-authored surfaces (`src/app/**`, `src/components/*.tsx`, `src/lib`, `src/hooks`). The **a11y** gates scan everything including `ui/`: stock shadcn/ui is verified to pass the static scan and the axe-core WCAG 2.1 AA audit with zero violations. The files below carry template-local extensions, so after an `--overwrite` re-check `git diff` and re-apply: `button.tsx`, `badge.tsx`, `card.tsx`, `avatar.tsx`, `select.tsx`, `tabs.tsx`, `alert-dialog.tsx`, `dialog.tsx`, `sheet.tsx`, `command.tsx` (RTL logical properties, reduced-motion fallbacks, mobile-safe typography).
 
 
 ## 3. How to Use This Template

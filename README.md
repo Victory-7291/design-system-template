@@ -41,13 +41,13 @@ To address these challenges, this template enforces two architectural mechanisms
 │   ├── motion-tokens.css                          # Physical and scoped motion tokens with reduced-motion fallback
 │   ├── main.tsx                                   # Local workshop application entry point
 │   ├── components/
-│   │   ├── ui/                                    # 26 atomic interaction primitives (Button, Card, Dialog, Input, etc.)
+│   │   ├── ui/                                    # shadcn/ui primitives (full registry injection, updated via the shadcn CLI)
 │   │   ├── EmptyState.tsx                         # Universal empty state container
 │   │   ├── ThemeToggle.tsx                        # Light and dark theme switcher
-│   │   ├── InlineBanner.tsx                       # Scoped status banner
-│   │   ├── StatusBadge.tsx                        # Text status badge
-│   │   ├── StatusGlyph.tsx                        # Geometry-first micro-status indicator independent of color
-│   │   ├── StatusIcon.tsx                         # Status indicator with popover detail support
+│   │   ├── InlineBanner.tsx                       # Token-backed banner with info / warning / danger tones
+│   │   ├── StatusBadge.tsx                        # Status badges (agent / task / run / approval vocabularies)
+│   │   ├── StatusGlyph.tsx                        # Geometry-first unified status glyph
+│   │   ├── StatusIcon.tsx                         # Interactive status indicator with popover picker
 │   │   └── ToastViewport.tsx                      # Toast notification viewport
 │   ├── context/
 │   │   ├── ThemeContext.tsx                       # Theme management and local storage persistence
@@ -97,6 +97,26 @@ To address these challenges, this template enforces two architectural mechanisms
 ```
 
 ---
+
+## 2.1 Component Layering & shadcn/ui Compatibility
+
+The component library is layered; only the top layer is Paperclip-specific.
+
+| Layer | Location | What it is | Relationship to shadcn/ui |
+| :--- | :--- | :--- | :--- |
+| 1. Atomic primitives | `src/components/ui/` | 26 interaction primitives (Button, Card, Dialog, Input, …) | `shadcn/ui` **new-york (Tailwind v4)** API-compatible: same exports, props, `data-slot` attributes, and cva variants. `components.json` ships in the repo root, so `npx shadcn@latest add <component>` works for pulling in additional stock primitives. |
+| 2. Primitive extensions | same files | Additive variants: Button `cta` / `xs` / `icon-*` sizes, Card `interactive`, Avatar sizes + group, Select `sm`, Tabs `line`, Badge `ghost` / `link` | Pure additive props on the stock API — no stock variant was removed or reshaped. |
+| 3. Template components | `src/components/*.tsx` | `EmptyState`, `InlineBanner`, `ThemeToggle`, `ToastViewport` + `RadioCard`, `ToggleSwitch`, `ResizablePanels` | Not in the shadcn registry; built purely from tokens and Layer-1 primitives. |
+| 4. Status language | `src/components/Status*.tsx` + `src/lib/status-colors.ts` | `StatusBadge`, `StatusGlyph`, `StatusIcon` + the status palette | Paperclip-specific domain layer carrying the status vocabulary (task lifecycle, agent heartbeat, run / goal / approval outcomes). Flat files — delete them if your product doesn't need the vocabulary. |
+
+Deliberate divergences from the upstream registry (kept on purpose, enforced by the token gates):
+
+- All arbitrary values are tokenized — `ring-[3px]` → `ring-(length:--rad-3)`, `transition-[color,box-shadow]` → `transition-(--tp-color-box-shadow)`, and geometry (`top-(--pct-50)`, `max-w-(--sz-calc-25)`) resolves through `src/index.css` tokens. Upstream class *order* may differ; the API does not.
+- Logical RTL properties (`ps-8` / `pe-2` / `start-2` / `end-2`) replace physical directions, per the i18n/RTL pass.
+- Interactive surfaces carry explicit `motion-reduce:` fallbacks and mobile-safe typography (`text-base md:text-sm` on editable controls).
+
+**Updating shadcn/ui components:** `src/components/ui/` is managed through the shadcn CLI — re-run `npx shadcn@latest add <component> --overwrite` (or `--all`) at any time; refresh existing installs with `npx shadcn@latest init --reinstall`, preview with `--dry-run` / `--diff`. The token and a11y quality gates deliberately do NOT scan `src/components/ui/` (upstream-managed code) — they govern template-authored surfaces (`src/app/**`, `src/components/*.tsx`, `src/lib`, `src/hooks`). The files below carry template-local extensions, so after an `--overwrite` re-check `git diff` and re-apply: `button.tsx`, `badge.tsx`, `card.tsx`, `avatar.tsx`, `select.tsx`, `tabs.tsx`, `alert-dialog.tsx`, `dialog.tsx`, `sheet.tsx`, `command.tsx` (RTL logical properties, reduced-motion fallbacks, mobile-safe typography).
+
 
 ## 3. How to Use This Template
 

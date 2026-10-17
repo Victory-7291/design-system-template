@@ -1,25 +1,29 @@
-import * as React from "react"
-import { AlertDialog as AlertDialogPrimitive } from "radix-ui"
+import * as React from "react";
+import { AlertDialog as AlertDialogPrimitive } from "radix-ui";
 
-import { cn } from "@/lib/utils"
-import { buttonVariants } from "@/components/ui/button"
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
 
 function AlertDialog({
   ...props
 }: React.ComponentProps<typeof AlertDialogPrimitive.Root>) {
-  return <AlertDialogPrimitive.Root data-slot="alert-dialog" {...props} />
+  return <AlertDialogPrimitive.Root data-slot="alert-dialog" {...props} />;
 }
 
 function AlertDialogTrigger({
   ...props
 }: React.ComponentProps<typeof AlertDialogPrimitive.Trigger>) {
-  return <AlertDialogPrimitive.Trigger data-slot="alert-dialog-trigger" {...props} />
+  return (
+    <AlertDialogPrimitive.Trigger data-slot="alert-dialog-trigger" {...props} />
+  );
 }
 
 function AlertDialogPortal({
   ...props
 }: React.ComponentProps<typeof AlertDialogPrimitive.Portal>) {
-  return <AlertDialogPrimitive.Portal data-slot="alert-dialog-portal" {...props} />
+  return (
+    <AlertDialogPrimitive.Portal data-slot="alert-dialog-portal" {...props} />
+  );
 }
 
 function AlertDialogOverlay({
@@ -35,26 +39,30 @@ function AlertDialogOverlay({
       )}
       {...props}
     />
-  )
+  );
 }
 
 function AlertDialogContent({
   className,
+  size = "default",
   ...props
-}: React.ComponentProps<typeof AlertDialogPrimitive.Content>) {
+}: React.ComponentProps<typeof AlertDialogPrimitive.Content> & {
+  size?: "default" | "sm";
+}) {
   return (
     <AlertDialogPortal>
       <AlertDialogOverlay />
       <AlertDialogPrimitive.Content
         data-slot="alert-dialog-content"
+        data-size={size}
         className={cn(
-          "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-[0.97] data-[state=open]:zoom-in-[0.97] fixed top-(--sz-calc-26) md:top-(--pct-50) left-(--pct-50) z-50 grid w-full max-w-(--sz-calc-25) translate-x-(--pct-neg-50) translate-y-0 md:translate-y-(--pct-neg-50) gap-4 rounded-lg border p-6 shadow-lg duration-150 ease-(--e-cubic-bezier-0_16-1-0_3-1) outline-none sm:max-w-lg [&>*]:min-w-0",
+          "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-[0.97] data-[state=open]:zoom-in-[0.97] fixed top-(--sz-calc-26) md:top-(--pct-50) left-(--pct-50) z-50 grid w-full max-w-(--sz-calc-25) translate-x-(--pct-neg-50) translate-y-0 md:translate-y-(--pct-neg-50) gap-4 rounded-lg border p-6 shadow-lg duration-150 ease-(--e-cubic-bezier-0_16-1-0_3-1) outline-none data-[size=sm]:max-w-xs data-[size=default]:sm:max-w-lg [&>*]:min-w-0",
           className
         )}
         {...props}
       />
     </AlertDialogPortal>
-  )
+  );
 }
 
 function AlertDialogHeader({
@@ -67,7 +75,7 @@ function AlertDialogHeader({
       className={cn("flex flex-col gap-2 text-center sm:text-left", className)}
       {...props}
     />
-  )
+  );
 }
 
 function AlertDialogFooter({
@@ -83,7 +91,7 @@ function AlertDialogFooter({
       )}
       {...props}
     />
-  )
+  );
 }
 
 function AlertDialogTitle({
@@ -96,7 +104,7 @@ function AlertDialogTitle({
       className={cn("text-lg leading-none font-semibold", className)}
       {...props}
     />
-  )
+  );
 }
 
 function AlertDialogDescription({
@@ -109,7 +117,7 @@ function AlertDialogDescription({
       className={cn("text-muted-foreground text-sm", className)}
       {...props}
     />
-  )
+  );
 }
 
 function AlertDialogAction({
@@ -122,7 +130,7 @@ function AlertDialogAction({
       className={cn(buttonVariants(), className)}
       {...props}
     />
-  )
+  );
 }
 
 function AlertDialogCancel({
@@ -135,7 +143,7 @@ function AlertDialogCancel({
       className={cn(buttonVariants({ variant: "outline" }), className)}
       {...props}
     />
-  )
+  );
 }
 
 export {
@@ -150,4 +158,4 @@ export {
   AlertDialogDescription,
   AlertDialogAction,
   AlertDialogCancel,
-}
+};

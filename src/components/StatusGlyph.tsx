@@ -51,7 +51,17 @@ export type StatusGlyphStatus =
 // LoaderCircle uses a 9-unit radius. Keep its open arc, but use the same
 // 10-unit circle and unscaled stroke as the other task glyphs.
 const TaskProgressSpinner = createLucideIcon("TaskProgressSpinner", [
-  ["circle", { cx: "12", cy: "12", r: "10", pathLength: "100", strokeDasharray: "80 20", key: "progress" }],
+  [
+    "circle",
+    {
+      cx: "12",
+      cy: "12",
+      r: "10",
+      pathLength: "100",
+      strokeDasharray: "80 20",
+      key: "progress",
+    },
+  ],
 ]);
 
 /** Status → Lucide icon. `in_queue` borrows the blocked icon; its colour var resolves to blue. */
@@ -79,7 +89,12 @@ interface StatusGlyphProps {
   title?: string;
 }
 
-export function StatusGlyph({ status, size = "md", className, title }: StatusGlyphProps) {
+export function StatusGlyph({
+  status,
+  size = "md",
+  className,
+  title,
+}: StatusGlyphProps) {
   const px = SIZE_PX[size];
   const Icon = STATUS_ICON[status] ?? STATUS_ICON_DEFAULT;
   const cssVar = taskStatusIconVar[status] ?? taskStatusIconVarDefault;
@@ -89,7 +104,11 @@ export function StatusGlyph({ status, size = "md", className, title }: StatusGly
   return (
     <Icon
       size={px}
-      className={cn("inline-block shrink-0 align-middle", status === "in_progress" && "motion-safe:animate-spin", className)}
+      className={cn(
+        "inline-block shrink-0 align-middle",
+        status === "in_progress" && "motion-safe:animate-spin",
+        className
+      )}
       style={{ color: `var(${cssVar})` } as CSSProperties}
       {...a11y}
     >

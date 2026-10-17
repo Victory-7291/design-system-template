@@ -36,12 +36,20 @@ describe("StatusGlyph", () => {
 
   it("maps sm/md/lg to 14/16/20 px", () => {
     for (const status of Object.keys(taskStatusIconVar)) {
-      expect(renderToStaticMarkup(<StatusGlyph status={status} size="sm" />)).toContain('width="14"');
-      expect(renderToStaticMarkup(<StatusGlyph status={status} size="md" />)).toContain('width="16"');
-      expect(renderToStaticMarkup(<StatusGlyph status={status} size="lg" />)).toContain('width="20"');
+      expect(
+        renderToStaticMarkup(<StatusGlyph status={status} size="sm" />)
+      ).toContain('width="14"');
+      expect(
+        renderToStaticMarkup(<StatusGlyph status={status} size="md" />)
+      ).toContain('width="16"');
+      expect(
+        renderToStaticMarkup(<StatusGlyph status={status} size="lg" />)
+      ).toContain('width="20"');
     }
     // Default size is md.
-    expect(renderToStaticMarkup(<StatusGlyph status="todo" />)).toContain('width="16"');
+    expect(renderToStaticMarkup(<StatusGlyph status="todo" />)).toContain(
+      'width="16"'
+    );
   });
 
   it("colours each status from its --status-task-icon-* var", () => {
@@ -67,12 +75,20 @@ describe("StatusGlyph", () => {
   it("animates only in-progress task icons and respects reduced motion", () => {
     for (const status of Object.keys(taskStatusIconVar)) {
       const html = renderToStaticMarkup(<StatusGlyph status={status} />);
-      expect(html.includes("motion-safe:animate-spin")).toBe(status === "in_progress");
+      expect(html.includes("motion-safe:animate-spin")).toBe(
+        status === "in_progress"
+      );
     }
   });
 
   it("uses the same circle radius and stroke for the spinner as other task icons", () => {
-    for (const status of ["in_progress", "todo", "done", "blocked", "cancelled"]) {
+    for (const status of [
+      "in_progress",
+      "todo",
+      "done",
+      "blocked",
+      "cancelled",
+    ]) {
       const html = renderToStaticMarkup(<StatusGlyph status={status} />);
       expect(html).toContain('<circle cx="12" cy="12" r="10"');
       expect(html).toContain('stroke-width="2"');
@@ -85,7 +101,12 @@ describe("StatusGlyph", () => {
   it("gives todo the plain circle (not a compound circle icon)", () => {
     const html = renderToStaticMarkup(<StatusGlyph status="todo" />);
     expect(html).toContain("lucide-circle");
-    for (const compound of ["circle-dashed", "circle-dot", "circle-check", "circle-minus"]) {
+    for (const compound of [
+      "circle-dashed",
+      "circle-dot",
+      "circle-check",
+      "circle-minus",
+    ]) {
       expect(html).not.toContain(compound);
     }
   });
@@ -102,8 +123,12 @@ describe("StatusGlyph", () => {
   });
 
   it("is decorative by default and labelled when given a title", () => {
-    expect(renderToStaticMarkup(<StatusGlyph status="todo" />)).toContain('aria-hidden="true"');
-    const labelled = renderToStaticMarkup(<StatusGlyph status="todo" title="Todo" />);
+    expect(renderToStaticMarkup(<StatusGlyph status="todo" />)).toContain(
+      'aria-hidden="true"'
+    );
+    const labelled = renderToStaticMarkup(
+      <StatusGlyph status="todo" title="Todo" />
+    );
     expect(labelled).toContain('role="img"');
     expect(labelled).toContain('aria-label="Todo"');
     expect(labelled).toContain("<title>Todo</title>");

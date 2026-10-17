@@ -27,7 +27,13 @@ function sentenceCaseStatus(status: string): string {
  */
 // design-allow(pill-pattern): DECISION-SHEET.md C8 - status badges keep the bespoke WCAG-tuned
 // .status-chip color-mix mechanic and do not wrap the Badge primitive.
-export function StatusBadge({ status, label }: { status: string; label?: string }) {
+export function StatusBadge({
+  status,
+  label,
+}: {
+  status: string;
+  label?: string;
+}) {
   return (
     <span
       className={cn(
@@ -69,7 +75,10 @@ export function AgentStatusCapsule({ status }: { status: string }) {
   return (
     <span
       aria-hidden
-      className={cn("status-fill inline-block h-4 w-2 rounded-(--rad-4) shrink-0", motion)}
+      className={cn(
+        "status-fill inline-block h-4 w-2 rounded-(--rad-4) shrink-0",
+        motion
+      )}
       style={scStyle(cssVar)}
     />
   );
@@ -83,8 +92,17 @@ export function AgentStatusCapsule({ status }: { status: string }) {
  * Distinct from the generic {@link StatusBadge} so run/goal/approval badges are
  * unaffected.
  */
-export function IssueStatusBadge({ status: taskStatus, externalConversationState }: { status: string; externalConversationState?: "active" | "waiting" | null }) {
-  const status = taskStatus === "in_review" && externalConversationState === "waiting" ? "idle" : taskStatus;
+export function IssueStatusBadge({
+  status: taskStatus,
+  externalConversationState,
+}: {
+  status: string;
+  externalConversationState?: "active" | "waiting" | null;
+}) {
+  const status =
+    taskStatus === "in_review" && externalConversationState === "waiting"
+      ? "idle"
+      : taskStatus;
   const cssVar = taskStatusVar[status] ?? taskStatusVarDefault;
   return (
     <span

@@ -3,7 +3,8 @@ import { AlertCircle, AlertTriangle, Info } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
-import { brandBanner, type BannerTone } from "@/lib/status-colors";
+
+export type BannerTone = "info" | "warning" | "danger";
 
 const TONE_ICON: Record<BannerTone, LucideIcon> = {
   info: Info,
@@ -29,11 +30,10 @@ export interface InlineBannerProps {
 
 /**
  * Token-backed inline banner used for full-width informational and warning
- * notices. Follows the existing bespoke-banner convention (`border … bg-…
- * rounded-lg p-4`) but centralizes the color recipe in `brandBanner` so
- * feature surfaces don't hand-roll `bg-yellow-*`/`bg-blue-*` variants.
- *
- * See `/design-guide` for tone examples.
+ * notices. Color comes from the `.banner-tone` token helper in `index.css`:
+ * `data-tone` points `--sc` at one of the `--banner-*` base hues and the
+ * helper derives the soft fill / AA text / translucent border per mode —
+ * feature surfaces never hand-roll `bg-yellow-*`/`bg-blue-*` recipes.
  */
 export function InlineBanner({
   tone = "info",
@@ -44,26 +44,32 @@ export function InlineBanner({
   compact = false,
   className,
 }: InlineBannerProps) {
-  const Icon = icon === false ? null : (icon ?? TONE_ICON[tone]);
+  const Icon = icon === false ? null : icon ?? TONE_ICON[tone];
   return (
     <div
       role="note"
+      data-tone={tone}
       className={cn(
-        "flex flex-col gap-2 rounded-lg border sm:flex-row sm:items-start sm:justify-between",
+        "banner-tone flex flex-col gap-2 rounded-lg border sm:flex-row sm:items-start sm:justify-between",
         compact ? "p-3" : "p-4",
-        brandBanner[tone],
-        className,
+        className
       )}
     >
       <div className="flex items-start gap-2.5">
-        {Icon && <Icon className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />}
+        {Icon && (
+          <Icon className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+        )}
         <div className="space-y-1 text-sm">
           {title && <p className="font-medium leading-tight">{title}</p>}
-          {children && <div className="leading-snug opacity-90">{children}</div>}
+          {children && (
+            <div className="leading-snug opacity-90">{children}</div>
+          )}
         </div>
       </div>
       {actions && (
-        <div className="flex shrink-0 flex-wrap items-center gap-2 ps-6 sm:ps-0">{actions}</div>
+        <div className="flex shrink-0 flex-wrap items-center gap-2 ps-6 sm:ps-0">
+          {actions}
+        </div>
       )}
     </div>
   );

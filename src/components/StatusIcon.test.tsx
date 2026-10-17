@@ -37,7 +37,7 @@ describe("StatusIcon", () => {
           sampleBlockerIdentifier: "PAP-9",
           sampleStalledBlockerIdentifier: null,
         }}
-      />,
+      />
     );
     expect(html).toContain("var(--status-task-icon-in_queue)");
     expect(html).not.toContain("bg-cyan");
@@ -60,9 +60,11 @@ describe("StatusIcon", () => {
           sampleBlockerIdentifier: "PAP-3541",
           sampleStalledBlockerIdentifier: null,
         }}
-      />,
+      />
     );
-    expect(html).toContain("Blocked · 3 blockers need attention; 2 covered by active work");
+    expect(html).toContain(
+      "Blocked · 3 blockers need attention; 2 covered by active work"
+    );
     // needs_attention is not "covered", so it keeps the blocked glyph (not in_queue).
     expect(html).toContain("var(--status-task-icon-blocked)");
     expect(html).not.toContain("var(--status-task-icon-in_queue)");
@@ -82,18 +84,19 @@ describe("StatusIcon", () => {
           sampleBlockerIdentifier: "PAP-2279",
           sampleStalledBlockerIdentifier: "PAP-2279",
         }}
-      />,
+      />
     );
     expect(html).toContain("Blocked · review stalled on PAP-2279");
   });
 
   it("uses an accessible native button for the icon-only picker trigger", () => {
-    const html = renderToStaticMarkup(<StatusIcon status="todo" onChange={() => {}} />);
+    const html = renderToStaticMarkup(
+      <StatusIcon status="todo" onChange={() => {}} />
+    );
     expect(html).toContain('viewBox="0 0 24 24"');
     expect(html).toContain('<button type="button"');
     expect(html).toContain('aria-label="Change status (current: Todo)"');
   });
-
 });
 
 describe("StatusIcon — glyph size (PAP-243a)", () => {
@@ -111,7 +114,7 @@ describe("StatusIcon — glyph size (PAP-243a)", () => {
 
   it("can place the default glyph in a larger layout footprint without resizing it", () => {
     const html = renderToStaticMarkup(
-      <StatusIcon status="todo" glyphContainerClassName="size-6" showLabel />,
+      <StatusIcon status="todo" glyphContainerClassName="size-6" showLabel />
     );
     expect(html).toContain('data-status-glyph-container="true"');
     expect(html).toContain('class="size-6"');
@@ -120,21 +123,42 @@ describe("StatusIcon — glyph size (PAP-243a)", () => {
   });
 });
 
-
 describe("Slack idle status presentation", () => {
   it("labels verified waiting conversations Idle in icons, labels, badges and picker triggers", () => {
-    const props = { status: "in_review", externalConversationState: "waiting" as const };
-    expect(renderToStaticMarkup(<StatusIcon {...props} showLabel />)).toContain(">Idle<");
-    expect(renderToStaticMarkup(<StatusIcon {...props} onChange={() => {}} />)).toContain('current: Idle');
-    expect(renderToStaticMarkup(<IssueStatusBadge {...props} />)).toContain(">Idle<");
+    const props = {
+      status: "in_review",
+      externalConversationState: "waiting" as const,
+    };
+    expect(renderToStaticMarkup(<StatusIcon {...props} showLabel />)).toContain(
+      ">Idle<"
+    );
+    expect(
+      renderToStaticMarkup(<StatusIcon {...props} onChange={() => {}} />)
+    ).toContain("current: Idle");
+    expect(renderToStaticMarkup(<IssueStatusBadge {...props} />)).toContain(
+      ">Idle<"
+    );
   });
 
-  it.each(["in_review", "blocked", "done", "cancelled"])("preserves %s without verified waiting", (status) => {
-    const html = renderToStaticMarkup(<StatusIcon status={status} externalConversationState="active" showLabel />);
-    expect(html).not.toContain("Idle");
-  });
+  it.each(["in_review", "blocked", "done", "cancelled"])(
+    "preserves %s without verified waiting",
+    (status) => {
+      const html = renderToStaticMarkup(
+        <StatusIcon
+          status={status}
+          externalConversationState="active"
+          showLabel
+        />
+      );
+      expect(html).not.toContain("Idle");
+    }
+  );
 
   it("preserves an explicit terminal outcome even with stale waiting data", () => {
-    expect(renderToStaticMarkup(<IssueStatusBadge status="done" externalConversationState="waiting" />)).toContain(">Done<");
+    expect(
+      renderToStaticMarkup(
+        <IssueStatusBadge status="done" externalConversationState="waiting" />
+      )
+    ).toContain(">Done<");
   });
 });

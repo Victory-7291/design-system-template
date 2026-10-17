@@ -1,5 +1,22 @@
 # design-system-template
 
+## 1.2.0
+
+### Minor Changes
+
+- **Brand-Book Guide Page (Next.js App Router Location)**:
+  - Rebuilt the showcase page following the paperclip.ing/brand presentation: fixed sidebar table of contents with scroll-spy, numbered section pills, display headings, spec tables, radius ladder with highlighted anchor, icon grid, and live motion signals.
+  - Moved the page from `src/pages/DesignGuide.tsx` to `src/app/brand/page.tsx` (App Router convention): default export + `"use client"`, so the template drops into Next.js bases unchanged.
+  - Reorganized coverage into ten numbered sections: foundations, typography, color, spacing, radius, iconography, motion, components, states & status, design tokens.
+- **Component Layering Audit & shadcn/ui Alignment**:
+  - Audited all 16 stock primitives against the official `new-york-v4` registry; APIs are compatible. Adopted the upstream `AlertDialogContent` `size` (`"default" | "sm"`) prop; every other divergence is a deliberate tokenization (`--rad-*`, `--sz-*`, `--tp-*`), RTL logical properties, or reduced-motion/mobile improvements documented in the README.
+  - Documented the four-layer component model (primitives / extensions / template components / optional status module) in the README.
+- **Token-Backed Banner Tones**:
+  - Decoupled `InlineBanner` from the status palette: banner tones are now the `.banner-tone` helper (`--banner-info/warning/danger` base hues + color-mix recipes in `index.css`), replacing hardcoded hex className strings.
+- **Fixes**:
+  - Removed the shell-residue `body { overflow: hidden }` so the standalone document scrolls natively.
+  - The displayed guide version is now sourced from `package.json` instead of hardcoded strings.
+
 ## 1.1.0
 
 ### Minor Changes

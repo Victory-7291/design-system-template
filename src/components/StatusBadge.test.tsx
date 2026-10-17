@@ -21,8 +21,12 @@ describe("IssueStatusBadge", () => {
   });
 
   it("points in_progress at the blue liveness var and todo at the amber var", () => {
-    expect(renderToStaticMarkup(<IssueStatusBadge status="in_progress" />)).toContain("var(--status-task-in_progress)");
-    expect(renderToStaticMarkup(<IssueStatusBadge status="todo" />)).toContain("var(--status-task-todo)");
+    expect(
+      renderToStaticMarkup(<IssueStatusBadge status="in_progress" />)
+    ).toContain("var(--status-task-in_progress)");
+    expect(renderToStaticMarkup(<IssueStatusBadge status="todo" />)).toContain(
+      "var(--status-task-todo)"
+    );
   });
 
   it("sentence-cases the label and uses regular weight", () => {
@@ -34,11 +38,15 @@ describe("IssueStatusBadge", () => {
   });
 
   it("strikes through cancelled chips", () => {
-    expect(renderToStaticMarkup(<IssueStatusBadge status="cancelled" />)).toContain("line-through");
+    expect(
+      renderToStaticMarkup(<IssueStatusBadge status="cancelled" />)
+    ).toContain("line-through");
   });
 
   it("falls back to the backlog (gray) var for unknown statuses", () => {
-    expect(renderToStaticMarkup(<IssueStatusBadge status="mystery" />)).toContain("var(--status-task-backlog)");
+    expect(
+      renderToStaticMarkup(<IssueStatusBadge status="mystery" />)
+    ).toContain("var(--status-task-backlog)");
   });
 
   it("renders task chips without depending on the chat flag", () => {
@@ -60,13 +68,19 @@ describe("AgentStatusBadge", () => {
   });
 
   it('renders "active" as the idle label', () => {
-    expect(renderToStaticMarkup(<AgentStatusBadge status="active" />)).toContain("idle");
+    expect(
+      renderToStaticMarkup(<AgentStatusBadge status="active" />)
+    ).toContain("idle");
   });
 });
 
 describe("StatusBadge", () => {
   it("uses the graduated brand hues", () => {
-    expect(renderToStaticMarkup(<StatusBadge status="todo" />)).toContain("bg-amber-100");
-    expect(renderToStaticMarkup(<StatusBadge status="in_progress" />)).toContain("bg-blue-100");
+    expect(renderToStaticMarkup(<StatusBadge status="todo" />)).toContain(
+      "bg-amber-100"
+    );
+    expect(
+      renderToStaticMarkup(<StatusBadge status="in_progress" />)
+    ).toContain("bg-blue-100");
   });
 });

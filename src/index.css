@@ -202,6 +202,15 @@
   --status-agent-running: #2563eb;
   --status-agent-paused: #f59e0b;
   --status-agent-error: #dc2626;
+
+  /* Inline banner base hues (InlineBanner tones). info = liveness blue,
+     warning = queued amber, danger = blocked red — the same brand anchors as
+     the status palette. The `.banner-tone` helper below derives the soft
+     fill / AA text / translucent border per mode from one hue via color-mix,
+     mirroring the `.status-chip` mechanic. */
+  --banner-info: #2563eb;
+  --banner-warning: #f59e0b;
+  --banner-danger: #dc2626;
   /* Dashboard agent card: translucent running treatment from the Paper design. */
   --dashboard-run-accent: oklch(62.3% 0.214 259.815);
   --dashboard-run-background: color-mix(in oklab, var(--dashboard-run-accent) 4%, transparent);
@@ -2464,6 +2473,30 @@ span.ds-mention-chip[data-mention-kind="external-object"] {
 }
 .status-fill {
   background-color: var(--sc);
+}
+
+/* Inline banner tone helper (InlineBanner.tsx). The component sets
+   data-tone and this rule points --sc at the matching --banner-* base hue;
+   the recipes mirror `.status-chip` (soft fill, AA-contrast text, translucent
+   border) so a single hue covers both modes. Light tints the page surface;
+   dark layers the hue at low alpha so it reads on dark surfaces. */
+.banner-tone {
+  border-color: color-mix(in srgb, var(--sc) 40%, transparent);
+  background-color: color-mix(in srgb, var(--sc) 8%, var(--background));
+  color: color-mix(in srgb, var(--sc) 82%, black);
+}
+.dark .banner-tone {
+  background-color: color-mix(in srgb, var(--sc) 14%, transparent);
+  color: color-mix(in srgb, var(--sc) 80%, white);
+}
+.banner-tone[data-tone="info"] {
+  --sc: var(--banner-info);
+}
+.banner-tone[data-tone="warning"] {
+  --sc: var(--banner-warning);
+}
+.banner-tone[data-tone="danger"] {
+  --sc: var(--banner-danger);
 }
 
 /* ── Extracted verbatim tokens (Phase 2, design/token-extraction) ── */

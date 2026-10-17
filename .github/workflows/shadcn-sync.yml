@@ -1,0 +1,79 @@
+# Weekly shadcn/ui registry sync — "Dependabot for registry code".
+#
+# shadcn/ui components are vendored source files (not npm packages), so
+# Dependabot cannot track them. This workflow re-injects the tracked
+# components from the official registry on a schedule and opens a PR when
+# upstream moved — the registry-code equivalent of a Dependabot update PR.
+#
+# Requires the repo setting "Allow GitHub Actions to create and approve
+# pull requests" to be enabled.
+
+name: shadcn sync
+
+on:
+  schedule:
+    - cron: "0 3 * * 1" # Every Monday 03:00 UTC (11:00 CST)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: shadcn-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Re-inject tracked components (upstream overwrite)
+        # The tracked list is the single source of truth for which registry
+        # items this project follows. Newly published components are adopted
+        # manually: `npx shadcn@latest add <name> --yes`, then append the
+        # name here.
+        run: npx shadcn@latest add $(cat scripts/shadcn-components.txt) --overwrite --yes
+
+      - name: Open sync PR when upstream changed
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if git diff --quiet; then
+            echo "Registry is already in sync — nothing to do."
+            exit 0
+          fi
+          DATE=$(date +%Y%m%d)
+          BRANCH="chore/shadcn-sync-${DATE}"
+          git config user.name "shadcn-sync-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add -A
+          git commit -m "chore(ui): sync shadcn/ui registry components"
+          git push origin "$BRANCH"
+          {
+            echo "Weekly \`shadcn add --overwrite\` re-injection of the tracked registry components (\`scripts/shadcn-components.txt\`)."
+            echo
+            echo "## Review notes"
+            echo ""
+            echo "- \`src/components/ui/\` is upstream-managed: the token gates do not scan it (the a11y gates do, and stock passes)."
+            echo "- **Extended files revert under \`--overwrite\`.** These carry template-local RTL properties, reduced-motion fallbacks, tokenized values, and additive variants — re-apply from the diff or merge upstream changes by hand:"
+            echo "  \`button\` · \`badge\` · \`card\` · \`avatar\` · \`select\` · \`tabs\` · \`alert-dialog\` · \`dialog\` · \`sheet\` · \`command\` (+ anything else this diff touches from that list)"
+            echo "- New registry items are never auto-added. To adopt one: \`npx shadcn@latest add <name> --yes\`, then append the name to \`scripts/shadcn-components.txt\`."
+          } | gh pr create \
+            --base main \
+            --head "$BRANCH" \
+            --title "chore(ui): weekly shadcn/ui registry sync (${DATE})" \
+            --body-file -

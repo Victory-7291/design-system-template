@@ -78,6 +78,11 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(__dirname, "..");
 const UI_SRC = existsSync(resolve(REPO_ROOT, "src")) ? resolve(REPO_ROOT, "src") : resolve(REPO_ROOT, "ui/src");
 const SCAN_DIRS = ["components", "app"];
+// src/components/ui is upstream-managed shadcn/ui code: injected and updated
+// through the shadcn CLI (`npx shadcn add <component> --overwrite` / `--all`).
+// The gates govern template-authored surfaces; stock registry files keep
+// their upstream form so the official update workflow stays no-conflict.
+const EXCLUDED_PREFIXES = ["components/ui/"];
 const CSS_PATH = resolve(UI_SRC, "index.css");
 
 // ── Allowlist parsing ────────────────────────────────────────────────────
@@ -115,8 +120,12 @@ function walk(dir, out) {
 function listFiles() {
   const files = [];
   for (const dir of SCAN_DIRS) walk(resolve(UI_SRC, dir), files);
-  files.sort();
-  return files;
+  const filtered = files.filter((file) => {
+    const rel = relative(UI_SRC, file).split("\\").join("/");
+    return !EXCLUDED_PREFIXES.some((prefix) => rel.startsWith(prefix));
+  });
+  filtered.sort();
+  return filtered;
 }
 
 // ── Gate 1: color literals ───────────────────────────────────────────────

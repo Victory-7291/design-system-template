@@ -1,5 +1,9 @@
 import { Group, Panel, Separator } from "react-resizable-panels";
-import type { GroupProps, PanelProps, SeparatorProps } from "react-resizable-panels";
+import type {
+  GroupProps,
+  PanelProps,
+  SeparatorProps,
+} from "react-resizable-panels";
 import { cn } from "@/lib/utils";
 
 /**
@@ -14,7 +18,10 @@ import { cn } from "@/lib/utils";
 export function ResizablePanelGroup({ className, ...props }: GroupProps) {
   return (
     <Group
-      className={cn("flex h-full w-full data-[orientation=vertical]:flex-col", className)}
+      className={cn(
+        "flex h-full w-full data-[orientation=vertical]:flex-col",
+        className
+      )}
       // Keep hit targets generous on both coarse (touch) and fine (mouse) input.
       resizeTargetMinimumSize={{ coarse: 24, fine: 12 }}
       {...props}
@@ -24,7 +31,12 @@ export function ResizablePanelGroup({ className, ...props }: GroupProps) {
 ResizablePanelGroup.displayName = "ResizablePanelGroup";
 
 export function ResizablePanel({ className, ...props }: PanelProps) {
-  return <Panel className={cn("h-full min-h-0 overflow-hidden", className)} {...props} />;
+  return (
+    <Panel
+      className={cn("h-full min-h-0 overflow-hidden", className)}
+      {...props}
+    />
+  );
 }
 ResizablePanel.displayName = "ResizablePanel";
 
@@ -33,7 +45,11 @@ ResizablePanel.displayName = "ResizablePanel";
  * (Fitts's Law). Resize is instantaneous — the only transition is the hover
  * colour, which is harmless under `prefers-reduced-motion`.
  */
-export function ResizableHandle({ className, orientation = "horizontal", ...props }: SeparatorProps & {
+export function ResizableHandle({
+  className,
+  orientation = "horizontal",
+  ...props
+}: SeparatorProps & {
   orientation?: "horizontal" | "vertical";
 }) {
   const vertical = orientation === "vertical";
@@ -42,8 +58,10 @@ export function ResizableHandle({ className, orientation = "horizontal", ...prop
       className={cn(
         "group relative flex items-center justify-center bg-transparent outline-none",
         "focus-visible:ring-1 focus-visible:ring-ring",
-        vertical ? "h-2 w-full cursor-row-resize" : "w-2 h-full cursor-col-resize",
-        className,
+        vertical
+          ? "h-2 w-full cursor-row-resize"
+          : "w-2 h-full cursor-col-resize",
+        className
       )}
       {...props}
     >
@@ -51,7 +69,7 @@ export function ResizableHandle({ className, orientation = "horizontal", ...prop
         aria-hidden
         className={cn(
           "bg-border transition-colors group-hover:bg-ring group-data-[dragging]:bg-ring",
-          vertical ? "h-px w-full" : "w-px h-full",
+          vertical ? "h-px w-full" : "w-px h-full"
         )}
       />
     </Separator>

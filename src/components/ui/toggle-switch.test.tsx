@@ -31,7 +31,9 @@ function click(el: Element) {
 it("fires onCheckedChange when clicked", () => {
   const onCheckedChange = vi.fn();
   flushSync(() => {
-    root.render(<ToggleSwitch checked={false} onCheckedChange={onCheckedChange} />);
+    root.render(
+      <ToggleSwitch checked={false} onCheckedChange={onCheckedChange} />
+    );
   });
   click(container.querySelector('[role="switch"]')!);
   expect(onCheckedChange).toHaveBeenCalledWith(true);
@@ -48,7 +50,7 @@ it("runs the caller's onClick and still toggles", () => {
         checked
         onClick={onClick}
         onCheckedChange={onCheckedChange}
-      />,
+      />
     );
   });
   click(container.querySelector('[role="switch"]')!);

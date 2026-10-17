@@ -52,7 +52,7 @@ export function RadioCard({
           ? "border-primary bg-primary/5 ring-1 ring-primary"
           : "border-border hover:border-border hover:bg-accent/40",
         "disabled:cursor-not-allowed disabled:opacity-60",
-        className,
+        className
       )}
       title={tooltip}
       {...props}

@@ -13,7 +13,7 @@
  */
 
 import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
-import { resolve, dirname, join } from "node:path";
+import { resolve, dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { JSDOM } from "jsdom";
 import axe from "axe-core";
@@ -201,6 +201,9 @@ function runTokenContrastCheck() {
 
 function getAllSourceFiles(dirs) {
   const files = [];
+  // src/components/ui is upstream-managed shadcn/ui code (updated via the
+  // shadcn CLI); the static a11y scan governs template-authored surfaces.
+  const EXCLUDED = "components/ui/";
   function walk(dir) {
     if (!existsSync(dir)) return;
     for (const item of readdirSync(dir)) {
@@ -209,7 +212,8 @@ function getAllSourceFiles(dirs) {
       if (stat.isDirectory()) {
         walk(full);
       } else if (/\.(tsx|jsx)$/.test(item) && !/\.(test|spec)\./.test(item)) {
-        files.push(full);
+        const rel = relative(REPO_ROOT, full).split("\\").join("/");
+        if (!rel.includes(EXCLUDED)) files.push(full);
       }
     }
   }

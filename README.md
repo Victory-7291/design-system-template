@@ -104,14 +104,17 @@ The component library is layered; only the top layer is Paperclip-specific.
 
 | Layer | Location | What it is | Relationship to shadcn/ui |
 | :--- | :--- | :--- | :--- |
-| 1. Atomic primitives | `src/components/ui/` | 26 interaction primitives (Button, Card, Dialog, Input, …) | `shadcn/ui` **new-york (Tailwind v4)** API-compatible: same exports, props, `data-slot` attributes, and cva variants. `components.json` ships in the repo root, so `npx shadcn@latest add <component>` works for pulling in additional stock primitives. |
+| 1. Atomic primitives | `src/components/ui/` | **The full shadcn/ui registry** (60+ primitives — accordion, chart, data-table via calendar/combobox patterns, sidebar, sonner, message / bubble / attachment AI primitives, …), injected with the official CLI | Stock shadcn/ui **new-york (Tailwind v4)** code, managed through `components.json` in the repo root. 26 of the files carry the template's tokenization + RTL + extension layer (see below); the rest are byte-identical upstream. |
 | 2. Primitive extensions | same files | Additive variants: Button `cta` / `xs` / `icon-*` sizes, Card `interactive`, Avatar sizes + group, Select `sm`, Tabs `line`, Badge `ghost` / `link` | Pure additive props on the stock API — no stock variant was removed or reshaped. |
 | 3. Template components | `src/components/*.tsx` | `EmptyState`, `InlineBanner`, `ThemeToggle`, `ToastViewport` + `RadioCard`, `ToggleSwitch`, `ResizablePanels` | Not in the shadcn registry; built purely from tokens and Layer-1 primitives. |
 | 4. Status language | `src/components/Status*.tsx` + `src/lib/status-colors.ts` | `StatusBadge`, `StatusGlyph`, `StatusIcon` + the status palette | Paperclip-specific domain layer carrying the status vocabulary (task lifecycle, agent heartbeat, run / goal / approval outcomes). Flat files — delete them if your product doesn't need the vocabulary. |
 
-Deliberate divergences from the upstream registry (kept on purpose, enforced by the token gates):
+**ai-elements**: the agentic-interface primitives (`message`, `message-scroller`, `bubble`, `attachment`, `spinner`, `code-block`-style building blocks) ship as part of the registry injection. The higher-level ai-elements *patterns* (chain-of-thought, plan, prompt-input, tool, …) are copy-paste compositions built on these primitives per the official docs — grab them from the ai-elements docs pages when a surface needs them.
+
+Deliberate divergences in the 26 extended files (kept on purpose; the gates no longer scan `ui/`, so these are documented rather than enforced):
 
 - All arbitrary values are tokenized — `ring-[3px]` → `ring-(length:--rad-3)`, `transition-[color,box-shadow]` → `transition-(--tp-color-box-shadow)`, and geometry (`top-(--pct-50)`, `max-w-(--sz-calc-25)`) resolves through `src/index.css` tokens. Upstream class *order* may differ; the API does not.
+- Component microcopy is parameterized and RTL-safe (logical properties), per the i18n pass.
 - Logical RTL properties (`ps-8` / `pe-2` / `start-2` / `end-2`) replace physical directions, per the i18n/RTL pass.
 - Interactive surfaces carry explicit `motion-reduce:` fallbacks and mobile-safe typography (`text-base md:text-sm` on editable controls).
 

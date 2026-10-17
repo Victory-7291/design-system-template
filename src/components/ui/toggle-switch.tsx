@@ -21,8 +21,16 @@ export const ToggleSwitch = React.forwardRef<
   ToggleSwitchProps
 >(
   (
-    { checked, onCheckedChange, size = "default", className, disabled, onClick, ...props },
-    ref,
+    {
+      checked,
+      onCheckedChange,
+      size = "default",
+      className,
+      disabled,
+      onClick,
+      ...props
+    },
+    ref
   ) => {
     const isLg = size === "lg";
 
@@ -42,7 +50,7 @@ export const ToggleSwitch = React.forwardRef<
           checked
             ? "border-(--status-task-done) bg-(--status-task-done)"
             : "border-transparent bg-input/90",
-          className,
+          className
         )}
         {...props}
         // Run the caller's onClick first (e.g. stopPropagation in a clickable
@@ -57,12 +65,12 @@ export const ToggleSwitch = React.forwardRef<
           className={cn(
             "pointer-events-none inline-block rounded-full bg-background shadow-sm transition-transform not-dark:bg-clip-padding dark:bg-foreground",
             isLg ? "h-5 w-7" : "h-4 w-6",
-            checked ? "translate-x-4" : "translate-x-0",
+            checked ? "translate-x-4" : "translate-x-0"
           )}
         />
       </button>
     );
-  },
+  }
 );
 
 ToggleSwitch.displayName = "ToggleSwitch";

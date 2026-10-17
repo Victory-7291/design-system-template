@@ -475,7 +475,6 @@
   background-color: var(--streamlined-task-detail-bg);
 }
 
-
 .ds-doc-annotation-highlight::before {
   position: absolute;
   inset:

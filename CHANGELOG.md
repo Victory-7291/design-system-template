@@ -1,5 +1,17 @@
 # design-system-template
 
+## 1.3.0
+
+### Minor Changes
+
+- **Full shadcn/ui Registry Injection**:
+  - Injected every component available in the official `new-york-v4` registry — `ui/` now ships 60+ primitives (accordion, alert, calendar, carousel, chart, combobox, context-menu, drawer, form primitives via `field`, input-otp, menubar, navigation-menu, pagination, progress, radio-group, sidebar, slider, sonner, switch, table, toggle / toggle-group, hover-card, and the agentic `message` / `message-scroller` / `bubble` / `attachment` / `spinner` / `item` / `kbd` / `empty` / `button-group` / `input-group` / `native-select` building blocks) alongside the 26 template-extended primitives.
+  - The ai-elements base primitives are part of the injection; the higher-level ai-elements patterns are copy-paste compositions per the official docs.
+  - The seven newest registry items (`code-block`, `data-table`, `date-picker`, `questionnaire`, `toast`, `trace`, `typography`) exist only in the new multi-style registry and are intentionally not mixed into the radix-based `new-york-v4` set.
+- **Upstream-Managed `ui/` Directory**:
+  - The token and a11y quality gates no longer scan `src/components/ui/` — stock registry code keeps its upstream form so `npx shadcn@latest add <component> --overwrite` stays a no-conflict update path. The gates govern template-authored surfaces (`src/app/**`, `src/components/*.tsx`, `src/lib`, `src/hooks`).
+  - Files carrying template-local extensions (RTL, reduced-motion, tokenization, additive variants) are listed in the README for re-application after an overwrite.
+
 ## 1.2.0
 
 ### Minor Changes

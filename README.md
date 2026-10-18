@@ -1,8 +1,8 @@
 # Design System Starter Template
 
-This is a production-grade, anti-slop design system starter template designed to eliminate AI-generated UI degradation during agentic and automated coding workflows. It serves as an autonomous frontend foundation for brand-new products or as an isolated design system workspace package inside enterprise monorepos.
+This is a design system starter template built to stop AI assistants from degrading UI quality during automated coding. Use it as the frontend foundation for a new product, or as an isolated design system workspace inside an enterprise monorepo.
 
-The template designates Tailwind CSS v4 as the single source of truth for design tokens. It packages 26 business-agnostic atomic interaction primitives, an air-gapped local variable font typography infrastructure, an OKLCH wide-gamut perceptual color system, a single-knob multiplicative corner radius scale, and an automated multi-tier hard gate pipeline enforced during local development and continuous integration.
+The template makes Tailwind CSS v4 the single source of truth for design tokens. It ships the full shadcn/ui registry plus a template extension layer, an air-gapped local variable font, an OKLCH color system, a single-knob radius scale, and an automated gate pipeline enforced locally and in CI.
 
 The repository is self-contained. All architectural principles, design tokens, typography specifications, and quality gate standards are defined within this document.
 
@@ -10,16 +10,16 @@ The repository is self-contained. All architectural principles, design tokens, t
 
 ## 1. Why We Built This Starter Template
 
-When using AI coding assistants such as Cursor, Claude Code, and GitHub Copilot in real-world frontend development, UI quality tends to deteriorate rapidly across multiple iterations. This degradation happens because large language models lack persistent spatial awareness and long-term memory, optimizing instead for local token probabilities. Common failure modes include:
+With AI coding assistants such as Cursor, Claude Code, and GitHub Copilot writing frontend code, UI quality deteriorates rapidly across iterations. This degradation happens because large language models lack persistent spatial awareness and long-term memory, optimizing instead for local token probabilities. Common failure modes include:
 
 1. **Color Drift**: Models frequently introduce raw hex literals (`#3b82f6` or `#18181b`) or ad-hoc `rgba(...)` calls for new elements. These hardcoded values bypass global theme variables, breaking dark mode and causing primary colors and background tints to diverge across pages.
 2. **Arbitrary Bracket Proliferation**: To align a card or align table items, models introduce arbitrary Tailwind bracket classes (`w-[347px]`, `p-[13px]`, `rounded-[11px]`, `text-[13px]`). This destroys the 4px and 8px rhythmic spacing scale and produces mismatched visual proportions across components.
 3. **Low-Density Template Stacking (AI Slop)**: Models default to low-density nested cards, diffuse blur backdrops, glowing borders, and excessive empty space. In enterprise command consoles, ticket boards, and dense data tables, this pattern slows scanning speed and wastes screen real estate.
 4. **Paper Specifications Fail to Constrain Code**: Writing design rules in Figma files, PDFs, or online wikis does not prevent AI assistants from breaking them. Rules only hold when backed by mechanical, automated gates that block non-compliant code from merging.
 
-To address these challenges, this template enforces two architectural mechanisms:
+The template counters with two mechanisms:
 
-- **Tailwind CSS v4 as the Single Source of Truth (Code as Design)**: We eliminated intermediate translation layers where DTCG JSON files were compiled into CSS variables. All tokens are declared directly in `src/index.css` via native CSS custom properties and `@theme inline`. The code is the design specification, eliminating translation drift.
+- **Tailwind CSS v4 as the Single Source of Truth (Code as Design)**: We eliminated intermediate translation layers where DTCG JSON files were compiled into CSS variables. All tokens are declared directly in `src/index.css` via native CSS custom properties and `@theme inline`, so the code is the design specification.
 - **Automated Hard Gates**: Static analysis rules in `scripts/check-token-gates.mjs` and related audit tools run during pre-commit and CI. If an AI assistant introduces a hardcoded color, an arbitrary value-bearing bracket, or an untokenized font size, the build halts immediately with actionable errors.
 
 ---
@@ -28,7 +28,7 @@ To address these challenges, this template enforces two architectural mechanisms
 
 ```text
 .
-├── README.md                                      # Comprehensive design system charter and specifications (single source of truth)
+├── README.md                                      # Design system charter and specifications (single source of truth)
 ├── package.json                                   # Package configuration (design-system-template)
 ├── tsconfig.json                                  # TypeScript configuration with @/* path aliases
 ├── components.json                                # shadcn/ui component library metadata
@@ -165,7 +165,7 @@ Placement is a one-question test: did the registry give you this file, or did yo
 
 ## 3. How to Use This Template
 
-The recommended way to scaffold a project is using the official `create-design-system-template` CLI initializer. It supports both **interactive guided prompts** and **one-shot command-line execution** for standalone applications and monorepo shared packages.
+The recommended way to scaffold a project is using the official `create-design-system-template` CLI initializer. It supports interactive guided prompts and one-shot command-line execution, for standalone applications and monorepo shared packages.
 
 ### 3.1 Quick Start
 
@@ -187,7 +187,7 @@ pnpm create design-system-template
 npx -y create-design-system-template@latest
 ```
 
-The wizard will interactively ask:
+The wizard asks:
 1. **Template Mode**: Choose between `Standalone Application (Next.js / Vite)` or `Monorepo Shared Package`.
 2. **Destination Path**:
    - In *Standalone Mode*: Enter the directory where `design-system` will be created (default: `./`, automatically creates `./design-system`).
@@ -253,11 +253,11 @@ To create a new product or establish a dedicated brand codebase:
    cd design-system # or cd <project-name>
    bun run dev
    ```
-   Open `http://localhost:5173` in your browser. This showcases all 26 atomic primitives, OKLCH color palettes, status badges, form controls, and card modes.
+   Open `http://localhost:5173` in your browser. The brand guide demos every registry primitive, the OKLCH palettes, status badges, form controls, and card modes.
 3. **Customize brand tokens**:
    Follow [4.1 Brand Customization Workflow](#41-brand-customization-workflow) to adjust OKLCH brand variables and corner radius knobs.
 4. **Develop application views**:
-   Add routes under `src/app/` (App Router convention — the shipped brand guide lives at `src/app/brand/page.tsx`), consuming atomic primitives directly from `src/components/ui/`.
+   Add routes under `src/app/` (App Router convention; the shipped brand guide lives at `src/app/brand/page.tsx`), consuming primitives directly from `src/components/ui/`.
 
 ---
 
@@ -309,8 +309,6 @@ In projects built on `next-forge`, `pnpm workspaces`, or `turborepo` (such as `s
 
 ## 4. How to Build
 
-This chapter details brand token customization, local development and production build commands, automated quality verification gates, and template maintenance/release operations.
-
 ### 4.1 Brand Customization Workflow
 
 Customizing brand identity does not require modifying component JSX. It is controlled through two core design knobs:
@@ -322,7 +320,7 @@ Customizing brand identity does not require modifying component JSX. It is contr
    - Rigid industrial or developer console aesthetic: `--radius: 0rem;`
    - Compact professional tool aesthetic (default): `--radius: 0.5rem;`
    - Soft consumer SaaS aesthetic: `--radius: 0.75rem;`
-   All buttons, input controls, cards, dialogs, and nested containers recalculate their concentric radii in mathematical harmony.
+   All buttons, inputs, cards, dialogs, and nested containers recalculate in proportion and stay concentric: nested controls keep tighter radii than their containers.
 
 ### 4.2 Local Development & Production Build Commands
 
@@ -394,27 +392,27 @@ bun run clean
 
 ## 5. Architectural Design & Engineering Decisions
 
-### 5.1 From Centralized Monoliths to Autonomous Decoupling
+### 5.1 Why there is no shared component package
 
-In legacy architectures, organizations often attempt to maintain centralized multi-brand npm packages (such as `@org/design-tokens` and `@org/ui`), forcing separate applications to install them as rigid upstream dependencies. Sub-applications are prohibited from modifying the base tier, restricted to overriding CSS variables, while new components must endure bureaucratic multi-team review processes.
+A common pattern is a centralized multi-brand npm package (`@org/design-tokens`, `@org/ui`) that every application installs as an upstream dependency. Sub-applications may only override CSS variables, and new components need a multi-team review.
 
-In production environments, this pattern creates four major failure points:
+In production this pattern fails in four ways:
 
-1. **CSS Variable Overrides Cannot Express Real Brand Differences**: Brand identity is defined by information density, layout geometry, whitespace rhythm, and domain-specific interactions, not just color swaps. Marketing homepages require expansive editorial layouts, whereas operations consoles require ultra-dense data tables. Forcing both into a single centralized component library degrades both into generic color-swapped templates.
-2. **Blast Radius and Fear of Refactoring**: When multiple independent products depend on the same centralized package, tweaking padding or borders on a basic button requires testing across every downstream project. Architects become afraid to refactor primitives, and the design system stagnates.
-3. **Bureaucratic Promotion Cycles**: Domain-specific components (e.g. ticket workflow cards or SLA countdown timers) rarely benefit other products. Cross-repository promotion reviews add overhead without producing reuse, prompting developers to write inline styles to bypass the process.
-4. **Impaired Product Independence**: Independent business units need the freedom to evolve or spin out. Binding frontend code to an internal monolithic npm package creates massive refactoring costs during divestitures.
+1. **Variable overrides cannot express brand differences**: brand identity lives in information density, layout geometry, whitespace rhythm, and domain-specific interaction. Marketing sites need editorial layouts; operations consoles need dense data tables. One shared library degrades both into color-swapped generics.
+2. **Blast radius**: with several products on one package, changing a button's padding means retesting every downstream app. Primitives stop being refactored and the system stagnates.
+3. **Promotion bureaucracy**: domain-specific components (a ticket workflow card, an SLA countdown) rarely help other products, so cross-repo review adds cost without reuse, and developers escape through inline styles.
+4. **Lost independence**: a business unit that needs to evolve or spin out inherits refactoring costs from the shared package.
 
-This template adopts an architecture of **shared engineering standards with decoupled implementations**:
+This template takes a different trade: shared engineering standards, decoupled implementations.
 
-- **Each brand or application owns its UI code and tokens**: UI primitives are maintained directly alongside the product, evolving freely without waiting for upstream package release cycles.
-- **Shared engineering standards and automated tooling**: Projects share token naming conventions, OKLCH color algorithms, single-knob radius mathematics, automated hard gate scripts, and living workshop tools.
+- Each brand or application owns its UI code and tokens. Primitives live alongside the product and evolve without waiting for an upstream release cycle.
+- Engineering standards and tooling stay shared: token naming, OKLCH color math, single-knob radius mathematics, the hard gate scripts, and the living workshop.
 
 ### 5.2 OKLCH Perceptual Color Model
 
-The system standardizes on the **OKLCH color space** (`oklch(L C H)`), built on the CIE Oklab standard:
+The system standardizes on the OKLCH color space (`oklch(L C H)`), built on the CIE Oklab standard:
 
-- **Perceptual Uniformity**: In traditional HSL, setting Lightness to 50% yields wildly different perceptual brightness across hues (yellow appears blindingly bright, while blue appears dark). OKLCH's Lightness (L), Chroma (C), and Hue (H) channels are orthogonal. Changing the hue preserves identical perceived brightness.
+- **Perceptual Uniformity**: In traditional HSL, setting Lightness to 50% yields wildly different perceptual brightness across hues (at the same nominal lightness, yellow renders far brighter than blue). OKLCH's Lightness (L), Chroma (C), and Hue (H) channels are orthogonal. Changing the hue preserves identical perceived brightness.
 - **Mathematical Contrast Derivation**: Using L channel values, accessible foreground and background pairs can be calculated deterministically without manual trial and error across light and dark themes.
 - **P3 Wide-Gamut Display Support**: OKLCH addresses wide-gamut Liquid Retina and OLED displays, delivering vibrant state accents while keeping dark-mode surfaces rich rather than washed out.
 
@@ -433,18 +431,18 @@ Contrast standards balance current legal compliance with modern perceptual resea
 3. **Automated Verification**:
    Storybook integrates `@storybook/addon-a11y` (powered by axe-core), while `scripts/check-a11y-wcag.mjs` runs mathematical checks and DOM audits locally and in CI.
 
-### 5.4 Insights from Google Design CLI & Stitch Ecosystem
+### 5.4 Lessons from the Google design CLI
 
 The `@google/design.md` CLI demonstrated that plain-text Markdown can serve as a machine-readable design specification. We drew two insights from this work:
 
 1. **Design Specifications as Machine-Readable Contracts**: Writing principles, color tokens, and layout constraints in structured Markdown gives AI coding assistants an explicit boundary, suppressing unprompted deviations.
 2. **Automated Semantic Diffing**: Changes to design systems should be checked for regressions automatically. Code introducing accessibility violations or orphaned styles should fail CI immediately.
 
-This template realizes these principles in a lightweight format: this README serves as the shared human and AI contract, while `scripts/check-token-gates.mjs` enforces the contract without heavy multi-layer compiler toolchains.
+This template applies both in a lightweight form: this README is the human and AI contract, and `scripts/check-token-gates.mjs` enforces it without a compiler toolchain.
 
 ### 5.5 Core Engineering Standards & Declarative Statements
 
-Underlying engineering decisions adhere to four declarative standards:
+Four standing engineering decisions:
 
 #### 1. Iconography Dependency Standard
 - The design system designates `lucide-react` as its standard atomic icon infrastructure. It must not be removed.
@@ -466,7 +464,7 @@ Underlying engineering decisions adhere to four declarative standards:
 
 ## 6. Multi-Tier Design Constraint Architecture
 
-Text specifications alone do not reliably constrain AI assistants. This template establishes a three-tier defense model that enforces quality through automated gates: from Tier 1 natural language rules and negative patterns in this document, to Tier 2 operational guardrails in `AGENTS.md`, and through to Tier 3 automated gate scripts (token gates, brand vector anti-XSS, Vitest unit tests, WCAG 2.1 AA / a11y audits, and Playwright visual snapshots).
+Text alone does not constrain AI assistants reliably, so quality is enforced through three tiers: Tier 1 is the rules and negative patterns in this document, Tier 2 is the operational guardrails in `AGENTS.md`, and Tier 3 is the automated gate scripts (token gates, brand vector anti-XSS, Vitest, WCAG 2.1 AA / a11y audits, Playwright visual snapshots).
 
 ### 6.1 Tier 1: Architectural Charter & Design Principles (This README)
 
@@ -513,8 +511,8 @@ Performs security and structural audits across all third-party vector SVGs in `p
 The template configures a headless DOM test suite via `vitest.config.ts` and `vitest.setup.ts`:
 - **Command**: `bun run test` or `npm run test`.
 - **Environment**: Happy-DOM / JSDOM with pre-configured `ResizeObserver`, `matchMedia`, and DOM stubs.
-- **Coverage**: 12 test suites, 59 automated unit tests.
-  - **Context State Machines**: Comprehensive coverage for `ThemeContext` (theme toggling and local storage persistence), `DialogContext` (modal stack management), `ToastContext` (toast notification lifecycles and timeouts), `SidebarContext` (desktop navigation and mobile drawer toggles), and `BreadcrumbContext` (route hierarchy tracking and document title derivation).
+- **Coverage**: 12 test suites, 59 tests.
+  - **Context State Machines**: covers `ThemeContext` (theme toggling and local storage persistence), `DialogContext` (modal stack management), `ToastContext` (toast notification lifecycles and timeouts), `SidebarContext` (desktop navigation and mobile drawer toggles), and `BreadcrumbContext` (route hierarchy tracking and document title derivation).
   - **Interactive Primitives**: Behavioral assertions for `ThemeToggle` (click and keyboard triggers), `ToggleSwitch` (accessibility states and debounce protection), `StatusBadge`, `StatusGlyph`, and `StatusIcon` (severity level styling and hover popover rendering).
   - **Custom Hooks and Utilities**: Verification for `useSecondTick` (high-precision second ticks), `usePrefersReducedMotion` (system motion preference listeners), and `timeAgo` / `formatDateTime` date helpers.
 - **Engineering Role**: Serves as a millisecond-fast regression barrier, verifying state transitions and event callbacks during package refactoring and dependency upgrades.
@@ -595,7 +593,7 @@ The `Card` primitive supports two distinct usage patterns:
 
 ### 7.4 Five-Phase Status Lifecycle & Non-Color Dependence
 
-Status presentation adheres to strict semantic and accessibility requirements:
+Status presentation follows two rules:
 
 1. **Five Canonical Lifecycle Phases**:
    - `success`: Green palette. Indicates smooth completion or healthy service operations.
@@ -610,7 +608,7 @@ Status presentation adheres to strict semantic and accessibility requirements:
 
 ### 7.5 Local Variable Font & Typography Infrastructure
 
-In enterprise Web and desktop applications, typography forms the layout skeleton. Interfaces demand high information density, rapid scanning, zero ambiguity, and air-gapped resilience. This system standardizes on **Inter Variable** as its foundational typeface, backed by a local static font infrastructure.
+Dense enterprise interfaces need a typeface that holds up under high information density, fast scanning, and air-gapped deployment. This system standardizes on Inter Variable, hosted locally.
 
 #### 1. WOFF2 Technology & Variable Font Mechanics
 

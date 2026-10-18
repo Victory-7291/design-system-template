@@ -98,28 +98,52 @@ To address these challenges, this template enforces two architectural mechanisms
 
 ---
 
-## 2.1 Component Layering & shadcn/ui Compatibility
+## 2.1 Component layering, shadcn/ui compatibility, and accessibility
 
-The component library is layered; only the top layer is Paperclip-specific.
+### Where the components come from
+
+`src/components/ui/` contains the full shadcn/ui registry, injected with the official CLI: 60+ primitives covering accordion, chart, sidebar, calendar, carousel, sonner, form primitives, and the agentic `message` / `bubble` / `attachment` building blocks. `components.json` in the repo root pins the `new-york` style on Tailwind v4, so `npx shadcn@latest add <component>` is the supported way to add or update any of them. 26 of the files carry a template extension layer (documented below); the rest are stock upstream files.
+
+The library is layered; only the top layer is Paperclip-specific.
 
 | Layer | Location | What it is | Relationship to shadcn/ui |
 | :--- | :--- | :--- | :--- |
-| 1. Atomic primitives | `src/components/ui/` | **The full shadcn/ui registry** (60+ primitives — accordion, chart, data-table via calendar/combobox patterns, sidebar, sonner, message / bubble / attachment AI primitives, …), injected with the official CLI | Stock shadcn/ui **new-york (Tailwind v4)** code, managed through `components.json` in the repo root. 26 of the files carry the template's tokenization + RTL + extension layer (see below); the rest are byte-identical upstream. |
-| 2. Primitive extensions | same files | Additive variants: Button `cta` / `xs` / `icon-*` sizes, Card `interactive`, Avatar sizes + group, Select `sm`, Tabs `line`, Badge `ghost` / `link` | Pure additive props on the stock API — no stock variant was removed or reshaped. |
-| 3. Template components | `src/components/*.tsx` | `EmptyState`, `InlineBanner`, `ThemeToggle`, `ToastViewport` + `RadioCard`, `ToggleSwitch`, `ResizablePanels` | Not in the shadcn registry; built purely from tokens and Layer-1 primitives. |
-| 4. Status language | `src/components/Status*.tsx` + `src/lib/status-colors.ts` | `StatusBadge`, `StatusGlyph`, `StatusIcon` + the status palette | Paperclip-specific domain layer carrying the status vocabulary (task lifecycle, agent heartbeat, run / goal / approval outcomes). Flat files — delete them if your product doesn't need the vocabulary. |
+| 1. Atomic primitives | `src/components/ui/` | Full shadcn/ui registry, CLI-injected | Stock shadcn/ui `new-york` (Tailwind v4) code, managed through `components.json` |
+| 2. Primitive extensions | 26 of the same files | Additive variants: Button `cta` / `xs` / `icon-*` sizes, Card `interactive`, Avatar sizes + group, Select `sm`, Tabs `line`, Badge `ghost` / `link` | Additive props on the stock API; no stock variant was removed or reshaped |
+| 3. Template components | `src/components/*.tsx` | `EmptyState`, `InlineBanner`, `ThemeToggle`, `ToastViewport`, `RadioCard`, `ToggleSwitch`, `ResizablePanels` | Not in the shadcn registry; built from tokens and Layer-1 primitives |
+| 4. Status language | `src/components/Status*.tsx` + `src/lib/status-colors.ts` | `StatusBadge`, `StatusGlyph`, `StatusIcon` + the status palette | Paperclip-specific domain vocabulary (task lifecycle, agent heartbeat, run / goal / approval outcomes). Flat files; delete them if your product does not need it |
 
-**ai-elements**: the agentic-interface primitives (`message`, `message-scroller`, `bubble`, `attachment`, `spinner`, `item`, `kbd`, `empty`) ship as part of the registry injection and are purely presentational — they take plain props/callbacks and do not import the Vercel AI SDK. The higher-level ai-elements *patterns* (plan, tool, chain-of-thought, …) are officially copy-paste compositions; they are deliberately **not** vendored here so that `src/components/ui/` stays 100% CLI-managed and machine-updatable. Compose them in feature code on top of the injected primitives when a surface needs one.
+The agentic-interface primitives (`message`, `message-scroller`, `bubble`, `attachment`, `spinner`, `item`, `kbd`, `empty`) ship as part of the registry injection. They are presentational: plain props and callbacks, no Vercel AI SDK imports. The higher-level ai-elements patterns (plan, tool, chain-of-thought, …) are officially copy-paste compositions and are deliberately not vendored here, so that `ui/` stays fully CLI-managed and machine-updatable. Compose those patterns in feature code on top of the injected primitives.
 
-Deliberate divergences in the 26 extended files (kept on purpose; the token gates do not scan `ui/`, so these are documented rather than enforced — the a11y gates still cover them):
+### Weekly updates without downstream churn
 
-- All arbitrary values are tokenized — `ring-[3px]` → `ring-(length:--rad-3)`, `transition-[color,box-shadow]` → `transition-(--tp-color-box-shadow)`, and geometry (`top-(--pct-50)`, `max-w-(--sz-calc-25)`) resolves through `src/index.css` tokens. Upstream class *order* may differ; the API does not.
-- Component microcopy is parameterized and RTL-safe (logical properties), per the i18n pass.
-- Logical RTL properties (`ps-8` / `pe-2` / `start-2` / `end-2`) replace physical directions, per the i18n/RTL pass.
+`.github/workflows/shadcn-sync.yml` re-injects every component tracked in `scripts/shadcn-components.txt` every Monday with `shadcn add --overwrite`, and opens a sync PR when upstream moved. Dependabot covers the npm packages the components installed; this workflow covers the vendored source files, which Dependabot cannot see.
+
+A sync cannot break application code for two reasons. First, the primitives keep a fixed API surface (exports, props, `data-slot` attributes, cva variants), so code written against `Button` or `Dialog` survives an overwrite. Second, the token gates do not scan `ui/`, so upstream's class conventions never fail a check; CI still runs the a11y gates and the test suite on every sync PR.
+
+One caveat: an overwrite reverts the 26 extended files to stock. The sync PR diff shows exactly which files were touched, and the re-apply list is `button.tsx`, `badge.tsx`, `card.tsx`, `avatar.tsx`, `select.tsx`, `tabs.tsx`, `alert-dialog.tsx`, `dialog.tsx`, `sheet.tsx`, `command.tsx`. Adopting a newly published component is one command plus one line in the tracked list.
+
+The extended files diverge from upstream in three documented ways:
+
+- Values are tokenized: `ring-[3px]` becomes `ring-(length:--rad-3)`, `transition-[color,box-shadow]` becomes `transition-(--tp-color-box-shadow)`, and geometry resolves through `src/index.css` tokens (`top-(--pct-50)`, `max-w-(--sz-calc-25)`). Class order may differ from upstream; the API does not.
+- Physical directions are replaced with logical RTL properties (`ps-8`, `pe-2`, `start-2`, `end-2`), per the i18n pass.
 - Interactive surfaces carry explicit `motion-reduce:` fallbacks and mobile-safe typography (`text-base md:text-sm` on editable controls).
 
-**Updating shadcn/ui components:** `src/components/ui/` is managed through the shadcn CLI — re-run `npx shadcn@latest add <component> --overwrite` (or `--all`) at any time; refresh existing installs with `npx shadcn@latest init --reinstall`, preview with `--dry-run` / `--diff`. Updates are automated: **`.github/workflows/shadcn-sync.yml`** re-injects every component tracked in `scripts/shadcn-components.txt` every Monday and opens a sync PR when upstream moved (CI runs the full quality suite on that PR). Dependabot covers the npm dependencies the registry components installed; the workflow covers the vendored component code. Adopting a newly published component is one command plus one line in the tracked list. The **token** quality gates deliberately do NOT scan `src/components/ui/` (upstream-managed code keeps its upstream form) — they govern template-authored surfaces (`src/app/**`, `src/components/*.tsx`, `src/lib`, `src/hooks`). The **a11y** gates scan everything including `ui/`: stock shadcn/ui is verified to pass the static scan and the axe-core WCAG 2.1 AA audit with zero violations. The files below carry template-local extensions, so after an `--overwrite` re-check `git diff` and re-apply: `button.tsx`, `badge.tsx`, `card.tsx`, `avatar.tsx`, `select.tsx`, `tabs.tsx`, `alert-dialog.tsx`, `dialog.tsx`, `sheet.tsx`, `command.tsx` (RTL logical properties, reduced-motion fallbacks, mobile-safe typography).
+### How shadcn/ui handles accessibility
 
+Accessibility lives in the behavior layer, below the styling. The primitives are headless (Radix UI) and own the parts that are hard to get right: focus trapping in dialogs and focus return to the trigger, roving tabindex and typeahead in menus, ARIA wiring (`DialogTitle` becomes `aria-labelledby`, `DialogDescription` becomes `aria-describedby`), `aria-expanded` and `aria-haspopup` on triggers, and live regions for toasts. The shadcn layer adds consistent conventions on top: a `focus-visible:ring` driven by the `--ring` token on every interactive element, `aria-invalid:` styling hooks for form validation, and `data-state` attributes so state styling cannot drift from semantic state.
+
+This template verifies the result instead of trusting it. The a11y gates run a static anti-pattern scan and an axe-core WCAG 2.1 AA audit over every component, `ui/` included, and the full registry passes with zero violations. A weekly sync that introduces a regression fails CI on the sync PR.
+
+That behavior-first model is the template's accessibility standard. Application and template components compose `ui/` primitives rather than reimplementing interaction; focus, keyboard, and ARIA concerns are inherited from the primitive, and the gates check the composed result.
+
+### The Radix UI rule
+
+Template-authored interactive components build on the `radix-ui` package or compose `ui/` primitives. Do not introduce a second headless base (Base UI, React Aria) into template code: one focus and keyboard model per product is what keeps dialog focus management, menu keyboard maps, and screen-reader output consistent across surfaces.
+
+The vendored registry follows upstream wherever upstream went. 36 files import `radix-ui`; one (`combobox.tsx`) uses Base UI because upstream chose it for that pattern. The exception ships because `ui/` tracks upstream file-for-file. It is not a pattern to copy into template code.
+
+---
 
 ## 3. How to Use This Template
 

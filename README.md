@@ -8,7 +8,7 @@ The repository is self-contained. All architectural principles, design tokens, t
 
 ---
 
-## 1. Why We Built This Starter Template
+## 1. Motivation
 
 With AI coding assistants such as Cursor, Claude Code, and GitHub Copilot writing frontend code, UI quality deteriorates rapidly across iterations. This degradation happens because large language models lack persistent spatial awareness and long-term memory, optimizing instead for local token probabilities. Common failure modes include:
 
@@ -24,7 +24,7 @@ The template counters with two mechanisms:
 
 ---
 
-## 2. Repository Structure & Module Overview
+## 2. Structure
 
 ```text
 .
@@ -98,9 +98,9 @@ The template counters with two mechanisms:
 
 ---
 
-## 2.1 Component layering, shadcn/ui compatibility, and accessibility
+## 2.1 Components
 
-### Where the components come from
+### Component sources
 
 `src/components/ui/` contains the full shadcn/ui registry, injected with the official CLI: 60+ primitives covering accordion, chart, sidebar, calendar, carousel, sonner, form primitives, and the agentic `message` / `bubble` / `attachment` building blocks. `components.json` in the repo root pins the `new-york` style on Tailwind v4, so `npx shadcn@latest add <component>` is the supported way to add or update any of them. 26 of the files carry a template extension layer (documented below); the rest are stock upstream files.
 
@@ -115,7 +115,7 @@ The library is layered; only the top layer is Paperclip-specific.
 
 The agentic-interface primitives (`message`, `message-scroller`, `bubble`, `attachment`, `spinner`, `item`, `kbd`, `empty`) ship as part of the registry injection. They are presentational: plain props and callbacks, no Vercel AI SDK imports. The higher-level ai-elements patterns (plan, tool, chain-of-thought, …) are officially copy-paste compositions and are deliberately not vendored here, so that `ui/` stays fully CLI-managed and machine-updatable. Compose those patterns in feature code on top of the injected primitives.
 
-### Weekly updates without downstream churn
+### Weekly updates
 
 `.github/workflows/shadcn-sync.yml` re-injects every component tracked in `scripts/shadcn-components.txt` every Monday with `shadcn add --overwrite`, and opens a sync PR when upstream moved. Dependabot covers the npm packages the components installed; this workflow covers the vendored source files, which Dependabot cannot see.
 
@@ -129,7 +129,7 @@ The extended files diverge from upstream in three documented ways:
 - Physical directions are replaced with logical RTL properties (`ps-8`, `pe-2`, `start-2`, `end-2`), per the i18n pass.
 - Interactive surfaces carry explicit `motion-reduce:` fallbacks and mobile-safe typography (`text-base md:text-sm` on editable controls).
 
-### How shadcn/ui handles accessibility
+### Accessibility
 
 Accessibility lives in the behavior layer, below the styling. The primitives are headless (Radix UI) and own the parts that are hard to get right: focus trapping in dialogs and focus return to the trigger, roving tabindex and typeahead in menus, ARIA wiring (`DialogTitle` becomes `aria-labelledby`, `DialogDescription` becomes `aria-describedby`), `aria-expanded` and `aria-haspopup` on triggers, and live regions for toasts. The shadcn layer adds consistent conventions on top: a `focus-visible:ring` driven by the `--ring` token on every interactive element, `aria-invalid:` styling hooks for form validation, and `data-state` attributes so state styling cannot drift from semantic state.
 
@@ -157,19 +157,19 @@ The vendored registry follows upstream wherever upstream went. 36 files import `
 
 Placement is a one-question test: did the registry give you this file, or did you write it? Registry files live in `ui/` and stay stock. Everything written by a person, template or application, is a flat file in `src/components/` with a co-located `*.test.tsx`. Two lifecycle rules keep the tree honest: a file in `context/`, `hooks/`, or `lib/` earns its place by having a real consumer, and deleting a component takes its dedicated state and palette with it.
 
-### The brand guide is the usage example
+### Usage example
 
 `src/app/brand/page.tsx` is both the showcase and the reference implementation. Every primitive in `ui/`, every template component, the status language, and every utility in `lib/` has a working demo there, written the way application code should be written: composition over `ui/` primitives, tokens everywhere, no hardcoded values. When you add a component to the template, add its demo to the brand guide in the same change; when a file cannot earn a demo, question whether it belongs in the template.
 
 ---
 
-## 3. How to Use This Template
+## 3. Usage
 
 The recommended way to scaffold a project is using the official `create-design-system-template` CLI initializer. It supports interactive guided prompts and one-shot command-line execution, for standalone applications and monorepo shared packages.
 
 ### 3.1 Quick Start
 
-#### Option A: Interactive Guided Mode (交互式引导创建)
+#### Option A: Interactive wizard
 
 Run without arguments to launch the step-by-step terminal wizard:
 
@@ -194,7 +194,7 @@ The wizard asks:
    - In *Monorepo Package Mode*: Enter the parent directory where `design-system` will be stored (default: `packages`, automatically creates `packages/design-system`).
 3. **Package Manager** *(Standalone only)*: Select `bun`, `pnpm`, `npm`, or `yarn`. (Package mode automatically detects and reuses your repository's existing package manager).
 
-#### Option B: Command-Line Arguments Mode (命令行直接指定参数)
+#### Option B: CLI flags
 
 Provide target paths and options directly for non-interactive or CI execution:
 
@@ -214,7 +214,7 @@ pnpm create design-system-template -p packages --mode package
 npx -y create-design-system-template@latest -p packages --mode package
 ```
 
-### CLI Command Options & Flags
+### CLI options
 
 | Flag | Description | Default |
 | :--- | :--- | :--- |
@@ -229,18 +229,18 @@ npx -y create-design-system-template@latest -p packages --mode package
 
 ---
 
-### Scenario 1: Standalone Application Starter (Next.js / Vite)
+### Scenario 1: Standalone app
 
 To create a new product or establish a dedicated brand codebase:
 
 1. **Scaffold via CLI**:
-   - **Interactive Prompt (交互式创建)**:
+   - **Interactive prompt**:
      ```bash
      bun create design-system-template
      # or: npm create design-system-template@latest
      ```
      *(Select `Standalone Application` -> enter destination directory e.g. `./` -> select package manager -> automatically creates `./design-system`)*.
-   - **Command-line Arguments (命令行一键创建)**:
+   - **CLI arguments**:
      ```bash
      # Specify destination directory (automatically creates <dir>/design-system):
      bun create design-system-template -p <dir> --mode standalone --pm bun
@@ -255,25 +255,25 @@ To create a new product or establish a dedicated brand codebase:
    ```
    Open `http://localhost:5173` in your browser. The brand guide demos every registry primitive, the OKLCH palettes, status badges, form controls, and card modes.
 3. **Customize brand tokens**:
-   Follow [4.1 Brand Customization Workflow](#41-brand-customization-workflow) to adjust OKLCH brand variables and corner radius knobs.
+   Follow [4.1 Brand customization](#41-brand-customization) to adjust OKLCH brand variables and corner radius knobs.
 4. **Develop application views**:
    Add routes under `src/app/` (App Router convention; the shipped brand guide lives at `src/app/brand/page.tsx`), consuming primitives directly from `src/components/ui/`.
 
 ---
 
-### Scenario 2: Autonomous Sub-package in a Full-stack Monorepo
+### Scenario 2: Monorepo package
 
 In projects built on `next-forge`, `pnpm workspaces`, or `turborepo` (such as `saas-template`):
 
 1. **Scaffold into packages directory**:
-   - **Interactive Prompt (交互式创建)**:
+   - **Interactive prompt**:
      ```bash
      # Run inside your monorepo root
      bun create design-system-template
      # or: pnpm create design-system-template
      ```
      *(Select `Monorepo Shared Package` -> enter parent path `packages` -> automatically creates `packages/design-system` and reuses monorepo package manager)*.
-   - **Command-line Arguments (命令行一键创建)**:
+   - **CLI arguments**:
      ```bash
      bun create design-system-template -p packages --mode package
      # or
@@ -307,9 +307,9 @@ In projects built on `next-forge`, `pnpm workspaces`, or `turborepo` (such as `s
 
 ---
 
-## 4. How to Build
+## 4. Build
 
-### 4.1 Brand Customization Workflow
+### 4.1 Brand customization
 
 Customizing brand identity does not require modifying component JSX. It is controlled through two core design knobs:
 
@@ -322,7 +322,7 @@ Customizing brand identity does not require modifying component JSX. It is contr
    - Soft consumer SaaS aesthetic: `--radius: 0.75rem;`
    All buttons, inputs, cards, dialogs, and nested containers recalculate in proportion and stay concentric: nested controls keep tighter radii than their containers.
 
-### 4.2 Local Development & Production Build Commands
+### 4.2 Commands
 
 ```bash
 # Start local living kitchen sink workshop (http://localhost:5173)
@@ -341,7 +341,7 @@ bun run storybook
 bun run build-storybook
 ```
 
-### 4.3 Automated Quality & Token Verification Gates
+### 4.3 Quality gates
 
 ```bash
 # Run automated token hard gates (Gate 1-4: zero hex colors, zero value brackets, zero raw font-size)
@@ -363,7 +363,7 @@ bun run test
 bun run typecheck
 ```
 
-### 4.4 Maintenance & Release Operations (运维与发布)
+### 4.4 Release
 
 The repository provides automated maintenance and publishing tooling for the design system template and its companion CLI (`create-design-system-template`):
 
@@ -384,15 +384,15 @@ bun run release
 bun run clean
 ```
 
-#### Automated CLI & Package Publishing
+#### CLI publishing
 - **NPM Package**: `create-design-system-template`
 - **Release Automation**: GitHub Actions ([`.github/workflows/release.yml`](.github/workflows/release.yml)) automatically builds the template and CLI on pushes to `main`. When `cli/package.json` version is incremented relative to npm, the workflow automatically publishes the new version with `--provenance` and `--access public`.
 
 ---
 
-## 5. Architectural Design & Engineering Decisions
+## 5. Architecture
 
-### 5.1 Why there is no shared component package
+### 5.1 No shared package
 
 A common pattern is a centralized multi-brand npm package (`@org/design-tokens`, `@org/ui`) that every application installs as an upstream dependency. Sub-applications may only override CSS variables, and new components need a multi-team review.
 
@@ -408,7 +408,7 @@ This template takes a different trade: shared engineering standards, decoupled i
 - Each brand or application owns its UI code and tokens. Primitives live alongside the product and evolve without waiting for an upstream release cycle.
 - Engineering standards and tooling stay shared: token naming, OKLCH color math, single-knob radius mathematics, the hard gate scripts, and the living workshop.
 
-### 5.2 OKLCH Perceptual Color Model
+### 5.2 OKLCH color
 
 The system standardizes on the OKLCH color space (`oklch(L C H)`), built on the CIE Oklab standard:
 
@@ -416,7 +416,7 @@ The system standardizes on the OKLCH color space (`oklch(L C H)`), built on the 
 - **Mathematical Contrast Derivation**: Using L channel values, accessible foreground and background pairs can be calculated deterministically without manual trial and error across light and dark themes.
 - **P3 Wide-Gamut Display Support**: OKLCH addresses wide-gamut Liquid Retina and OLED displays, delivering vibrant state accents while keeping dark-mode surfaces rich rather than washed out.
 
-### 5.3 Accessibility Metrics: WCAG 2.1 AA and APCA
+### 5.3 Contrast
 
 Contrast standards balance current legal compliance with modern perceptual research:
 
@@ -440,7 +440,7 @@ The `@google/design.md` CLI demonstrated that plain-text Markdown can serve as a
 
 This template applies both in a lightweight form: this README is the human and AI contract, and `scripts/check-token-gates.mjs` enforces it without a compiler toolchain.
 
-### 5.5 Core Engineering Standards & Declarative Statements
+### 5.5 Engineering decisions
 
 Four standing engineering decisions:
 
@@ -456,35 +456,35 @@ Four standing engineering decisions:
 - The design system packages `InterVariable.woff2` locally, completely eliminating external Google Fonts or Adobe Typekit CDN links.
 - Local static fonts guarantee air-gapped deployment readiness, eliminate font flicker (zero FOIT and zero FOUT), and provide deterministic pixel rendering baselines in automated visual regression tests.
 
-#### 4. Flattened Single-Package Architecture Decision
+#### Flat single package
 - The design system operates as a unified, root-level package rather than a nested sub-directory structure.
 - This flattened layout eliminates path resolution overhead in build scripts, allowing the directory to function as a standalone repository or as an isolated workspace package inside a monorepo.
 
 ---
 
-## 6. Multi-Tier Design Constraint Architecture
+## 6. Constraints
 
 Text alone does not constrain AI assistants reliably, so quality is enforced through three tiers: Tier 1 is the rules and negative patterns in this document, Tier 2 is the operational guardrails in `AGENTS.md`, and Tier 3 is the automated gate scripts (token gates, brand vector anti-XSS, Vitest, WCAG 2.1 AA / a11y audits, Playwright visual snapshots).
 
-### 6.1 Tier 1: Architectural Charter & Design Principles (This README)
+### 6.1 Tier 1: this README
 
 This document establishes foundational constraints and negative patterns:
 - One way to express each scenario: do not duplicate components for minor styling variations.
 - No gratuitous linear gradients, heavy glassmorphism, or blurry drop shadows.
 - Density serves fast scanning; whitespace serves information hierarchy. Every border, divider, and surface fill must serve a functional layout purpose.
 
-### 6.2 Tier 2: AI Coding Operational Guardrails (`AGENTS.md`)
+### 6.2 Tier 2: AGENTS.md
 
 Explicit operational rules for AI assistants:
 - Always inspect existing primitives in `src/components/ui/` and Storybook before creating new UI elements.
 - Never invent new Button or Card variants in business pages; compose existing `variant` and `size` attributes.
 - Never write hardcoded color literals or arbitrary bracket classes in component JSX.
 
-### 6.3 Tier 3: Automated Hard Gate Pipeline
+### 6.3 Tier 3: gate scripts
 
 All code, whether authored by humans or generated by AI, must pass automated hard gates during pre-commit and CI:
 
-#### Token Hard Gates (`scripts/check-token-gates.mjs`)
+#### Token gates
 
 The gate script performs static AST analysis across all TSX files in `src/components/**` and `src/app/**`:
 
@@ -499,14 +499,14 @@ The gate script performs static AST analysis across all TSX files in `src/compon
 - Conditional state selectors (e.g. `data-[state=open]:opacity-100`, `aria-[checked=true]:bg-primary`, `max-[480px]:hidden`) are state predicates and are fully permitted.
 - Third-party library overrides must be registered in `src/index.css` under the `/* ── ALLOWLIST ── */` section with explicit paths and technical rationales (`* allow <path> — <reason>`). Unregistered overrides trigger build errors.
 
-#### Brand Vector Asset Security Scanning (`scripts/app-brand-validation.mjs`)
+#### Brand asset security
 
 Performs security and structural audits across all third-party vector SVGs in `public/brands/apps/`:
 - Enforces valid `viewBox` coordinates or intrinsic dimensions.
 - Rejects potential XSS vectors: `<script>`, `<foreignObject>`, `<iframe|object|embed>`, `onload=`, and `javascript:` URIs.
 - Blocks external network `@import` references and un-embedded external image links, ensuring 100% offline air-gapped safety.
 
-#### Unit & Context Testing (`Vitest + JSDOM`)
+#### Unit tests
 
 The template configures a headless DOM test suite via `vitest.config.ts` and `vitest.setup.ts`:
 - **Command**: `bun run test` or `npm run test`.
@@ -517,14 +517,14 @@ The template configures a headless DOM test suite via `vitest.config.ts` and `vi
   - **Custom Hooks and Utilities**: Verification for `useSecondTick` (high-precision second ticks), `usePrefersReducedMotion` (system motion preference listeners), and `timeAgo` / `formatDateTime` date helpers.
 - **Engineering Role**: Serves as a millisecond-fast regression barrier, verifying state transitions and event callbacks during package refactoring and dependency upgrades.
 
-#### Accessibility & Contrast Hard Gate (`scripts/check-a11y-wcag.mjs`)
+#### Accessibility gate
 
 Executes a three-in-one accessibility gate during component maintenance and CI:
 - **Token Contrast Mathematics**: Extracts all semantic foreground and background pairs in light and dark modes (`foreground`/`background`, `card`, `popover`, `primary`, `secondary`, `muted`, `destructive`, `sidebar`) and status glyphs, calculating WCAG 2.1 AA contrast ratios ($\ge 4.5:1$ text, $\ge 3.0:1$ graphics) and APCA $L_c$ perceptual scores.
 - **Static AST Anti-Pattern Audit**: Scans all UI components, verifying that `<img>` tags declare `alt` text, non-interactive elements with `onClick` declare `role` and keyboard focus handlers, and icon-only buttons include accessible text or `aria-label`.
 - **Headless DOM Audit**: Evaluates rendered component trees against WCAG 2.1 A and AA rules using JSDOM and axe-core.
 
-#### Pixel-Level Visual Regression Testing (`tests/storybook-visual/`)
+#### Visual regression
 
 - Runs automated screenshots using Playwright headless Chromium.
 - Enforces `reducedMotion: "reduce"` and disables CSS animations (`animations: "disabled"`).
@@ -533,9 +533,9 @@ Executes a three-in-one accessibility gate during component maintenance and CI:
 
 ---
 
-## 7. Core Design Specifications
+## 7. Design
 
-### 7.1 Design Token Architecture
+### 7.1 Tokens
 
 All tokens are declared in `src/index.css` across four structured tiers:
 
@@ -557,7 +557,7 @@ All tokens are declared in `src/index.css` across four structured tiers:
 4. **Motion Tier**:
    Declared in `src/motion-tokens.css`, defining physical durations, easing curves, and scoped animation tokens.
 
-### 7.2 Single-Knob Radius Scale
+### 7.2 Radius
 
 To eliminate optical disharmony where nested buttons appear rounder than their container cards, the system uses a single-knob multiplicative radius scale:
 
@@ -582,7 +582,7 @@ $$\text{Target Radius} = \text{Anchor Knob} \times \text{Multiplier}$$
 - **Global Calibration**: Updating `--radius` once recalculates buttons, inputs, cards, and modal dialogs in geometric proportion.
 - **Concentric Geometry**: Nested controls (`md`, 6.4px) remain tighter than outer container cards (`lg`, 8.0px), creating natural visual nesting.
 
-### 7.3 Dual-Mode Card Architecture (One Card, Two Modes)
+### 7.3 Dual-mode cards
 
 The `Card` primitive supports two distinct usage patterns:
 
@@ -591,7 +591,7 @@ The `Card` primitive supports two distinct usage patterns:
 - **Interactive Container Mode (Interactive Mode)**:
   Declared with `variant="interactive"`. Converts the card into a clickable surface: cursor becomes `cursor-pointer`, border smoothly shifts to `border-foreground/20` on hover, and the element responds with subtle elevation and focus rings.
 
-### 7.4 Five-Phase Status Lifecycle & Non-Color Dependence
+### 7.4 Status
 
 Status presentation follows two rules:
 
@@ -606,11 +606,11 @@ Status presentation follows two rules:
    - Geometric micro-glyphs: `StatusGlyph` renders solid discs, checkmarks, clock icons, warning triangles, or obstruction bars.
    - Text labels: Critical statuses declare explicit text via `StatusBadge`, allowing screen readers and visually impaired users to recognize states unambiguously.
 
-### 7.5 Local Variable Font & Typography Infrastructure
+### 7.5 Typography
 
 Dense enterprise interfaces need a typeface that holds up under high information density, fast scanning, and air-gapped deployment. This system standardizes on Inter Variable, hosted locally.
 
-#### 1. WOFF2 Technology & Variable Font Mechanics
+#### WOFF2 and variable fonts
 
 - **WOFF2 Compression**:
   WOFF2 (Web Open Font Format 2.0) is the W3C recommended web font standard. Utilizing Google Brotli compression, WOFF2 reduces file sizes by **over 70%** compared to TTF/OTF, and **30% to 50%** compared to WOFF 1.0. Modern browsers (Chrome, Safari, Firefox, Edge, iOS Safari, Android WebKit) deliver **>99.8% support**, eliminating the need for legacy TTF/EOT fallbacks.
@@ -624,14 +624,14 @@ Dense enterprise interfaces need a typeface that holds up under high information
 | **Weight Range** | Discrete steps (400, 500, 600, 700) | **Continuous interpolation**: `font-weight: 100` through `900` |
 | **Raster Smoothing** | Hard-coded glyph outlines | Real-time variation axis interpolation |
 
-#### 2. Source Auditing & Licensing Compliance
+#### Source and licensing
 
 - **Upstream Source**:
   Created by Rasmus Andersson (former Design Director at Spotify and early systems designer at Figma), Inter was built for computer displays, high-density data tables, and mixed code reading. Andersson engineered optical kerning, tall x-height, and character distinction (differentiating `0` vs `O`, `1` vs `l`, and uppercase `I`). Inter is deployed as the screen standard by Figma, GitHub, Vercel, Linear, Raycast, and Stripe. We pin upstream version **v4.1** (`https://github.com/rsms/inter`).
 - **Open Source Licensing**:
   Licensed under the **SIL Open Font License 1.1 (OFL)** (see `public/fonts/NOTICE.md`). It permits commercial deployment, royalty-free bundling in open source or proprietary software, and offline distribution without recurring fees.
 
-#### 3. Four Engineering Rules for Local Typography
+#### Four typography rules
 
 1. **Rule 1: Zero External Network Dependencies (Air-Gapped Ready)**:
    No component, stylesheet, or HTML entry point may issue requests to external font CDNs (`fonts.googleapis.com` or `fonts.gstatic.com`). The interface renders reliably in air-gapped private clouds, corporate intranets, and offline environments.
@@ -644,7 +644,7 @@ Dense enterprise interfaces need a typeface that holds up under high information
 4. **Rule 4: Immutable Typography Geometry**:
    Public CDNs can silently push minor font revisions that alter glyph bounding boxes or kerning pairs, causing unexpected line wraps in dense dashboards. Pinning local v4.1 SHA-256 binaries preserves layout geometry throughout the product lifecycle.
 
-#### 4. Code Integration & CSS Pipeline
+#### CSS integration
 
 - **`@font-face` Declarations**:
   Declared in `src/index.css`:
@@ -691,19 +691,19 @@ Dense enterprise interfaces need a typeface that holds up under high information
   />
   ```
 
-### 7.6 Mechanical Motion System & Accessibility Fallbacks
+### 7.6 Motion
 
 Motion tokens are declared in `src/motion-tokens.css`:
 
 - **Runtime Mutation via `:root`**: Motion tokens reside in `:root` as native CSS custom properties rather than static utility classes, allowing developers to tune animation durations and easing curves dynamically in developer tools.
 - **Global Reduced-Motion Fallback**: Configured with `@media (prefers-reduced-motion: reduce)`. When users enable reduced motion in their operating systems, animation durations and delays collapse to zero globally, preventing vestibular discomfort.
 
-### 7.7 Component Atomicity Principle (One Way to Say Each Thing)
+### 7.7 Atomicity
 
 - **Single Responsibility**: Each scenario has one canonical primitive (one Button, one Card, one Dialog, one Table, one EmptyState).
 - **Variant Attribution**: Visual variations and sizes are parameterized through `class-variance-authority` (cva). Deriving duplicate components for small visual tweaks is prohibited.
 
-### 7.8 Internationalization-Ready Architecture (i18n-Ready)
+### 7.8 i18n
 
 The component library architecture is completely i18n-ready out of the box. It does not force an external translation framework, but provides three structural mechanisms that guarantee zero-overhead localization:
 

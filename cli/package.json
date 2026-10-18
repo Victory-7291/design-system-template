@@ -1,6 +1,6 @@
 {
   "name": "create-design-system-template",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Scaffold an autonomous, anti-slop Tailwind CSS v4 design system starter template",
   "type": "module",
   "license": "MIT",

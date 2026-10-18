@@ -264,6 +264,14 @@ export const initialize = async (
       console.log(`  cd ${displayDir}`);
       console.log(`  ${runCmd} check        # Run quality and token governance checks`);
       console.log(`  ${runCmd} storybook    # Preview components in Storybook`);
+      log.info(
+        "CI workflows ship in this package's workflows/ folder (GitHub only runs .github/ at the repository root). Migrate them manually when ready:"
+      );
+      console.log("  mkdir -p .github/workflows");
+      console.log(`  cp ${displayDir}/workflows/*.yml .github/workflows/`);
+      console.log(
+        "  # Optional: add paths: [packages/design-system/**] to shadcn-sync.yml push filters so sync PRs only fire for design-system changes"
+      );
     }
 
     outro("Happy building with zero AI slop!");

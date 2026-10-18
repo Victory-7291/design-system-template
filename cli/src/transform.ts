@@ -1,4 +1,4 @@
-import { readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rename, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { PackageManagerName } from "nypm";
 
@@ -57,6 +57,18 @@ export const transformProject = async ({
 
     // Remove standalone application host files
     await rm(join(projectDir, "index.html"), { force: true });
+
+    // Ship the CI workflows inside the package for the user to migrate:
+    // GitHub only executes .github/ at the repository root, and overwriting
+    // a host monorepo's .github from a scaffold is never safe. The CLI
+    // prints the manual migration steps after install.
+    const workflowsSource = join(projectDir, ".github", "workflows");
+    const workflowsTarget = join(projectDir, "workflows");
+    await mkdir(workflowsTarget, { recursive: true });
+    for (const workflow of ["ci.yml", "shadcn-sync.yml"]) {
+      await rename(join(workflowsSource, workflow), join(workflowsTarget, workflow));
+    }
+    await rm(join(projectDir, ".github"), { recursive: true, force: true });
   } else {
     // Mode 1: Standalone Application
     pkg.description = "Autonomous anti-slop Tailwind CSS v4 design system application";

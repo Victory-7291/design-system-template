@@ -221,7 +221,16 @@ bun create design-system-template -p packages --mode package
 }
 ```
 
-3. Consume from applications:
+3. Migrate CI workflows (manual by design). The package ships its GitHub Actions in `packages/design-system/workflows/`; GitHub only executes `.github/` at the repository root, and the CLI leaves the move to you so an existing `.github/` is never overwritten:
+
+```bash
+mkdir -p .github/workflows
+cp packages/design-system/workflows/*.yml .github/workflows/
+```
+
+Optionally scope `shadcn-sync.yml` to the package by adding `paths: ["packages/design-system/**"]` under its push trigger, so weekly sync PRs only fire for design-system changes.
+
+4. Consume from applications:
 
 ```css
 @import "@repo/design-system/styles.css";
@@ -270,17 +279,9 @@ bun run check          # All of the above in sequence
 bun run test           # Vitest unit tests
 bun run typecheck      # TypeScript strict verification
 
-# Release operations
-bun run build:cli          # Build the CLI distribution bundle
-bun run changeset          # Create a changeset version entry
-bun run version-packages   # Bump versions and update CHANGELOG.md
-bun run release            # Tag the release commit
-bun run clean              # Remove build artifacts and caches
+# Clean build artifacts and caches
+bun run clean
 ```
-
-### Release automation
-
-`.github/workflows/release.yml` builds the template and CLI on every push to `main`. The changesets action opens a Version Packages PR from pending changesets; merging it bumps versions, updates `CHANGELOG.md`, and tags the release. Independently, `create-design-system-template` publishes to npm with provenance whenever `cli/package.json` version is ahead of the published version.
 
 ## 5. Quality gates
 

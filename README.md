@@ -143,6 +143,24 @@ Template-authored interactive components build on the `radix-ui` package or comp
 
 The vendored registry follows upstream wherever upstream went. 36 files import `radix-ui`; one (`combobox.tsx`) uses Base UI because upstream chose it for that pattern. The exception ships because `ui/` tracks upstream file-for-file. It is not a pattern to copy into template code.
 
+### Directory responsibilities
+
+| Directory | Role | Gates |
+| :--- | :--- | :--- |
+| `src/app/` | Routes and pages (App Router). The brand guide lives at `src/app/brand/page.tsx`. | token + a11y |
+| `src/components/ui/` | shadcn/ui registry code, CLI-managed, never hand-edited | a11y only |
+| `src/components/*.tsx` | Template components and your application components, composed from `ui/` primitives and tokens | token + a11y |
+| `src/context/` | Global state providers, one per real consumer (`Theme`, `Toast`) | vitest |
+| `src/hooks/` | Shared hooks (`use-mobile` ships with the sidebar primitive) | vitest |
+| `src/lib/` | Pure utilities (`cn`, `timeAgo`, `formatDateTime`, copy feedback, contrast math) and the status palette | vitest |
+| `src/index.css` | Token single source of truth | n/a |
+
+Placement is a one-question test: did the registry give you this file, or did you write it? Registry files live in `ui/` and stay stock. Everything written by a person, template or application, is a flat file in `src/components/` with a co-located `*.test.tsx`. Two lifecycle rules keep the tree honest: a file in `context/`, `hooks/`, or `lib/` earns its place by having a real consumer, and deleting a component takes its dedicated state and palette with it.
+
+### The brand guide is the usage example
+
+`src/app/brand/page.tsx` is both the showcase and the reference implementation. Every primitive in `ui/`, every template component, the status language, and every utility in `lib/` has a working demo there, written the way application code should be written: composition over `ui/` primitives, tokens everywhere, no hardcoded values. When you add a component to the template, add its demo to the brand guide in the same change; when a file cannot earn a demo, question whether it belongs in the template.
+
 ---
 
 ## 3. How to Use This Template

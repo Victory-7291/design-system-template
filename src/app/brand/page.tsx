@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import pkg from "../../../package.json";
 import {
+  AlertCircle,
   BookOpen,
   Bot,
   Check,
@@ -134,6 +135,182 @@ import {
 } from "@/components/ui/resizable-panels";
 import { ToggleSwitch } from "@/components/ui/toggle-switch";
 import { RadioCardGroup } from "@/components/ui/radio-card";
+import { toast } from "sonner";
+import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import {
+  Attachment,
+  AttachmentContent,
+  AttachmentDescription,
+  AttachmentGroup,
+  AttachmentMedia,
+  AttachmentTitle,
+} from "@/components/ui/attachment";
+import { Bubble, BubbleContent } from "@/components/ui/bubble";
+import { ButtonGroup } from "@/components/ui/button-group";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+} from "@/components/ui/carousel";
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "@/components/ui/combobox";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupTextarea,
+  InputGroupText,
+} from "@/components/ui/input-group";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemMedia,
+  ItemTitle,
+} from "@/components/ui/item";
+import { Kbd } from "@/components/ui/kbd";
+import { Marker, MarkerContent } from "@/components/ui/marker";
+import {
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarShortcut,
+  MenubarTrigger,
+} from "@/components/ui/menubar";
+import {
+  Message,
+  MessageContent,
+  MessageFooter,
+  MessageHeader,
+} from "@/components/ui/message";
+import {
+  MessageScroller,
+  MessageScrollerButton,
+  MessageScrollerContent,
+  MessageScrollerItem,
+  MessageScrollerProvider,
+  MessageScrollerViewport,
+} from "@/components/ui/message-scroller";
+import {
+  NativeSelect,
+  NativeSelectOption,
+} from "@/components/ui/native-select";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import { Progress } from "@/components/ui/progress";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Sidebar as UiSidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarInset,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+} from "@/components/ui/sidebar";
+import { Slider } from "@/components/ui/slider";
+import { Toaster } from "@/components/ui/sonner";
+import { Spinner } from "@/components/ui/spinner";
+import { Switch } from "@/components/ui/switch";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Toggle } from "@/components/ui/toggle";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+
+import { pickTextColorForPillBg } from "@/lib/color-contrast";
+import { timeAgo } from "@/lib/timeAgo";
+import { useCopyAction } from "@/lib/use-copy-action";
+import { formatDateTime } from "@/lib/utils";
+import { useSecondTick } from "@/hooks/useSecondTick";
 
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { EmptyState } from "@/components/EmptyState";
@@ -147,7 +324,11 @@ import {
 import { StatusGlyph } from "@/components/StatusGlyph";
 import { StatusIcon } from "@/components/StatusIcon";
 import { useToastActions } from "@/context/ToastContext";
-import { agentStatusDot, agentStatusDotDefault } from "@/lib/status-colors";
+import {
+  agentStatusDot,
+  agentStatusDotDefault,
+  DEMO_PILL_HUES,
+} from "@/lib/status-colors";
 
 /* ------------------------------------------------------------------ */
 /*  Section registry — drives the sidebar TOC and the scroll spy       */
@@ -166,7 +347,8 @@ const SECTIONS = [
   { id: "motion", num: "07", label: "Motion" },
   { id: "components", num: "08", label: "Components" },
   { id: "status", num: "09", label: "States & status" },
-  { id: "tokens", num: "10", label: "Design tokens" },
+  { id: "utilities", num: "10", label: "Utilities" },
+  { id: "tokens", num: "11", label: "Design tokens" },
 ] as const;
 
 function useScrollSpy() {
@@ -422,6 +604,98 @@ const SPACING_ROWS: { t: string; v: string; bar: number; u: string }[] = [
   { t: "gap-8 · p-8", v: "32px · 2rem", bar: 32, u: "Subsection blocks" },
   { t: "py-16", v: "64px · 4rem", bar: 64, u: "Section rhythm on long pages" },
 ];
+
+/** Sample series for the chart demo. Colors resolve through chart tokens. */
+const CHART_DATA = [
+  { month: "Jan", runs: 186 },
+  { month: "Feb", runs: 305 },
+  { month: "Mar", runs: 237 },
+  { month: "Apr", runs: 273 },
+];
+
+const CHART_CONFIG = {
+  runs: { label: "Runs", color: "var(--chart-2)" },
+} satisfies import("@/components/ui/chart").ChartConfig;
+
+/** Live demos for the lib/ + hooks/ utilities: shared ticker, relative time,
+    copy feedback, formatted dates, and contrast-aware text picking. */
+function UtilitiesShowcase() {
+  useSecondTick(true);
+  const { copied, copy } = useCopyAction();
+  const launched = new Date(Date.now() - 95 * 60 * 1000);
+
+  return (
+    <div className="grid gap-4 md:grid-cols-2">
+      <div className="rounded-lg border border-border bg-card p-5">
+        <p className="font-mono text-(length:--text-nano) uppercase tracking-widest text-muted-foreground">
+          useSecondTick + timeAgo
+        </p>
+        <p className="mt-2 text-2xl font-semibold tabular-nums">
+          {timeAgo(launched)}
+        </p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          One shared 1s ticker re-renders every subscriber; the tick count keeps
+          the relative time honest as the page stays open.
+        </p>
+      </div>
+      <div className="rounded-lg border border-border bg-card p-5">
+        <p className="font-mono text-(length:--text-nano) uppercase tracking-widest text-muted-foreground">
+          formatDateTime
+        </p>
+        <p className="mt-2 text-2xl font-semibold tabular-nums">
+          {formatDateTime(launched, { includeYear: true })}
+        </p>
+        <p className="mt-1 text-xs text-muted-foreground">
+          One formatter for machine-adjacent timestamps, shared across surfaces.
+        </p>
+      </div>
+      <div className="rounded-lg border border-border bg-card p-5">
+        <p className="font-mono text-(length:--text-nano) uppercase tracking-widest text-muted-foreground">
+          useCopyAction
+        </p>
+        <div className="mt-2 flex items-center gap-2">
+          <code className="rounded-md border border-border bg-background px-2.5 py-1.5 font-mono text-xs">
+            npx create-design-system-template
+          </code>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => copy("npx create-design-system-template")}
+          >
+            {copied ? "Copied" : "Copy"}
+          </Button>
+        </div>
+        <p className="mt-2 text-xs text-muted-foreground">
+          Inline copy feedback that only reports success once the clipboard
+          write resolves.
+        </p>
+      </div>
+      <div className="rounded-lg border border-border bg-card p-5">
+        <p className="font-mono text-(length:--text-nano) uppercase tracking-widest text-muted-foreground">
+          pickTextColorForPillBg
+        </p>
+        <div className="mt-2 flex flex-wrap items-center gap-2">
+          {DEMO_PILL_HUES.map((hue) => (
+            <span
+              key={hue}
+              className="rounded-full border px-3 py-1 font-mono text-xs"
+              style={{
+                backgroundColor: `color-mix(in srgb, ${hue} 22%, transparent)`,
+                color: pickTextColorForPillBg(hue),
+              }}
+            >
+              {hue}
+            </span>
+          ))}
+        </div>
+        <p className="mt-2 text-xs text-muted-foreground">
+          WCAG luminance math picks readable pill text over any translucent
+          fill.
+        </p>
+      </div>
+    </div>
+  );
+}
 
 /* ------------------------------------------------------------------ */
 /*  Page                                                               */
@@ -1986,6 +2260,553 @@ export default function DesignGuide() {
                 </ResizablePanelGroup>
               </div>
             </SubSection>
+
+            <SubSection
+              title="Disclosure & navigation"
+              aside="Accordion · context menu · menubar · navigation menu · pagination · drawer · hover card"
+            >
+              <div className="grid gap-6 md:grid-cols-2">
+                <Accordion type="single" collapsible>
+                  <AccordionItem value="a">
+                    <AccordionTrigger>
+                      What owns the keyboard behavior?
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      The headless primitive layer. Focus traps, roving
+                      tabindex, and typeahead are inherited, not reimplemented.
+                    </AccordionContent>
+                  </AccordionItem>
+                  <AccordionItem value="b">
+                    <AccordionTrigger>Can I restyle it?</AccordionTrigger>
+                    <AccordionContent>
+                      Yes. Styling is token-driven classes; the behavior stays.
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+
+                <div className="flex flex-col items-start gap-3">
+                  <ContextMenu>
+                    <ContextMenuTrigger asChild>
+                      <Button variant="outline" className="w-full">
+                        Right-click this area
+                      </Button>
+                    </ContextMenuTrigger>
+                    <ContextMenuContent>
+                      <ContextMenuItem>Open</ContextMenuItem>
+                      <ContextMenuItem>Copy path</ContextMenuItem>
+                      <ContextMenuItem variant="destructive">
+                        Delete
+                      </ContextMenuItem>
+                    </ContextMenuContent>
+                  </ContextMenu>
+                  <Menubar>
+                    <MenubarMenu>
+                      <MenubarTrigger>File</MenubarTrigger>
+                      <MenubarContent>
+                        <MenubarItem>
+                          New task <MenubarShortcut>⌘T</MenubarShortcut>
+                        </MenubarItem>
+                        <MenubarItem>Rename</MenubarItem>
+                        <MenubarItem>Move to…</MenubarItem>
+                      </MenubarContent>
+                    </MenubarMenu>
+                    <MenubarMenu>
+                      <MenubarTrigger>Edit</MenubarTrigger>
+                      <MenubarContent>
+                        <MenubarItem>Undo</MenubarItem>
+                        <MenubarItem>Redo</MenubarItem>
+                      </MenubarContent>
+                    </MenubarMenu>
+                  </Menubar>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-6">
+                <NavigationMenu>
+                  <NavigationMenuList>
+                    <NavigationMenuItem>
+                      <NavigationMenuTrigger>Products</NavigationMenuTrigger>
+                      <NavigationMenuContent>
+                        <div className="w-64 space-y-2 p-3">
+                          <NavigationMenuLink
+                            href="#"
+                            className="block rounded-md p-2 hover:bg-accent"
+                          >
+                            <p className="text-sm font-medium">Agents</p>
+                            <p className="text-xs text-muted-foreground">
+                              Run autonomous work
+                            </p>
+                          </NavigationMenuLink>
+                          <NavigationMenuLink
+                            href="#"
+                            className="block rounded-md p-2 hover:bg-accent"
+                          >
+                            <p className="text-sm font-medium">Routines</p>
+                            <p className="text-xs text-muted-foreground">
+                              Schedule recurring runs
+                            </p>
+                          </NavigationMenuLink>
+                        </div>
+                      </NavigationMenuContent>
+                    </NavigationMenuItem>
+                    <NavigationMenuItem>
+                      <NavigationMenuLink href="#" className={""}>
+                        Docs
+                      </NavigationMenuLink>
+                    </NavigationMenuItem>
+                  </NavigationMenuList>
+                </NavigationMenu>
+
+                <HoverCard>
+                  <HoverCardTrigger asChild>
+                    <Button variant="link">Hover card</Button>
+                  </HoverCardTrigger>
+                  <HoverCardContent className="w-64">
+                    <p className="text-sm font-medium">Agent Alpha</p>
+                    <p className="text-xs text-muted-foreground">
+                      Runs on a shared ticker; last heartbeat 24s ago.
+                    </p>
+                  </HoverCardContent>
+                </HoverCard>
+
+                <Pagination>
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious href="#" />
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationLink href="#">1</PaginationLink>
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationLink href="#" isActive>
+                        2
+                      </PaginationLink>
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationLink href="#">3</PaginationLink>
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationNext href="#" />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+
+                <Drawer>
+                  <DrawerTrigger asChild>
+                    <Button variant="outline">Drawer</Button>
+                  </DrawerTrigger>
+                  <DrawerContent>
+                    <DrawerHeader>
+                      <DrawerTitle>Run details</DrawerTitle>
+                      <DrawerDescription>
+                        Streaming output for run 4821.
+                      </DrawerDescription>
+                    </DrawerHeader>
+                    <div className="px-4 text-sm text-muted-foreground">
+                      Drawer content scrolls with the page, not the viewport.
+                    </div>
+                    <DrawerFooter>
+                      <DrawerClose asChild>
+                        <Button variant="outline">Close</Button>
+                      </DrawerClose>
+                    </DrawerFooter>
+                  </DrawerContent>
+                </Drawer>
+              </div>
+            </SubSection>
+
+            <SubSection
+              title="Forms & selection"
+              aside="Field · input group · slider · switch · radio group · toggle · OTP · native select · button group · calendar · combobox"
+            >
+              <div className="grid gap-6 md:grid-cols-2">
+                <FieldGroup>
+                  <Field>
+                    <FieldLabel htmlFor="field-demo">Deploy key</FieldLabel>
+                    <InputGroup>
+                      <InputGroupTextarea
+                        id="field-demo"
+                        placeholder="ssh-ed25519 AAAA…"
+                        rows={2}
+                      />
+                      <InputGroupAddon align="block-end">
+                        <InputGroupText className="text-xs text-muted-foreground">
+                          ed25519 · never shared
+                        </InputGroupText>
+                        <InputGroupButton size="sm">Paste</InputGroupButton>
+                      </InputGroupAddon>
+                    </InputGroup>
+                    <FieldDescription>
+                      Stored encrypted; rotated every 90 days.
+                    </FieldDescription>
+                    <FieldError>Key was rejected by the remote.</FieldError>
+                  </Field>
+                  <div className="flex flex-wrap items-center gap-6">
+                    <div className="flex items-center gap-2">
+                      <Switch id="switch-demo" defaultChecked />
+                      <Label htmlFor="switch-demo">Stock switch</Label>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Toggle variant="outline" defaultPressed>
+                        Pin
+                      </Toggle>
+                      <ToggleGroup
+                        type="multiple"
+                        variant="outline"
+                        defaultValue={["bold", "italic"]}
+                      >
+                        <ToggleGroupItem value="bold">B</ToggleGroupItem>
+                        <ToggleGroupItem value="italic">I</ToggleGroupItem>
+                      </ToggleGroup>
+                    </div>
+                  </div>
+                </FieldGroup>
+
+                <div className="space-y-5">
+                  <Slider
+                    defaultValue={[35]}
+                    max={100}
+                    step={1}
+                    aria-label="Concurrency"
+                  />
+                  <RadioGroup
+                    defaultValue="balanced"
+                    className="grid grid-cols-2 gap-2"
+                  >
+                    <div className="flex items-center gap-2">
+                      <RadioGroupItem value="fast" id="rg-fast" />
+                      <Label htmlFor="rg-fast">Fast</Label>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <RadioGroupItem value="deep" id="rg-deep" />
+                      <Label htmlFor="rg-deep">Deep</Label>
+                    </div>
+                  </RadioGroup>
+                  <InputOTP maxLength={6}>
+                    <InputOTPGroup>
+                      <InputOTPSlot index={0} />
+                      <InputOTPSlot index={1} />
+                      <InputOTPSlot index={2} />
+                      <InputOTPSeparator />
+                      <InputOTPSlot index={3} />
+                      <InputOTPSlot index={4} />
+                      <InputOTPSlot index={5} />
+                    </InputOTPGroup>
+                  </InputOTP>
+                  <ButtonGroup>
+                    <Button variant="outline" size="sm">
+                      Daily
+                    </Button>
+                    <Button variant="outline" size="sm">
+                      Weekly
+                    </Button>
+                    <Button variant="outline" size="sm">
+                      Monthly
+                    </Button>
+                  </ButtonGroup>
+                </div>
+              </div>
+
+              <div className="grid gap-6 md:grid-cols-3">
+                <div className="space-y-2">
+                  <Label>Native select</Label>
+                  <NativeSelect defaultValue="auto">
+                    <NativeSelectOption value="auto">
+                      Auto-assign
+                    </NativeSelectOption>
+                    <NativeSelectOption value="round">
+                      Round robin
+                    </NativeSelectOption>
+                  </NativeSelect>
+                </div>
+                <div className="space-y-2 flex flex-col items-center">
+                  <Label>Calendar</Label>
+                  <Calendar className="rounded-md border" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Combobox</Label>
+                  <Combobox>
+                    <ComboboxInput placeholder="Select framework…" />
+                    <ComboboxContent>
+                      <ComboboxList>
+                        <ComboboxItem value="react">React</ComboboxItem>
+                        <ComboboxItem value="vue">Vue</ComboboxItem>
+                        <ComboboxItem value="svelte">Svelte</ComboboxItem>
+                      </ComboboxList>
+                    </ComboboxContent>
+                  </Combobox>
+                </div>
+              </div>
+            </SubSection>
+
+            <SubSection
+              title="Data display"
+              aside="Table · item · kbd · marker · alert · aspect ratio · carousel · chart"
+            >
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Task</TableHead>
+                    <TableHead>Agent</TableHead>
+                    <TableHead className="text-right">Tokens</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>Reconcile navigation model</TableCell>
+                    <TableCell>Agent Alpha</TableCell>
+                    <TableCell className="text-right font-mono text-xs">
+                      142,850
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>Cost tracking dashboard</TableCell>
+                    <TableCell>Agent Beta</TableCell>
+                    <TableCell className="text-right font-mono text-xs">
+                      98,120
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <Item>
+                  <ItemMedia variant="icon">
+                    <Bot className="size-4" />
+                  </ItemMedia>
+                  <ItemContent>
+                    <ItemTitle>Heartbeat run 4821</ItemTitle>
+                    <ItemDescription>
+                      Completed in 2m 41s · 3 tool calls
+                    </ItemDescription>
+                  </ItemContent>
+                  <ItemActions>
+                    <Button variant="ghost" size="icon-sm">
+                      <Search />
+                    </Button>
+                  </ItemActions>
+                </Item>
+                <div className="flex flex-col items-start gap-3">
+                  <div className="flex items-center gap-2">
+                    <Kbd>⌘</Kbd>
+                    <Kbd>K</Kbd>
+                    <span className="text-xs text-muted-foreground">
+                      command palette
+                    </span>
+                  </div>
+                  <Marker variant="border">
+                    <MarkerContent>SECTION MARKER</MarkerContent>
+                  </Marker>
+                  <Alert>
+                    <Zap className="size-4" />
+                    <AlertTitle>Heads up</AlertTitle>
+                    <AlertDescription>
+                      The monthly token budget crosses 80% tonight.
+                    </AlertDescription>
+                  </Alert>
+                  <Alert variant="destructive">
+                    <AlertCircle className="size-4" />
+                    <AlertTitle>Run failed</AlertTitle>
+                    <AlertDescription>
+                      Connection timeout to the upstream service.
+                    </AlertDescription>
+                  </Alert>
+                </div>
+              </div>
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <AspectRatio ratio={16 / 9}>
+                  <div className="flex h-full items-center justify-center rounded-lg border border-border bg-muted/40 font-mono text-xs text-muted-foreground">
+                    16 : 9 media slot
+                  </div>
+                </AspectRatio>
+                <Carousel className="w-full">
+                  <CarouselContent>
+                    {[1, 2, 3].map((n) => (
+                      <CarouselItem key={n}>
+                        <div className="flex h-32 items-center justify-center rounded-lg border border-border bg-muted/40 font-mono text-xs text-muted-foreground">
+                          slide {n}
+                        </div>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                </Carousel>
+              </div>
+
+              <ChartContainer config={CHART_CONFIG} className="h-48 w-full">
+                <BarChart data={CHART_DATA}>
+                  <CartesianGrid vertical={false} />
+                  <XAxis
+                    dataKey="month"
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={8}
+                  />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Bar dataKey="runs" fill="var(--color-runs)" radius={4} />
+                </BarChart>
+              </ChartContainer>
+            </SubSection>
+
+            <SubSection
+              title="Feedback & loaders"
+              aside="Progress · spinner · sonner · empty"
+            >
+              <div className="flex flex-wrap items-center gap-8">
+                <div className="w-48 space-y-1">
+                  <Progress value={62} />
+                  <span className="font-mono text-(length:--text-nano) text-muted-foreground">
+                    Progress 62
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Spinner />
+                  <span className="text-xs text-muted-foreground">Spinner</span>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    toast.success("Run queued", {
+                      description: "The agent picks it up within a minute.",
+                    })
+                  }
+                >
+                  Sonner toast
+                </Button>
+              </div>
+              <Toaster position="bottom-right" />
+              <div className="rounded-lg border border-border">
+                <Empty>
+                  <EmptyHeader>
+                    <EmptyMedia variant="icon">
+                      <Inbox className="size-5" />
+                    </EmptyMedia>
+                    <EmptyTitle>No runs yet</EmptyTitle>
+                    <EmptyDescription>
+                      The stock Empty pattern — the template ships its own
+                      EmptyState beside it.
+                    </EmptyDescription>
+                  </EmptyHeader>
+                  <EmptyContent>
+                    <Button size="sm">New run</Button>
+                  </EmptyContent>
+                </Empty>
+              </div>
+            </SubSection>
+
+            <SubSection
+              title="Agentic primitives"
+              aside="Message · message scroller · bubble · attachment"
+            >
+              <div className="grid gap-4 lg:grid-cols-2">
+                <MessageScrollerProvider>
+                  <MessageScroller className="rounded-lg border border-border">
+                    <MessageScrollerViewport className="h-64">
+                      <MessageScrollerContent className="gap-3 p-3">
+                        <MessageScrollerItem>
+                          <Message align="end">
+                            <MessageContent>
+                              Include the revised delivery address.
+                            </MessageContent>
+                            <MessageFooter>you · just now</MessageFooter>
+                          </Message>
+                        </MessageScrollerItem>
+                        <MessageScrollerItem>
+                          <Message>
+                            <MessageContent>
+                              <Bubble>
+                                <BubbleContent>
+                                  Sending the courier a revised label now. I
+                                  will confirm once tracking updates.
+                                </BubbleContent>
+                              </Bubble>
+                            </MessageContent>
+                            <MessageFooter>Agent Alpha · 12s ago</MessageFooter>
+                          </Message>
+                        </MessageScrollerItem>
+                        <MessageScrollerItem>
+                          <Message>
+                            <MessageContent>
+                              Done — tracking is live.
+                            </MessageContent>
+                          </Message>
+                        </MessageScrollerItem>
+                      </MessageScrollerContent>
+                    </MessageScrollerViewport>
+                    <MessageScrollerButton />
+                  </MessageScroller>
+                </MessageScrollerProvider>
+
+                <AttachmentGroup className="max-w-sm">
+                  <Attachment state="done">
+                    <AttachmentMedia variant="icon">
+                      <History className="size-4" />
+                    </AttachmentMedia>
+                    <AttachmentContent>
+                      <AttachmentTitle>q3-summary.pdf</AttachmentTitle>
+                      <AttachmentDescription>
+                        412 KB · uploaded
+                      </AttachmentDescription>
+                    </AttachmentContent>
+                  </Attachment>
+                  <Attachment state="uploading">
+                    <AttachmentMedia variant="icon">
+                      <Upload className="size-4" />
+                    </AttachmentMedia>
+                    <AttachmentContent>
+                      <AttachmentTitle>talking-points.md</AttachmentTitle>
+                      <AttachmentDescription>
+                        Uploading… 64%
+                      </AttachmentDescription>
+                    </AttachmentContent>
+                  </Attachment>
+                </AttachmentGroup>
+              </div>
+            </SubSection>
+
+            <SubSection title="App shell" aside="Sidebar">
+              <div className="h-96 translate-x-0 overflow-hidden rounded-lg border border-border bg-card">
+                <SidebarProvider className="min-h-full">
+                  <UiSidebar collapsible="none" className="h-full">
+                    <SidebarHeader>
+                      <span className="px-2 text-sm font-semibold">
+                        Workspace
+                      </span>
+                    </SidebarHeader>
+                    <SidebarContent>
+                      <SidebarGroup>
+                        <SidebarGroupLabel>Projects</SidebarGroupLabel>
+                        <SidebarGroupContent>
+                          <SidebarMenu>
+                            {["Design system", "Brand site", "Docs"].map(
+                              (name, i) => (
+                                <SidebarMenuItem key={name}>
+                                  <SidebarMenuButton isActive={i === 0}>
+                                    <Hexagon className="size-4" />
+                                    {name}
+                                  </SidebarMenuButton>
+                                </SidebarMenuItem>
+                              )
+                            )}
+                          </SidebarMenu>
+                        </SidebarGroupContent>
+                      </SidebarGroup>
+                    </SidebarContent>
+                    <SidebarFooter>
+                      <span className="px-2 font-mono text-(length:--text-nano) text-muted-foreground">
+                        operator@design-system
+                      </span>
+                    </SidebarFooter>
+                  </UiSidebar>
+                  <SidebarInset className="h-full">
+                    <div className="flex h-full items-center justify-center text-xs text-muted-foreground">
+                      SidebarInset — app content lives here
+                    </div>
+                  </SidebarInset>
+                </SidebarProvider>
+              </div>
+            </SubSection>
           </SectionShell>
 
           {/* ======================================================== */}
@@ -2155,11 +2976,24 @@ export default function DesignGuide() {
           </SectionShell>
 
           {/* ======================================================== */}
-          {/*  10 DESIGN TOKENS                                        */}
+          {/*  10 UTILITIES                                            */}
+          {/* ======================================================== */}
+          <SectionShell
+            id="utilities"
+            num="10"
+            kicker="Utilities"
+            title="Small tools, real consumers."
+            lede="Every utility in lib/ and hooks/ has a working demo on this page — the brand guide doubles as the usage example. If a utility cannot earn a demo here, it does not belong in the template."
+          >
+            <UtilitiesShowcase />
+          </SectionShell>
+
+          {/* ======================================================== */}
+          {/*  11 DESIGN TOKENS                                        */}
           {/* ======================================================== */}
           <SectionShell
             id="tokens"
-            num="10"
+            num="11"
             kicker="Design tokens"
             title="One canonical source."
             lede={

@@ -10,6 +10,9 @@
   - The seven newest registry items (`code-block`, `data-table`, `date-picker`, `questionnaire`, `toast`, `trace`, `typography`) exist only in the new multi-style registry and are intentionally not mixed into the radix-based `new-york-v4` set.
 - **Automated Weekly Registry Sync**:
   - Added `.github/workflows/shadcn-sync.yml`: every Monday the tracked components (`scripts/shadcn-components.txt`) are re-injected with `shadcn add --overwrite` and a sync PR opens when upstream moved — Dependabot-style updates for vendored registry code (Dependabot itself covers the npm dependencies).
+- **Brand Guide Doubles as the Usage Example**:
+  - Every injected registry component now has a working demo on the brand page (accordion, chart, sidebar, calendar, carousel, combobox, drawer, menubar, navigation-menu, table, input-otp, sonner, the agentic message / bubble / attachment primitives, and more), organized into six new subsections plus a Utilities section that demos every `lib/` and `hooks/` utility with live consumers.
+  - Documented the directory responsibility model and the two placement rules (registry files in `ui/`, everything hand-written as flat files in `components/`; utilities earn their place through a real consumer).
 - **Upstream-Managed `ui/` Directory**:
   - The token and a11y quality gates no longer scan `src/components/ui/` — stock registry code keeps its upstream form so `npx shadcn@latest add <component> --overwrite` stays a no-conflict update path. The gates govern template-authored surfaces (`src/app/**`, `src/components/*.tsx`, `src/lib`, `src/hooks`).
   - Files carrying template-local extensions (RTL, reduced-motion, tokenization, additive variants) are listed in the README for re-application after an overwrite.

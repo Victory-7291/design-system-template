@@ -412,3 +412,15 @@ export const externalObjectStatusToneSeverity: Record<string, number> = {
 };
 
 export const externalObjectStatusToneSeverityDefault = 0;
+
+/** Sample brand hues for the brand-page utilities demo (pickTextColorForPillBg).
+    Data, not CSS: the page passes them through the WCAG text-picker at runtime. */
+export const DEMO_PILL_HUES = [
+  "#2563eb",
+  "#f59e0b",
+  "#22c55e",
+  "#dc2626",
+  "#7c3aed",
+  "#0891b2",
+  "#e11d48",
+];

@@ -2060,7 +2060,7 @@ export default function DesignGuide() {
                   </CardFooter>
                 </Card>
                 <Card
-                  className="cursor-pointer transition-colors hover:border-foreground/20 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="card-interactive"
                   onClick={() =>
                     pushToast({
                       title: "Card opened",
@@ -2072,8 +2072,9 @@ export default function DesignGuide() {
                   <CardHeader>
                     <CardTitle>Interactive target</CardTitle>
                     <CardDescription>
-                      Clickable card with a pointer cursor, quiet hover border,
-                      and focus ring.
+                      The <code className="font-mono">card-interactive</code>{" "}
+                      class adds a pointer cursor, quiet hover border, and focus
+                      ring.
                     </CardDescription>
                   </CardHeader>
                   <CardContent>

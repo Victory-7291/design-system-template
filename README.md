@@ -2,7 +2,7 @@
 
 This is a design system starter template built to stop AI assistants from degrading UI quality during automated coding. Use it as the frontend foundation for a new product, or as an isolated design system workspace inside an enterprise monorepo.
 
-The template makes Tailwind CSS v4 the single source of truth for design tokens. It ships the full shadcn/ui registry plus a template extension layer, an air-gapped local variable font, an OKLCH color system, a single-knob radius scale, and an automated gate pipeline enforced locally and in CI.
+The template makes Tailwind CSS v4 the single source of truth for design tokens. It ships the full shadcn/ui registry, template-level components and CSS surface helpers, an air-gapped local variable font, an OKLCH color system, a single-knob radius scale, and an automated gate pipeline enforced locally and in CI.
 
 The repository is self-contained: architectural principles, design tokens, typography specifications, and quality gate standards are all defined in this document.
 
@@ -95,14 +95,14 @@ The template counters with two mechanisms:
 
 ### Registry components
 
-`src/components/ui/` contains the full shadcn/ui registry, injected with the official CLI: 60+ primitives covering accordion, chart, sidebar, calendar, carousel, sonner, form primitives, and the agentic `message` / `bubble` / `attachment` building blocks. `components.json` pins the `new-york` style on Tailwind v4, so `npx shadcn@latest add <component>` adds or updates any of them. 26 files carry a template extension layer (divergences under [Quality gates](#5-quality-gates)); the rest are stock upstream files.
+`src/components/ui/` contains the full shadcn/ui registry in unmodified stock form, injected with the official CLI: 60+ primitives covering accordion, chart, sidebar, calendar, carousel, sonner, form primitives, and the agentic `message` / `bubble` / `attachment` building blocks. `components.json` pins the `new-york` style on Tailwind v4, so `npx shadcn@latest add <component>` adds or updates any of them without conflict.
 
 The library is layered; only the top layer is Paperclip-specific.
 
 | Layer | Location | What it is | Relationship to shadcn/ui |
 | :--- | :--- | :--- | :--- |
-| 1. Atomic primitives | `src/components/ui/` | Full shadcn/ui registry, CLI-injected | Stock shadcn/ui `new-york` (Tailwind v4) code, managed through `components.json` |
-| 2. Primitive extensions | 26 of the same files | Additive variants: Button `cta` / `xs` / `icon-*` sizes, Card `interactive`, Avatar sizes + group, Select `sm`, Tabs `line`, Badge `ghost` / `link` | Additive props on the stock API; no stock variant was removed or reshaped |
+| 1. Atomic primitives | `src/components/ui/` | Full shadcn/ui registry, CLI-injected | Stock shadcn/ui `new-york` (Tailwind v4) code, managed through `components.json` and never hand-edited |
+| 2. Surface & tone helpers | `src/index.css` | `.card-interactive`, `.banner-tone`, `.status-chip` | Semantic CSS helpers that layer interactive surface affordances and mode-aware tone recipes without modifying `ui/` source files |
 | 3. Template components | `src/components/*.tsx` | `EmptyState`, `InlineBanner`, `ThemeToggle`, `ToastViewport`, `RadioCard`, `ToggleSwitch`, `ResizablePanels` | Not in the shadcn registry; built from tokens and Layer-1 primitives |
 | 4. Status language | `src/components/Status*.tsx` + `src/lib/status-colors.ts` | `StatusBadge`, `StatusGlyph`, `StatusIcon` + the status palette | Paperclip-specific domain vocabulary (task lifecycle, agent heartbeat, run / goal / approval outcomes). Flat files; delete them if your product does not need it |
 
@@ -112,15 +112,12 @@ The agentic-interface primitives (`message`, `message-scroller`, `bubble`, `atta
 
 `.github/workflows/shadcn-sync.yml` re-injects every component tracked in `scripts/shadcn-components.txt` every Monday with `shadcn add --overwrite`, and opens a sync PR when upstream moved. Dependabot covers the npm packages the components installed; this workflow covers the vendored source files, which Dependabot cannot see.
 
-A sync cannot break application code for two reasons. First, the primitives keep a fixed API surface (exports, props, `data-slot` attributes, cva variants), so code written against `Button` or `Dialog` survives an overwrite. Second, the token gates do not scan `ui/`, so upstream's class conventions never fail a check; CI still runs the a11y gates and the test suite on every sync PR.
+A sync cannot break application code for three reasons:
+1. `src/components/ui/` is kept strictly in stock upstream form — template-specific surface modes (`.card-interactive`, `.banner-tone`) live in `src/index.css` or `src/components/*.tsx`, so `--overwrite` never reverts custom props or requires manual diff re-application.
+2. The primitives keep a fixed API surface (exports, props, `data-slot` attributes, cva variants), so code written against `Button` or `Dialog` survives an overwrite.
+3. The token gates do not scan `ui/`, so upstream's class conventions never fail a check; CI still runs the a11y gates, typechecks, and unit test suite on every sync PR.
 
-One caveat: an overwrite reverts the 26 extended files to stock. The sync PR diff shows exactly which files were touched, and the re-apply list is `button.tsx`, `badge.tsx`, `card.tsx`, `avatar.tsx`, `select.tsx`, `tabs.tsx`, `alert-dialog.tsx`, `dialog.tsx`, `sheet.tsx`, `command.tsx`. Adopting a newly published component is one command plus one line in the tracked list.
-
-The extended files diverge from upstream in three documented ways:
-
-- Values are tokenized: `ring-[3px]` becomes `ring-(length:--rad-3)`, `transition-[color,box-shadow]` becomes `transition-(--tp-color-box-shadow)`, and geometry resolves through `src/index.css` tokens (`top-(--pct-50)`, `max-w-(--sz-calc-25)`). Class order may differ from upstream; the API does not.
-- Physical directions are replaced with logical RTL properties (`ps-8`, `pe-2`, `start-2`, `end-2`), per the i18n pass.
-- Interactive surfaces carry explicit `motion-reduce:` fallbacks and mobile-safe typography (`text-base md:text-sm` on editable controls).
+Adopting a newly published component is one command (`npx shadcn@latest add <name> --yes`) plus one line in `scripts/shadcn-components.txt`.
 
 ### The Radix UI rule
 
@@ -417,7 +414,7 @@ Changing `--radius` once recalculates every corner in the app.
 
 ### Dual-mode cards
 
-The Card primitive has two modes. Static container (default): `bg-card text-card-foreground border border-border`, grouping content with no hover behavior. Interactive (`interactive` prop): a clickable surface with `cursor-pointer`, a border shift to `border-foreground/20` on hover, and subtle elevation plus focus ring.
+The Card primitive supports two modes while keeping `src/components/ui/card.tsx` in stock upstream form. Static container (default): `bg-card text-card-foreground border border-border`, grouping content with no hover behavior. Interactive (`.card-interactive` helper in `src/index.css`): a clickable surface with `cursor-pointer`, a border shift to `border-foreground/20` on hover, and subtle elevation plus focus ring.
 
 ### Status
 

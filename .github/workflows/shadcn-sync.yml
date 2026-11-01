@@ -72,9 +72,7 @@ jobs:
             echo
             echo "## Review notes"
             echo ""
-            echo "- \`src/components/ui/\` is upstream-managed: the token gates do not scan it (the a11y gates do, and stock passes)."
-            echo "- **Extended files revert under \`--overwrite\`.** These carry template-local RTL properties, reduced-motion fallbacks, tokenized values, and additive variants — re-apply from the diff or merge upstream changes by hand:"
-            echo "  \`button\` · \`badge\` · \`card\` · \`avatar\` · \`select\` · \`tabs\` · \`alert-dialog\` · \`dialog\` · \`sheet\` · \`command\` (+ anything else this diff touches from that list)"
+            echo "- \`src/components/ui/\` is upstream-managed and kept in stock form: template-specific surface modes (\`.card-interactive\`, \`.banner-tone\`) live in \`src/index.css\` or \`src/components/*.tsx\`, so \`--overwrite\` requires no manual re-application."
             echo "- New registry items are never auto-added. To adopt one: \`npx shadcn@latest add <name> --yes\`, then append the name to \`scripts/shadcn-components.txt\`."
           } | gh pr create \
             --base main \

@@ -2498,6 +2498,13 @@ span.ds-mention-chip[data-mention-kind="external-object"] {
   --sc: var(--banner-danger);
 }
 
+/* Interactive card surface helper (Dual-mode Card). Keeps src/components/ui/card.tsx
+   in stock upstream form while providing the clickable card mode (pointer cursor,
+   border shift to foreground/20 on hover, subtle elevation, and focus-visible ring). */
+.card-interactive {
+  @apply cursor-pointer transition-colors hover:border-foreground/20 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring;
+}
+
 /* ── Extracted verbatim tokens (Phase 2, design/token-extraction) ── */
 /* Batch 1/4: color literals only. Reused-from-existing-token sites (see
    TOKEN-AUDIT.md section 1.1) are NOT duplicated here — they reference

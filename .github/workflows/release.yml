@@ -25,26 +25,100 @@ jobs:
         with:
           ref: ${{ github.event.workflow_run.head_sha || github.ref }}
           fetch-depth: 0
+          fetch-tags: true
+
+      - name: Check CHANGELOG version eligibility
+        id: version_check
+        run: |
+          node - <<'EOF'
+          const fs = require("node:fs");
+          const { execSync } = require("node:child_process");
+
+          const changelog = fs.readFileSync("CHANGELOG.md", "utf8");
+          const lines = changelog.split(/\r?\n/);
+
+          let version = null;
+          let startIdx = -1;
+          let endIdx = lines.length;
+
+          for (let i = 0; i < lines.length; i++) {
+            const match = lines[i].match(/^##\s+\[?v?(\d+\.\d+\.\d+)\]?/);
+            if (match) {
+              if (!version) {
+                version = match[1];
+                startIdx = i + 1;
+              } else {
+                endIdx = i;
+                break;
+              }
+            }
+          }
+
+          const out = process.env.GITHUB_OUTPUT;
+          if (!version) {
+            console.log("No semver heading found in CHANGELOG.md — skipping release.");
+            fs.appendFileSync(out, "should_release=false\n");
+            process.exit(0);
+          }
+
+          const [major, minor, patch] = version.split(".").map(Number);
+          const tag = `v${version}`;
+
+          // Patch versions (0.0.z where z > 0) do not trigger a release; only X.Y.0 triggers.
+          if (patch !== 0) {
+            console.log(`Version ${tag} is a patch release (z=${patch} != 0) — skipping release.`);
+            fs.appendFileSync(out, "should_release=false\n");
+            process.exit(0);
+          }
+
+          // Check if the git tag already exists.
+          try {
+            execSync(`git rev-parse -q --verify "refs/tags/${tag}"`, { stdio: "ignore" });
+            console.log(`Tag ${tag} already exists — skipping release.`);
+            fs.appendFileSync(out, "should_release=false\n");
+            process.exit(0);
+          } catch {
+            // Tag does not exist yet; proceed with release.
+          }
+
+          const notes = lines.slice(startIdx, endIdx).join("\n").trim();
+          fs.writeFileSync("/tmp/release-notes.md", notes + "\n", "utf8");
+
+          console.log(`New major/minor version detected in CHANGELOG.md: ${tag}`);
+          fs.appendFileSync(out, `should_release=true\nversion=${version}\ntag=${tag}\n`);
+          EOF
 
       - uses: oven-sh/setup-bun@v2
+        if: steps.version_check.outputs.should_release == 'true'
         with:
           bun-version: latest
 
       - name: Install dependencies
+        if: steps.version_check.outputs.should_release == 'true'
         run: bun install --frozen-lockfile
 
       - name: Build template
+        if: steps.version_check.outputs.should_release == 'true'
         run: bun run build
 
-      - name: Create version PR or tag
-        uses: changesets/action@v1
-        with:
-          version: bun run version-packages
-          publish: bun run release
+      - name: Create Git tag and GitHub Release
+        if: steps.version_check.outputs.should_release == 'true'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.version_check.outputs.tag }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "$TAG" -m "Release $TAG"
+          git push origin "$TAG"
+          if ! gh release view "$TAG" >/dev/null 2>&1; then
+            gh release create "$TAG" \
+              --title "$TAG" \
+              --notes-file /tmp/release-notes.md
+          fi
 
       - name: Build and Publish CLI to NPM
+        if: steps.version_check.outputs.should_release == 'true'
         run: |
           if [ -z "${{ secrets.NPM_TOKEN }}" ]; then
             echo "::notice ::Skipping CLI publish to npm: NPM_TOKEN secret is not configured in repository secrets."

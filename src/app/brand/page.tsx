@@ -1513,10 +1513,9 @@ export default function DesignGuide() {
               </p>
             </div>
 
-            <SubSection title="Buttons" aside="7 variants · 4 sizes · icon">
+            <SubSection title="Buttons" aside="6 variants · 4 sizes · icon">
               <div className="flex flex-wrap items-center gap-2">
                 <Button variant="default">Default</Button>
-                <Button variant="cta">CTA</Button>
                 <Button variant="secondary">Secondary</Button>
                 <Button variant="outline">Outline</Button>
                 <Button variant="ghost">Ghost</Button>
@@ -2000,9 +1999,6 @@ export default function DesignGuide() {
                   </Card>
                   <div className="space-y-4">
                     <div className="flex items-center gap-3">
-                      <Avatar size="xs">
-                        <AvatarFallback>XS</AvatarFallback>
-                      </Avatar>
                       <Avatar size="sm">
                         <AvatarFallback>SM</AvatarFallback>
                       </Avatar>
@@ -2064,7 +2060,7 @@ export default function DesignGuide() {
                   </CardFooter>
                 </Card>
                 <Card
-                  interactive
+                  className="cursor-pointer transition-colors hover:border-foreground/20 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   onClick={() =>
                     pushToast({
                       title: "Card opened",
@@ -2076,8 +2072,8 @@ export default function DesignGuide() {
                   <CardHeader>
                     <CardTitle>Interactive target</CardTitle>
                     <CardDescription>
-                      The <code className="font-mono">interactive</code> prop
-                      adds a pointer cursor, quiet hover border, and focus ring.
+                      Clickable card with a pointer cursor, quiet hover border,
+                      and focus ring.
                     </CardDescription>
                   </CardHeader>
                   <CardContent>

@@ -1,29 +1,31 @@
-import * as React from "react";
-import { cn } from "cn";
-import { Drawer as DrawerPrimitive } from "vaul";
+"use client"
+
+import * as React from "react"
+import { cn } from "cn"
+import { Drawer as DrawerPrimitive } from "vaul"
 
 function Drawer({
   ...props
 }: React.ComponentProps<typeof DrawerPrimitive.Root>) {
-  return <DrawerPrimitive.Root data-slot="drawer" {...props} />;
+  return <DrawerPrimitive.Root data-slot="drawer" {...props} />
 }
 
 function DrawerTrigger({
   ...props
 }: React.ComponentProps<typeof DrawerPrimitive.Trigger>) {
-  return <DrawerPrimitive.Trigger data-slot="drawer-trigger" {...props} />;
+  return <DrawerPrimitive.Trigger data-slot="drawer-trigger" {...props} />
 }
 
 function DrawerPortal({
   ...props
 }: React.ComponentProps<typeof DrawerPrimitive.Portal>) {
-  return <DrawerPrimitive.Portal data-slot="drawer-portal" {...props} />;
+  return <DrawerPrimitive.Portal data-slot="drawer-portal" {...props} />
 }
 
 function DrawerClose({
   ...props
 }: React.ComponentProps<typeof DrawerPrimitive.Close>) {
-  return <DrawerPrimitive.Close data-slot="drawer-close" {...props} />;
+  return <DrawerPrimitive.Close data-slot="drawer-close" {...props} />
 }
 
 function DrawerOverlay({
@@ -39,7 +41,7 @@ function DrawerOverlay({
       )}
       {...props}
     />
-  );
+  )
 }
 
 function DrawerContent({
@@ -66,7 +68,7 @@ function DrawerContent({
         {children}
       </DrawerPrimitive.Content>
     </DrawerPortal>
-  );
+  )
 }
 
 function DrawerHeader({ className, ...props }: React.ComponentProps<"div">) {
@@ -79,7 +81,7 @@ function DrawerHeader({ className, ...props }: React.ComponentProps<"div">) {
       )}
       {...props}
     />
-  );
+  )
 }
 
 function DrawerFooter({ className, ...props }: React.ComponentProps<"div">) {
@@ -89,7 +91,7 @@ function DrawerFooter({ className, ...props }: React.ComponentProps<"div">) {
       className={cn("mt-auto flex flex-col gap-2 p-4", className)}
       {...props}
     />
-  );
+  )
 }
 
 function DrawerTitle({
@@ -102,7 +104,7 @@ function DrawerTitle({
       className={cn("font-semibold text-foreground", className)}
       {...props}
     />
-  );
+  )
 }
 
 function DrawerDescription({
@@ -115,7 +117,7 @@ function DrawerDescription({
       className={cn("text-sm text-muted-foreground", className)}
       {...props}
     />
-  );
+  )
 }
 
 export {
@@ -129,4 +131,4 @@ export {
   DrawerFooter,
   DrawerTitle,
   DrawerDescription,
-};
+}

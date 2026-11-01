@@ -51,7 +51,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if git diff --quiet; then
+          if git diff --quiet && [ -z "$(git status --porcelain)" ]; then
             echo "Registry is already in sync — nothing to do."
             exit 0
           fi
@@ -59,10 +59,14 @@ jobs:
           BRANCH="chore/shadcn-sync-${DATE}"
           git config user.name "shadcn-sync-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout -b "$BRANCH"
+          git checkout -B "$BRANCH"
           git add -A
           git commit -m "chore(ui): sync shadcn/ui registry components"
-          git push origin "$BRANCH"
+          git push -f origin "$BRANCH"
+          if gh pr view "$BRANCH" >/dev/null 2>&1; then
+            echo "Pull request for branch $BRANCH already exists — branch updated."
+            exit 0
+          fi
           {
             echo "Weekly \`shadcn add --overwrite\` re-injection of the tracked registry components (\`scripts/shadcn-components.txt\`)."
             echo

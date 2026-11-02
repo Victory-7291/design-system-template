@@ -33,19 +33,30 @@ jobs:
         with:
           bun-version: latest
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
       - name: Re-inject tracked components (upstream overwrite)
         # The tracked list is the single source of truth for which registry
         # items this project follows. Newly published components are adopted
-        # manually: `npx shadcn@latest add <name> --yes`, then append the
+        # manually: `bunx shadcn@latest add <name> --yes`, then append the
         # name here.
-        run: npx shadcn@latest add $(cat scripts/shadcn-components.txt) --overwrite --yes
+        #
+        # bunx (not npx): bun retries transient network failures internally,
+        # which npx does not — a single ECONNRESET while fetching the CLI or
+        # registry used to fail the whole job (seen 2026-11-02). The loop
+        # below adds one more layer of retries for registry-side 5xx bursts.
+        run: |
+          attempt=1
+          until bunx shadcn@latest add $(cat scripts/shadcn-components.txt) --overwrite --yes; do
+            if [ "$attempt" -ge 3 ]; then
+              echo "::error::shadcn add failed after $attempt attempts"
+              exit 1
+            fi
+            echo "Attempt $attempt failed — retrying in 30s..."
+            attempt=$((attempt + 1))
+            sleep 30
+          done
 
       - name: Open sync PR when upstream changed
         env:
@@ -73,7 +84,7 @@ jobs:
             echo "## Review notes"
             echo ""
             echo "- \`src/components/ui/\` is upstream-managed and kept in stock form: template-specific surface modes (\`.card-interactive\`, \`.banner-tone\`) live in \`src/index.css\` or \`src/components/*.tsx\`, so \`--overwrite\` requires no manual re-application."
-            echo "- New registry items are never auto-added. To adopt one: \`npx shadcn@latest add <name> --yes\`, then append the name to \`scripts/shadcn-components.txt\`."
+            echo "- New registry items are never auto-added. To adopt one: \`bunx shadcn@latest add <name> --yes\`, then append the name to \`scripts/shadcn-components.txt\`."
           } | gh pr create \
             --base main \
             --head "$BRANCH" \

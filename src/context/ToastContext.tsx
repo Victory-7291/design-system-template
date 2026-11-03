@@ -45,10 +45,6 @@ interface ToastActionsContextValue {
   clearToasts: () => void;
 }
 
-interface ToastContextValue extends ToastActionsContextValue {
-  toasts: ToastItem[];
-}
-
 const DEFAULT_TTL_BY_TONE: Record<ToastTone, number> = {
   info: 4000,
   success: 3500,
@@ -191,14 +187,4 @@ export function useToastActions() {
 
 export function useOptionalToastActions() {
   return useContext(ToastActionsContext);
-}
-
-export function useOptionalToastState() {
-  return useContext(ToastStateContext);
-}
-
-export function useToast() {
-  const toasts = useToastState();
-  const actions = useToastActions();
-  return useMemo<ToastContextValue>(() => ({ toasts, ...actions }), [toasts, actions]);
 }

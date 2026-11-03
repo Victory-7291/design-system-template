@@ -1,9 +1,6 @@
 import { useLayoutEffect, type ReactNode } from "react";
 import type { Preview } from "@storybook/react-vite";
 import { MINIMAL_VIEWPORTS } from "storybook/viewport";
-import { BreadcrumbProvider } from "@/context/BreadcrumbContext";
-import { DialogProvider } from "@/context/DialogContext";
-import { SidebarProvider } from "@/context/SidebarContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { ToastProvider } from "@/context/ToastContext";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -27,13 +24,7 @@ function StorybookProviders({
   return (
     <ThemeProvider>
       <ToastProvider>
-        <TooltipProvider>
-          <BreadcrumbProvider>
-            <SidebarProvider>
-              <DialogProvider>{children}</DialogProvider>
-            </SidebarProvider>
-          </BreadcrumbProvider>
-        </TooltipProvider>
+        <TooltipProvider>{children}</TooltipProvider>
       </ToastProvider>
     </ThemeProvider>
   );

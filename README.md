@@ -44,13 +44,9 @@ The template counters with two mechanisms:
 │   │   └── ToastViewport.tsx                      # Toast notification viewport
 │   ├── context/
 │   │   ├── ThemeContext.tsx                       # Theme management and local storage persistence
-│   │   ├── ToastContext.tsx                       # Notification dispatch context
-│   │   ├── DialogContext.tsx                      # Modal dialog state stack
-│   │   ├── SidebarContext.tsx                     # Collapsible sidebar and mobile drawer state
-│   │   └── BreadcrumbContext.tsx                  # Breadcrumb hierarchy and document title management
+│   │   └── ToastContext.tsx                       # Notification dispatch context
 │   ├── hooks/
 │   │   ├── use-mobile.ts                          # Breakpoint detection (sidebar primitive dependency)
-│   │   ├── usePrefersReducedMotion.ts             # System reduced motion preference listener
 │   │   └── useSecondTick.ts                       # Shared one-second tick generator
 │   ├── lib/
 │   │   ├── utils.ts                               # cn() class merging (clsx + tailwind-merge) and date formatting
@@ -310,7 +306,7 @@ Contrast targets: WCAG 2.1 AA relative luminance `(L1 + 0.05) / (L2 + 0.05)` wit
 
 ### Unit tests
 
-Vitest with JSDOM (`vitest.config.ts`, `vitest.setup.ts`): 9 suites, 25 tests, covering the context state machines (`Theme`, `Dialog`, `Toast`, `Sidebar`, `Breadcrumb`), interactive components (`ThemeToggle`, `ToggleSwitch`), and the hooks and utilities (`useSecondTick`, `usePrefersReducedMotion`, `timeAgo`, `formatDateTime`).
+Vitest with JSDOM (`vitest.config.ts`, `vitest.setup.ts`): 6 suites, 16 tests, covering the context state machines (`Theme`, `Toast`), interactive components (`ThemeToggle`, `ToggleSwitch`), and the hooks and utilities (`useSecondTick`, `timeAgo`, `formatDateTime`).
 
 ### Visual regression
 

@@ -41,9 +41,6 @@ The template counters with two mechanisms:
 │   │   ├── EmptyState.tsx                         # Universal empty state container
 │   │   ├── ThemeToggle.tsx                        # Light and dark theme switcher
 │   │   ├── InlineBanner.tsx                       # Token-backed banner with info / warning / danger tones
-│   │   ├── StatusBadge.tsx                        # Status badges (agent / task / run / approval vocabularies)
-│   │   ├── StatusGlyph.tsx                        # Geometry-first unified status glyph
-│   │   ├── StatusIcon.tsx                         # Interactive status indicator with popover picker
 │   │   └── ToastViewport.tsx                      # Toast notification viewport
 │   ├── context/
 │   │   ├── ThemeContext.tsx                       # Theme management and local storage persistence
@@ -57,13 +54,12 @@ The template counters with two mechanisms:
 │   │   └── useSecondTick.ts                       # Shared one-second tick generator
 │   ├── lib/
 │   │   ├── utils.ts                               # cn() class merging (clsx + tailwind-merge) and date formatting
-│   │   ├── status-colors.ts                       # Status color dictionaries and demo palettes
 │   │   ├── color-contrast.ts                      # WCAG AA contrast ratio helpers
 │   │   ├── use-copy-action.ts                     # Clipboard copy interaction hook
 │   │   └── timeAgo.ts                             # Relative time formatter
 │   └── app/
 │       └── brand/
-│           └── page.tsx                           # Brand guide (Next.js App Router page): tokens, primitives, status language
+│           └── page.tsx                           # Brand guide: tokens, primitives, utilities — usage example and reference implementation
 │
 ├── public/                                        # Static assets and asset libraries
 │   ├── brands/                                    # Curated vector SVG library of 120+ developer and SaaS services
@@ -102,9 +98,8 @@ The library is layered; only the top layer is Paperclip-specific.
 | Layer | Location | What it is | Relationship to shadcn/ui |
 | :--- | :--- | :--- | :--- |
 | 1. Atomic primitives | `src/components/ui/` | Full shadcn/ui registry, CLI-injected | Stock shadcn/ui `new-york` (Tailwind v4) code, managed through `components.json` and never hand-edited |
-| 2. Surface & tone helpers | `src/index.css` | `.card-interactive`, `.banner-tone`, `.status-chip` | Semantic CSS helpers that layer interactive surface affordances and mode-aware tone recipes without modifying `ui/` source files |
+| 2. Surface & tone helpers | `src/index.css` | `.card-interactive`, `.banner-tone` | Semantic CSS helpers that layer interactive surface affordances and mode-aware tone recipes without modifying `ui/` source files |
 | 3. Template components | `src/components/*.tsx` | `EmptyState`, `InlineBanner`, `ThemeToggle`, `ToastViewport`, `RadioCard`, `ToggleSwitch`, `ResizablePanels` | Not in the shadcn registry; built from tokens and Layer-1 primitives |
-| 4. Status language | `src/components/Status*.tsx` + `src/lib/status-colors.ts` | `StatusBadge`, `StatusGlyph`, `StatusIcon` + the status palette | Paperclip-specific domain vocabulary (task lifecycle, agent heartbeat, run / goal / approval outcomes). Flat files; delete them if your product does not need it |
 
 The agentic-interface primitives (`message`, `message-scroller`, `bubble`, `attachment`, `spinner`, `item`, `kbd`, `empty`) ship as part of the injection. They are presentational: plain props and callbacks, no Vercel AI SDK imports. The higher-level ai-elements patterns (plan, tool, chain-of-thought, …) are officially copy-paste compositions and are deliberately not vendored, so that `ui/` stays fully CLI-managed and machine-updatable.
 
@@ -134,14 +129,14 @@ The vendored registry follows upstream wherever upstream went. 36 files import `
 | `src/components/*.tsx` | Template components and your application components, composed from `ui/` primitives and tokens | token + a11y |
 | `src/context/` | Global state providers, one per real consumer (`Theme`, `Toast`) | vitest |
 | `src/hooks/` | Shared hooks (`use-mobile` ships with the sidebar primitive) | vitest |
-| `src/lib/` | Pure utilities (`cn`, `timeAgo`, `formatDateTime`, copy feedback, contrast math) and the status palette | vitest |
+| `src/lib/` | Pure utilities (`cn`, `timeAgo`, `formatDateTime`, copy feedback, contrast math) | vitest |
 | `src/index.css` | Token single source of truth | n/a |
 
-Placement is a one-question test: did the registry give you this file, or did you write it? Registry files live in `ui/` and stay stock. Everything written by a person, template or application, is a flat file in `src/components/` with a co-located `*.test.tsx`. Two lifecycle rules keep the tree honest: a file in `context/`, `hooks/`, or `lib/` earns its place by having a real consumer, and deleting a component takes its dedicated state and palette with it.
+Placement is a one-question test: did the registry give you this file, or did you write it? Registry files live in `ui/` and stay stock. Everything written by a person, template or application, is a flat file in `src/components/` with a co-located `*.test.tsx`. Two lifecycle rules keep the tree honest: a file in `context/`, `hooks/`, or `lib/` earns its place by having a real consumer, and deleting a component takes its dedicated state with it.
 
 ### The brand guide
 
-`src/app/brand/page.tsx` is both the showcase and the reference implementation. Every primitive in `ui/`, every template component, the status language, and every utility in `lib/` has a working demo there, written the way application code should be written: composition over `ui/` primitives, tokens everywhere, no hardcoded values. When you add a component to the template, add its demo to the brand guide in the same change; when a file cannot earn a demo, question whether it belongs in the template.
+`src/app/brand/page.tsx` is both the showcase and the reference implementation. Every primitive in `ui/`, every template component, and every utility in `lib/` has a working demo there, written the way application code should be written: composition over `ui/` primitives, tokens everywhere, no hardcoded values. When you add a component to the template, add its demo to the brand guide in the same change; when a file cannot earn a demo, question whether it belongs in the template.
 
 ## 3. Usage
 
@@ -198,7 +193,7 @@ bun create design-system-template -p packages --mode package
 ### Scenario: standalone application
 
 1. Scaffold: `bun create design-system-template -p <dir> --mode standalone --pm bun`
-2. Preview: `cd design-system && bun run dev`, then open `http://localhost:5173`. The brand guide demos every registry primitive, the OKLCH palettes, status badges, form controls, and card modes.
+2. Preview: `cd design-system && bun run dev`, then open `http://localhost:5173`. The brand guide demos every registry primitive, the OKLCH palettes, form controls, and card modes.
 3. Customize brand tokens per [4.1 Brand customization](#brand-customization).
 4. Add application routes under `src/app/` (App Router convention; the shipped brand guide lives at `src/app/brand/page.tsx`), consuming primitives directly from `src/components/ui/`.
 
@@ -305,7 +300,7 @@ Allowlist rules: state selectors (`data-[state=open]:opacity-100`, `aria-[checke
 
 The gate is three checks in one (`scripts/check-a11y-wcag.mjs`):
 
-- **Token contrast mathematics**: extracts every semantic foreground/background pair in light and dark modes (`foreground`/`background`, `card`, `popover`, `primary`, `secondary`, `muted`, `destructive`, `sidebar`) plus status glyphs, and computes WCAG 2.1 AA ratios (≥ 4.5:1 text, ≥ 3.0:1 graphics) and APCA Lc scores.
+- **Token contrast mathematics**: extracts every semantic foreground/background pair in light and dark modes (`foreground`/`background`, `card`, `popover`, `primary`, `secondary`, `muted`, `destructive`, `sidebar`) and computes WCAG 2.1 AA ratios (≥ 4.5:1 text, ≥ 3.0:1 graphics) and APCA Lc scores.
 - **Static anti-pattern scan**: every component file is checked for `<img>` without `alt`, clickable non-interactive elements without `role` and keyboard handlers, and icon-only buttons without accessible text or `aria-label`.
 - **Headless DOM audit**: rendered component trees are evaluated against WCAG 2.1 A and AA rules with JSDOM and axe-core.
 
@@ -315,7 +310,7 @@ Contrast targets: WCAG 2.1 AA relative luminance `(L1 + 0.05) / (L2 + 0.05)` wit
 
 ### Unit tests
 
-Vitest with JSDOM (`vitest.config.ts`, `vitest.setup.ts`): 12 suites, 59 tests, covering the context state machines (`Theme`, `Dialog`, `Toast`, `Sidebar`, `Breadcrumb`), interactive components (`ThemeToggle`, `ToggleSwitch`, `StatusBadge`, `StatusGlyph`, `StatusIcon`), and the hooks and utilities (`useSecondTick`, `usePrefersReducedMotion`, `timeAgo`, `formatDateTime`).
+Vitest with JSDOM (`vitest.config.ts`, `vitest.setup.ts`): 9 suites, 25 tests, covering the context state machines (`Theme`, `Dialog`, `Toast`, `Sidebar`, `Breadcrumb`), interactive components (`ThemeToggle`, `ToggleSwitch`), and the hooks and utilities (`useSecondTick`, `usePrefersReducedMotion`, `timeAgo`, `formatDateTime`).
 
 ### Visual regression
 
@@ -386,9 +381,8 @@ One canonical primitive per scenario: one Button, one Card, one Dialog, one Tabl
 All tokens live in `src/index.css` across four tiers:
 
 1. **Semantic**: foreground/background pairs in OKLCH that flip across light and dark: `--background` / `--foreground`, `--card` / `--card-foreground`, `--popover` / `--popover-foreground`, `--primary` / `--primary-foreground`, `--secondary` / `--secondary-foreground`, `--muted` / `--muted-foreground`, `--destructive` / `--destructive-foreground`, plus `--border`, `--input`, `--ring`.
-2. **Status**: lifecycle and severity hues, for example `--status-task-todo`, `--status-task-done`, `--status-task-blocked`.
-3. **Domain and brand**: specialized tokens such as syntax-highlight backgrounds and data chips.
-4. **Motion**: durations, easing curves, and scoped animation tokens in `src/motion-tokens.css`.
+2. **Domain and brand**: specialized tokens such as the success green (`--success`), the banner tone hues (`--banner-*`), syntax-highlight backgrounds, and data chips.
+3. **Motion**: durations, easing curves, and scoped animation tokens in `src/motion-tokens.css`.
 
 ### Radius
 
@@ -415,12 +409,6 @@ Changing `--radius` once recalculates every corner in the app.
 ### Dual-mode cards
 
 The Card primitive supports two modes while keeping `src/components/ui/card.tsx` in stock upstream form. Static container (default): `bg-card text-card-foreground border border-border`, grouping content with no hover behavior. Interactive (`.card-interactive` helper in `src/index.css`): a clickable surface with `cursor-pointer`, a border shift to `border-foreground/20` on hover, and subtle elevation plus focus ring.
-
-### Status
-
-Five canonical lifecycle phases: `success` (green, healthy completion), `error` (red, failures or required intervention), `warning` (amber, thresholds or pending approvals), `pending` (blue/violet, queued or in-flight work), and `idle` (neutral slate, not started or archived).
-
-Status never relies on color alone. `StatusGlyph` adds geometric micro-glyphs (discs, checkmarks, clocks, warning triangles, obstruction bars) and `StatusBadge` adds explicit text labels, so color-vision-deficient users and screen readers get the same information.
 
 ### Motion
 

@@ -315,20 +315,8 @@ import { useSecondTick } from "@/hooks/useSecondTick";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { EmptyState } from "@/components/EmptyState";
 import { InlineBanner } from "@/components/InlineBanner";
-import {
-  StatusBadge,
-  AgentStatusBadge,
-  AgentStatusCapsule,
-  IssueStatusBadge,
-} from "@/components/StatusBadge";
-import { StatusGlyph } from "@/components/StatusGlyph";
-import { StatusIcon } from "@/components/StatusIcon";
 import { useToastActions } from "@/context/ToastContext";
-import {
-  agentStatusDot,
-  agentStatusDotDefault,
-  DEMO_PILL_HUES,
-} from "@/lib/status-colors";
+import { DEMO_PILL_HUES } from "@/lib/demo-hues";
 
 /* ------------------------------------------------------------------ */
 /*  Section registry — drives the sidebar TOC and the scroll spy       */
@@ -346,9 +334,8 @@ const SECTIONS = [
   { id: "iconography", num: "06", label: "Iconography" },
   { id: "motion", num: "07", label: "Motion" },
   { id: "components", num: "08", label: "Components" },
-  { id: "status", num: "09", label: "States & status" },
-  { id: "utilities", num: "10", label: "Utilities" },
-  { id: "tokens", num: "11", label: "Design tokens" },
+  { id: "utilities", num: "09", label: "Utilities" },
+  { id: "tokens", num: "10", label: "Design tokens" },
 ] as const;
 
 function useScrollSpy() {
@@ -704,7 +691,6 @@ function UtilitiesShowcase() {
 export default function DesignGuide() {
   const { pushToast } = useToastActions();
   const active = useScrollSpy();
-  const [status, setStatus] = useState("todo");
   const [selectValue, setSelectValue] = useState("in_progress");
   const [menuChecked, setMenuChecked] = useState(true);
   const [collapsibleOpen, setCollapsibleOpen] = useState(false);
@@ -762,13 +748,6 @@ export default function DesignGuide() {
             {/* Meta table */}
             <div className="max-w-md overflow-hidden rounded-lg border border-border bg-card">
               {[
-                [
-                  "Status",
-                  <span key="s" className="flex items-center justify-end gap-2">
-                    <span className="size-2 rounded-full bg-(--status-task-done)" />
-                    Active
-                  </span>,
-                ],
                 ["Version", VERSION],
                 ["Token layer", "src/index.css"],
                 ["Primitives", "25 parts"],
@@ -833,9 +812,9 @@ export default function DesignGuide() {
               />
               <PrincipleCard
                 num="04"
-                kicker="Status is systematic"
-                statement="Learn the vocabulary once."
-                body="Running, paused, blocked, awaiting-approval map to a single semantic status token set used identically everywhere — badge, row, chart, log."
+                kicker="Color is semantic"
+                statement="Learn the tokens once."
+                body="Success, info, warning, and danger map to a single semantic token set used identically everywhere — banner, toast, button, badge."
               />
               <PrincipleCard
                 num="05"
@@ -1034,8 +1013,9 @@ export default function DesignGuide() {
               <>
                 OKLCH grays — white surfaces separated by borders, not tonal
                 fills. Semantic tokens swap under{" "}
-                <code className="font-mono text-sm">.dark</code>; status hues
-                carry product meaning and are literal in both themes.
+                <code className="font-mono text-sm">.dark</code>; brand-fixed
+                hues (success, banner tones, agent gradients) are literal in
+                both themes.
               </>
             }
           >
@@ -1274,7 +1254,7 @@ export default function DesignGuide() {
                 {[
                   [
                     "Pill",
-                    "Badges and status chips — full-round reads as metadata.",
+                    "Badges and chips — full-round reads as metadata.",
                     "h-10 w-20 rounded-full",
                   ],
                   [
@@ -1460,14 +1440,6 @@ export default function DesignGuide() {
 
             <SubSection title="Live signals" aside="Reduced-motion aware">
               <div className="flex flex-wrap items-center gap-8 rounded-lg border border-border bg-card p-6">
-                {(["running", "paused", "error"] as const).map((s) => (
-                  <div key={s} className="flex items-center gap-2">
-                    <AgentStatusCapsule status={s} />
-                    <span className="font-mono text-(length:--text-micro) text-muted-foreground">
-                      {s}
-                    </span>
-                  </div>
-                ))}
                 <span className="shimmer-text-muted shimmer-text font-mono text-(length:--text-micro)">
                   Working…
                 </span>
@@ -1632,9 +1604,9 @@ export default function DesignGuide() {
                       />
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      On-state uses the status-system green (
-                      <code className="font-mono">--status-task-done</code>),
-                      not primary — deliberate ruling, don&apos;t swap for the
+                      On-state uses the success green (
+                      <code className="font-mono">--success</code>), not
+                      primary — deliberate ruling, don&apos;t swap for the
                       registry Switch.
                     </p>
                   </div>
@@ -2807,177 +2779,11 @@ export default function DesignGuide() {
           </SectionShell>
 
           {/* ======================================================== */}
-          {/*  09 STATES & STATUS                                      */}
-          {/* ======================================================== */}
-          <SectionShell
-            id="status"
-            num="09"
-            kicker="States & status"
-            title={
-              <>
-                Color is meaning.
-                <br />
-                Shape is meaning.
-              </>
-            }
-            lede={
-              <>
-                One color language across every entity. The governing rule:{" "}
-                <strong className="text-foreground">blue = liveness</strong> —
-                actively running work is blue; queued, idle, or inert work is
-                not. Base hues live in the token layer (
-                <code className="font-mono text-sm">--status-task-*</code>,{" "}
-                <code className="font-mono text-sm">--status-agent-*</code>) and
-                are WCAG-tuned for both modes.
-              </>
-            }
-          >
-            <SubSection
-              title="The full vocabulary"
-              aside="One set · everywhere"
-            >
-              <div className="flex flex-wrap items-center gap-2">
-                {[
-                  "active",
-                  "running",
-                  "paused",
-                  "idle",
-                  "archived",
-                  "planned",
-                  "achieved",
-                  "completed",
-                  "failed",
-                  "timed_out",
-                  "succeeded",
-                  "error",
-                  "pending_approval",
-                  "backlog",
-                  "todo",
-                  "in_progress",
-                  "in_review",
-                  "blocked",
-                  "done",
-                  "terminated",
-                  "cancelled",
-                  "pending",
-                  "revision_requested",
-                  "approved",
-                  "rejected",
-                ].map((s) => (
-                  <StatusBadge key={s} status={s} />
-                ))}
-              </div>
-            </SubSection>
-
-            <SubSection title="Task chips" aside="Glyph + sentence case">
-              <div className="flex flex-wrap items-center gap-2">
-                {[
-                  "backlog",
-                  "todo",
-                  "in_progress",
-                  "in_review",
-                  "done",
-                  "blocked",
-                  "cancelled",
-                ].map((s) => (
-                  <IssueStatusBadge key={s} status={s} />
-                ))}
-              </div>
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs text-muted-foreground">
-                  A task waiting on its external conversation renders idle —
-                  blocked on a human reply, not making progress:
-                </span>
-                <IssueStatusBadge
-                  status="in_review"
-                  externalConversationState="waiting"
-                />
-              </div>
-            </SubSection>
-
-            <SubSection title="Unified glyph" aside="One family · three sizes">
-              <div className="flex flex-wrap items-center gap-6">
-                {(["sm", "md", "lg"] as const).map((size) => (
-                  <div key={size} className="flex items-center gap-2">
-                    <StatusGlyph status="in_progress" size={size} />
-                    <StatusGlyph status="done" size={size} />
-                    <StatusGlyph status="blocked" size={size} />
-                    <span className="font-mono text-(length:--text-micro) text-muted-foreground">
-                      {size}
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <div className="flex flex-wrap items-center gap-3">
-                {[
-                  "backlog",
-                  "todo",
-                  "in_progress",
-                  "in_review",
-                  "done",
-                  "blocked",
-                  "cancelled",
-                  "in_queue",
-                ].map((s) => (
-                  <div key={s} className="flex items-center gap-1.5">
-                    <StatusGlyph status={s} />
-                    <span className="font-mono text-(length:--text-micro) text-muted-foreground">
-                      {s}
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <div className="flex flex-wrap items-center gap-4">
-                <StatusIcon status={status} onChange={setStatus} />
-                <span className="text-sm text-muted-foreground">
-                  Click the icon to change status (current: {status})
-                </span>
-              </div>
-            </SubSection>
-
-            <SubSection
-              title="Agent states"
-              aside="Capsule + chip · pulse & blink"
-            >
-              <div className="flex flex-wrap items-center gap-6">
-                {["idle", "running", "paused", "error"].map((s) => (
-                  <div key={s} className="flex items-center gap-2">
-                    <AgentStatusCapsule status={s} />
-                    <AgentStatusBadge status={s} />
-                  </div>
-                ))}
-              </div>
-              <div className="flex flex-wrap items-center gap-4">
-                {(
-                  ["running", "active", "paused", "error", "archived"] as const
-                ).map((label) => (
-                  <div key={label} className="flex items-center gap-2">
-                    <span className="relative flex h-2.5 w-2.5">
-                      <span
-                        className={`inline-flex h-full w-full rounded-full ${
-                          agentStatusDot[label] ?? agentStatusDotDefault
-                        }`}
-                      />
-                    </span>
-                    <span className="font-mono text-(length:--text-micro) text-muted-foreground">
-                      {label}
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Running pulses, error blinks; both honor{" "}
-                <code className="font-mono">prefers-reduced-motion</code>.
-              </p>
-            </SubSection>
-          </SectionShell>
-
-          {/* ======================================================== */}
-          {/*  10 UTILITIES                                            */}
+          {/*  09 UTILITIES                                            */}
           {/* ======================================================== */}
           <SectionShell
             id="utilities"
-            num="10"
+            num="09"
             kicker="Utilities"
             title="Small tools, real consumers."
             lede="Every utility in lib/ and hooks/ has a working demo on this page — the brand guide doubles as the usage example. If a utility cannot earn a demo here, it does not belong in the template."
@@ -2986,11 +2792,11 @@ export default function DesignGuide() {
           </SectionShell>
 
           {/* ======================================================== */}
-          {/*  11 DESIGN TOKENS                                        */}
+          {/*  10 DESIGN TOKENS                                        */}
           {/* ======================================================== */}
           <SectionShell
             id="tokens"
-            num="11"
+            num="10"
             kicker="Design tokens"
             title="One canonical source."
             lede={
@@ -3057,31 +2863,28 @@ export default function DesignGuide() {
             <SubSection title="Brand tier" aside="Literal in both themes">
               <div className="rounded-lg border border-border bg-card p-6">
                 <p className="text-sm leading-relaxed text-muted-foreground">
-                  Status hues (
+                  Semantic brand hues (
                   <code className="font-mono text-xs text-foreground">
-                    --status-task-*
+                    --success
                   </code>
                   ,{" "}
                   <code className="font-mono text-xs text-foreground">
-                    --status-agent-*
+                    --banner-*
                   </code>
-                  ), agent gradients (
+                  ) and agent gradients (
                   <code className="font-mono text-xs text-foreground">
                     --agent-1a…10b
                   </code>
-                  ), and the AA-tuned icon hues are brand-fixed hex values —
-                  identical across themes, so status reads the same at a glance
-                  everywhere. The semantic layer above swaps; the brand tier
-                  doesn&apos;t.
+                  ) are brand-fixed hex values — identical across themes, so
+                  meaning reads the same at a glance everywhere. The semantic
+                  layer above swaps; the brand tier doesn&apos;t.
                 </p>
                 <div className="mt-4 flex flex-wrap gap-3">
                   {[
-                    "--status-task-backlog",
-                    "--status-task-todo",
-                    "--status-task-in_progress",
-                    "--status-task-in_review",
-                    "--status-task-done",
-                    "--status-task-blocked",
+                    "--success",
+                    "--banner-info",
+                    "--banner-warning",
+                    "--banner-danger",
                   ].map((v) => (
                     <div key={v} className="flex items-center gap-2">
                       <span

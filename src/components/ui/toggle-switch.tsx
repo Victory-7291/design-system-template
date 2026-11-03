@@ -12,9 +12,8 @@ export interface ToggleSwitchProps
  * Custom API (checked/onCheckedChange button, no Radix dep) with the shadcn
  * radix-luma Switch's capsule form: border-2 track, oval thumb, bg-input
  * off-state. Deliberate deviation from the registry: the on-state is the
- * status-system green (var(--status-task-done)), not bg-primary — user
- * ruling, DECISION-SHEET "toggle form" note. Do not swap for the registry
- * Switch without revisiting that ruling (C7).
+ * success green (var(--success)), not bg-primary — user ruling. Do not swap
+ * for the registry Switch without revisiting that ruling.
  */
 export const ToggleSwitch = React.forwardRef<
   HTMLButtonElement,
@@ -48,7 +47,7 @@ export const ToggleSwitch = React.forwardRef<
           "disabled:cursor-not-allowed disabled:opacity-50",
           isLg ? "h-6 w-12" : "h-5 w-11",
           checked
-            ? "border-(--status-task-done) bg-(--status-task-done)"
+            ? "border-(--success) bg-(--success)"
             : "border-transparent bg-input/90",
           className
         )}

@@ -192,25 +192,16 @@
   --pill-guy-alive-top: #3028aa;
   --pill-guy-alive-bottom: #ff0000;
 
-  /* Status colors — one base hue per status, consumed by the agent / task
-     status chips and the task status icons. Mode-independent: the `.status-chip`,
-     `.status-fill` and inline icon helpers derive the light vs dark
-     fill/text/border from these via color-mix, so a single hue covers both
-     modes. Values mirror the PAP-75 brand palette (gray inert, blue liveness,
-     amber queued, violet review, green done, red blocked). */
-  --status-agent-idle: #a8aeb2;
-  --status-agent-running: #2563eb;
-  --status-agent-paused: #f59e0b;
-  --status-agent-error: #dc2626;
-
   /* Inline banner base hues (InlineBanner tones). info = liveness blue,
-     warning = queued amber, danger = blocked red — the same brand anchors as
-     the status palette. The `.banner-tone` helper below derives the soft
-     fill / AA text / translucent border per mode from one hue via color-mix,
-     mirroring the `.status-chip` mechanic. */
+     warning = queued amber, danger = blocked red — the shared brand anchors.
+     The `.banner-tone` helper below derives the soft fill / AA text /
+     translucent border per mode from one hue via color-mix. */
   --banner-info: #2563eb;
   --banner-warning: #f59e0b;
   --banner-danger: #dc2626;
+  /* Success green for on/positive states (ToggleSwitch on-state). Brand-fixed
+     in both modes — deliberate deviation from the registry Switch's primary. */
+  --success: #22c55e;
   /* Dashboard agent card: translucent running treatment from the Paper design. */
   --dashboard-run-accent: oklch(62.3% 0.214 259.815);
   --dashboard-run-background: color-mix(in oklab, var(--dashboard-run-accent) 4%, transparent);
@@ -220,32 +211,6 @@
   --dashboard-list-time-width: calc(var(--spacing) * 16);
   --dashboard-task-list-columns: var(--dashboard-list-leading-width) minmax(0, 1fr) calc(var(--spacing) * 36) var(--dashboard-list-id-width) var(--dashboard-list-time-width);
   --dashboard-activity-list-columns: var(--dashboard-list-leading-width) minmax(0, 1fr) var(--dashboard-list-id-width) var(--dashboard-list-time-width);
-  --status-task-backlog: #a8aeb2;
-  --status-task-todo: #f59e0b;
-  --status-task-in_progress: #2563eb;
-  --status-task-in_review: #7c3aed;
-  --status-task-done: #22c55e;
-  --status-task-blocked: #dc2626;
-  --status-task-cancelled: #a8aeb2;
-
-  /* Task status ICON hues (PAP-238 3b) — AA-tuned (every glyph ≥ 3:1 against
-     its surface, WCAG 2.1 AA, both modes). Distinct from the
-     `--status-task-*` chip base hues: a status chip carries its own bg/text
-     tint, but a bare glyph sitting next to text on the page needs a stronger
-     hue to clear 3:1. Where the chip base already passes (blue liveness, red
-     blocked, light violet review) the icon var simply re-points at it; the
-     gray / amber / green statuses are pinned to the board-approved AA hexes.
-     `in_queue` is the BLOCKED shape recoloured to the in_progress blue
-     (replaces the bespoke teal "covered" state). Light values here; the
-     `.dark` block below overrides the hues that need a mode-specific value. */
-  --status-task-icon-backlog: #52585d;   /* gray darkened — 7.21:1 on paper */
-  --status-task-icon-todo: #cc7a00;       /* amber darkened — clears 3:1 */
-  --status-task-icon-in_progress: var(--color-blue-600); /* matches nav dots and live labels */
-  --status-task-icon-in_review: var(--status-task-in_review);     /* #7c3aed (light) */
-  --status-task-icon-done: #16a34a;       /* green darkened — clears 3:1 */
-  --status-task-icon-blocked: var(--status-task-blocked);         /* #dc2626 both modes */
-  --status-task-icon-cancelled: #52585d;
-  --status-task-icon-in_queue: var(--status-task-icon-in_progress); /* blocked shape, same mode-aware blue */
 
   --folder-color-indigo: #6366f1;
   --folder-color-violet: #8b5cf6;
@@ -370,13 +335,6 @@
   --organization-popover-prefix-line-height: 13px;
   --organization-popover-action-line-height: 18px;
 
-  /* Composer mode-chip hues (v5–v7 decisions): agent + plan reuse the task
-     status hues; ask is the v5 blue. Consumed as `--sc` seeds through the
-     .status-chip color-mix recipe. */
-  --tc-mode-agent: var(--status-task-backlog);
-  --tc-mode-plan: var(--status-task-todo);
-  --tc-mode-ask: #3b82f6;
-
   /* Agent-comment comparison fill used by TaskChatLab. The chosen production
      treatment sits directly on the page surface; this token keeps the darker
      card available as an explicit lab alternative. */
@@ -459,15 +417,6 @@
   --chip-match-identifier-bg: var(--muted);
   --chip-match-identifier-fg: var(--muted-foreground);
   --chip-match-identifier-border: var(--border);
-  /* Dark-mode status-icon hues. The lighter progress blue gives bare glyphs
-     contrast comparable to the neighboring gray, purple, and green icons.
-     Blocked retains its base red; in_queue follows the progress icon blue. */
-  --status-task-icon-backlog: #9a958a;
-  --status-task-icon-todo: #fbbf24;
-  --status-task-icon-in_progress: var(--color-blue-400); /* matches nav dots and live labels */
-  --status-task-icon-in_review: #9474f0;  /* deeper than violet-400, reads purple */
-  --status-task-icon-done: #34d06f;
-  --status-task-icon-cancelled: #9a958a;
 }
 
 .streamlined-task-detail-surface {
@@ -1563,35 +1512,6 @@ select:where(:not([multiple]):not(.appearance-none)):where(:not([size]), [size="
   }
 }
 
-/* Agent heartbeat capsule motion (PAP-75).
-   `hb-pulse` marks a running agent (live); `hb-blink` marks a broken agent
-   (error). The blink alternates the fill between brand red and the page
-   background so the capsule reads as a faltering heartbeat. */
-@keyframes hb-pulse {
-  0%, 100% { opacity: 0.4; transform: scale(0.85); }
-  50% { opacity: 1; transform: scale(1); }
-}
-
-@keyframes hb-blink {
-  0%, 49.9% { background-color: #DC2626; }
-  50%, 100% { background-color: var(--background); }
-}
-
-.hb-pulse {
-  animation: hb-pulse 1.6s ease-in-out infinite;
-}
-
-.hb-blink {
-  animation: hb-blink 1.2s step-end infinite;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hb-pulse,
-  .hb-blink {
-    animation: none;
-  }
-}
-
 /* Agent capsule motif (PAP-119) — "the capsule is the agent".
    Three states realized in the AgentCapsule component:
    - slot:       dashed outline gently pulsing (an empty agent slot)
@@ -2453,32 +2373,11 @@ span.ds-mention-chip[data-mention-kind="external-object"] {
   z-index: 81 !important;
 }
 
-/* Status chip/fill helpers.
-   Each consumer sets a local `--sc` to the status' base hue (e.g.
-   `--sc: var(--status-task-in_progress)`); these rules derive the rendered
-   fill / text / border from it. `.status-chip` is the bordered chip (agent +
-   task chips); `.status-fill` a solid swatch (heartbeat capsule). Light mixes
-   the hue toward white for a soft fill; dark layers the hue at low alpha so it
-   reads on dark surfaces. A single hue covers both modes. */
-.status-chip {
-  background-color: color-mix(in srgb, var(--sc) 15%, white);
-  color: color-mix(in srgb, var(--sc) 82%, black);
-  border-color: var(--sc);
-}
-.dark .status-chip {
-  background-color: color-mix(in srgb, var(--sc) 22%, transparent);
-  color: color-mix(in srgb, var(--sc) 80%, white);
-  border-color: color-mix(in srgb, var(--sc) 48%, transparent);
-}
-.status-fill {
-  background-color: var(--sc);
-}
-
 /* Inline banner tone helper (InlineBanner.tsx). The component sets
-   data-tone and this rule points --sc at the matching --banner-* base hue;
-   the recipes mirror `.status-chip` (soft fill, AA-contrast text, translucent
-   border) so a single hue covers both modes. Light tints the page surface;
-   dark layers the hue at low alpha so it reads on dark surfaces. */
+   data-tone and this rule points --sc at the matching --banner-* base hue,
+   deriving the soft fill / AA-contrast text / translucent border so a single
+   hue covers both modes. Light tints the page surface; dark layers the hue
+   at low alpha so it reads on dark surfaces. */
 .banner-tone {
   border-color: color-mix(in srgb, var(--sc) 40%, transparent);
   background-color: color-mix(in srgb, var(--sc) 8%, var(--background));

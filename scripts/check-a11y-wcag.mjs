@@ -4,7 +4,7 @@
  *
  * Operational quality gate script for accessibility (a11y) and color contrast:
  *   1. Token-level WCAG 2.1 AA & APCA mathematical contrast verification
- *      (Light & Dark modes, semantic surface/foreground pairs and status hues).
+ *      (Light & Dark modes, semantic surface/foreground pairs).
  *   2. Static AST / code accessibility pattern scan across UI components.
  *   3. Headless DOM accessibility audit using axe-core (WCAG 2.0/2.1 A & AA).
  *
@@ -170,28 +170,6 @@ function runTokenContrastCheck() {
         failures++;
       }
     }
-  }
-
-  // Check status icon hues in light mode
-  console.log("\n  [Status Icon Glyph Contrast on Canvas (WCAG 2.1 AA UI Graphics min 3.0:1)]");
-  const canvasBgY = parseColorToLuminance(rootVars["--background"], rootVars);
-  const statusGlyphs = [
-    { name: "Backlog icon", varName: "--status-task-icon-backlog", minRatio: 3.0 },
-    { name: "Todo icon", varName: "--status-task-icon-todo", minRatio: 3.0 },
-    { name: "Done icon", varName: "--status-task-icon-done", minRatio: 3.0 },
-    { name: "Blocked icon", varName: "--status-task-icon-blocked", minRatio: 3.0 },
-  ];
-
-  for (const glyph of statusGlyphs) {
-    const val = rootVars[glyph.varName];
-    if (!val) continue;
-    const y = parseColorToLuminance(val, rootVars);
-    if (y === null) continue;
-    const ratio = calcContrastRatio(y, canvasBgY);
-    const passed = ratio >= glyph.minRatio;
-    const symbol = passed ? "✓" : "✗";
-    console.log(`    ${symbol} ${glyph.name} (${glyph.varName}): ${ratio.toFixed(2)}:1 [${passed ? "PASS" : "FAIL"}]`);
-    if (!passed) failures++;
   }
 
   return failures;

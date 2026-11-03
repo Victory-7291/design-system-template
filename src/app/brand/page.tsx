@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import pkg from "../../../package.json";
 import {
   AlertCircle,
   BookOpen,
@@ -322,9 +321,6 @@ import { DEMO_PILL_HUES } from "@/lib/demo-hues";
 /*  Section registry — drives the sidebar TOC and the scroll spy       */
 /* ------------------------------------------------------------------ */
 
-/** Single-sourced from package.json — never retype the version in copy. */
-const VERSION = `v${pkg.version.split(".").slice(0, 2).join(".")}`;
-
 const SECTIONS = [
   { id: "foundations", num: "01", label: "Foundations" },
   { id: "typography", num: "02", label: "Typography" },
@@ -380,17 +376,6 @@ function TopBar() {
           <span className="text-sm font-semibold tracking-tight">
             Design System
           </span>
-          <span className="font-mono text-(length:--text-nano) text-muted-foreground">
-            {VERSION}
-          </span>
-        </div>
-        <div className="hidden items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 sm:inline-flex">
-          <span className="font-mono text-(length:--text-nano) uppercase tracking-widest text-muted-foreground">
-            Version
-          </span>
-          <span className="font-mono text-(length:--text-micro)">
-            {VERSION} — template
-          </span>
         </div>
       </div>
     </header>
@@ -401,8 +386,7 @@ function Sidebar({ active }: { active: string }) {
   return (
     <aside className="sticky top-14 hidden w-64 shrink-0 self-start px-6 py-10 lg:block">
       <p className="mb-6 font-mono text-(length:--text-micro) text-muted-foreground">
-        Design System {VERSION} <span className="mx-1">·</span>{" "}
-        {new Date().getFullYear()}
+        Design System <span className="mx-1">·</span> Brand guide
       </p>
       <nav aria-label="Sections">
         <ul>
@@ -709,13 +693,8 @@ export default function DesignGuide() {
           {/*  HERO                                                    */}
           {/* ======================================================== */}
           <div className="space-y-8 pb-16 pt-16">
-            <span className="inline-flex items-center overflow-hidden rounded-full border border-border bg-card text-xs">
-              <span className="px-3 py-1.5 font-mono text-muted-foreground">
-                {VERSION}
-              </span>
-              <span className="border-l border-border px-3 py-1.5 font-medium uppercase tracking-widest">
-                Design System
-              </span>
+            <span className="inline-flex items-center rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium uppercase tracking-widest">
+              Design System
             </span>
             <h1 className="max-w-3xl text-6xl font-semibold tracking-tight md:text-7xl">
               The Design System Template.
@@ -748,9 +727,7 @@ export default function DesignGuide() {
             {/* Meta table */}
             <div className="max-w-md overflow-hidden rounded-lg border border-border bg-card">
               {[
-                ["Version", VERSION],
                 ["Token layer", "src/index.css"],
-                ["Primitives", "25 parts"],
                 ["Themes", "light · dark"],
                 ["Stack", "React · Tailwind v4"],
               ].map(([label, value]) => (

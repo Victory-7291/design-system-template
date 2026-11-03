@@ -34,7 +34,7 @@ The template counters with two mechanisms:
 │
 ├── src/                                           # Core source code
 │   ├── index.css                                  # Token single source of truth: OKLCH semantic tiers and Tailwind v4 @theme
-│   ├── motion-tokens.css                          # Physical and scoped motion tokens with reduced-motion fallback
+│   ├── motion-tokens.css                          # Core motion primitives (easings + durations) with reduced-motion fallback
 │   ├── main.tsx                                   # Local workshop application entry point
 │   ├── components/
 │   │   ├── ui/                                    # shadcn/ui primitives (full registry injection, updated via the shadcn CLI)
@@ -381,8 +381,8 @@ One canonical primitive per scenario: one Button, one Card, one Dialog, one Tabl
 All tokens live in `src/index.css` across four tiers:
 
 1. **Semantic**: foreground/background pairs in OKLCH that flip across light and dark: `--background` / `--foreground`, `--card` / `--card-foreground`, `--popover` / `--popover-foreground`, `--primary` / `--primary-foreground`, `--secondary` / `--secondary-foreground`, `--muted` / `--muted-foreground`, `--destructive` / `--destructive-foreground`, plus `--border`, `--input`, `--ring`.
-2. **Domain and brand**: specialized tokens such as the success green (`--success`), the banner tone hues (`--banner-*`), syntax-highlight backgrounds, and data chips.
-3. **Motion**: durations, easing curves, and scoped animation tokens in `src/motion-tokens.css`.
+2. **Domain and brand**: specialized tokens such as the success green (`--success`) and the banner tone hues (`--banner-*`).
+3. **Motion**: durations and easing curves in `src/motion-tokens.css` (imported first by `src/index.css`).
 
 ### Radius
 
@@ -412,7 +412,7 @@ The Card primitive supports two modes while keeping `src/components/ui/card.tsx`
 
 ### Motion
 
-Motion tokens live in `src/motion-tokens.css` as native custom properties on `:root`, so durations and easings can be tuned live in developer tools. A `@media (prefers-reduced-motion: reduce)` block collapses durations and delays to zero globally.
+Motion primitives (two easing curves, instant/fast durations) live in `src/motion-tokens.css`, with the longer base/slow durations declared in `src/index.css` — all as native custom properties on `:root`, so durations and easings can be tuned live in developer tools. A `@media (prefers-reduced-motion: reduce)` block collapses durations to zero globally, and every animated helper in `index.css` (`.shimmer-text`, `.typing-dots`) has its own reduced-motion override.
 
 ### i18n
 

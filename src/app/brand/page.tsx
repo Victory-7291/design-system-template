@@ -1259,7 +1259,7 @@ export default function DesignGuide() {
                   ],
                   [
                     "Capsule",
-                    "The agent motif — a capsule is an agent, never chrome.",
+                    "Tall pills read as identity markers, not chrome.",
                     "h-16 w-8 rounded-full",
                   ],
                   [
@@ -2870,10 +2870,6 @@ export default function DesignGuide() {
                   ,{" "}
                   <code className="font-mono text-xs text-foreground">
                     --banner-*
-                  </code>
-                  ) and agent gradients (
-                  <code className="font-mono text-xs text-foreground">
-                    --agent-1a…10b
                   </code>
                   ) are brand-fixed hex values — identical across themes, so
                   meaning reads the same at a glance everywhere. The semantic

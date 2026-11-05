@@ -1,5 +1,37 @@
 # design-system-template
 
+## 1.4.0
+
+### Minor Changes
+
+- 59d21f1: **Purge Paperclip-legacy dead CSS** (~2,700 lines removed from `src/index.css`, plus `src/motion-tokens.css` slimmed to the 4 core motion primitives):
+
+  - Deleted all consumer-less extracted token families: the `--sz-*` / `--rad-*` / `--pct-*` Batch 3-4 transcriptions, the `--hex-*` / `--app-logo-tile-*` / `--gradient-extract-*` / `--shadow-extract-*` verbatim block, `--agent-1a…10b` gradients, `--pill-guy-*`, `--folder-color-*`, `--gtc-*`, `--dashboard-*`, `--chip-match-*`, `--ds-doc-annotation-*`, `--bubble-agent*`, `--side-panel-*` / streamlined chrome, `--organization-popover-*`, and the dead `--profile-popover-*` members (row-height / row-gap / label-line-height kept — ThemeToggle consumes them).
+  - Deleted all consumer-less animation classes and keyframes: the `tc-*` chat-thread family, `agent-cap-*` capsule motif, `hb-*` remnants' sibling blocks (scrollbar auto-hide / while-scrolling, mobile nav / toolbars, dashboard rows, cot ticker, transcript live-tail, decision-disclosure, quicklook, pill-guy, ds-markdown / ds-mdxeditor / mention chips / mermaid themes, ds-thinking), plus their reduced-motion blocks.
+  - Deleted consumer-less scoped `--motion-*` tokens (marker/bubble/tool enter, status enter/exit, approval pulse, plan/question, turn fold/meta, line scroll, scroll-pill, pane glide, side-panel tab, mobile nav, count tween, interstitial dwell, scrollbar idle delay, duration deliberate/swap/enter/exit, scroll-pill easings) and the 21 `--onboarding-motion-*` tokens.
+  - The machine-readable token-gate allowlist was trimmed to the three entries whose files still exist; kept tokens: `--tp-transform-opacity`, `--tp-border-color-background-color`, `--z-120`, `--text-nano/micro/compact`, `--native-select-*`, `--success`, `--banner-*`.
+
+  No TSX/TS API changes — every removed token, class, and keyframe had zero consumers in the template. Brand-guide copy referencing the removed agent gradients and capsule motif was updated.
+
+- 422f6c9: **Remove Paperclip-legacy dead contexts and hooks** (zero consumers — the brand guide and `main.tsx` only ever mount `ThemeProvider` + `ToastProvider`):
+
+  - Deleted `DialogContext` (NewIssue/NewGoal/NewAgent dialog stacks, the `IssueWorkMode` type, and the onboarding wizard API — the `/onboarding` route it references does not exist in the template).
+  - Deleted `SidebarContext` (mobile drawer + retired icon-rail compatibility shim: `collapsed`/`peeking`/`forceCollapsed`/`routeRequestsCollapsed` were all inert by design).
+  - Deleted `BreadcrumbContext` (breadcrumb hierarchy + company-name page-title builder for a product surface that no longer exists).
+  - Deleted `hooks/usePrefersReducedMotion` (no consumers; reduced-motion is handled globally in CSS).
+  - Trimmed `ToastContext` dead exports: `useToast` and `useOptionalToastState` (`useOptionalToastActions` stays — `lib/use-copy-action.ts` consumes it).
+  - Storybook preview now wraps only Theme + Toast + Tooltip providers.
+
+  This continues the repo's stated lifecycle rule: a file in `context/`/`hooks/`/`lib/` earns its place by having a real consumer. Tests updated accordingly (6 suites, 16 tests).
+
+- 418148b: **Remove the Paperclip status system** (domain-specific legacy, not generic design-system material):
+
+  - Deleted `StatusBadge.tsx` (incl. `AgentStatusBadge` / `AgentStatusCapsule` / `IssueStatusBadge`), `StatusGlyph.tsx`, `StatusIcon.tsx`, their tests, and `src/lib/status-colors.ts`.
+  - Removed the `--status-task-*`, `--status-agent-*`, and `--status-task-icon-*` token sets, the `.status-chip` / `.status-fill` / `hb-pulse` / `hb-blink` helpers, and the dead `--tc-mode-*` block from `src/index.css`.
+  - Added a generic `--success` semantic token; `ToggleSwitch`'s on-state now uses `var(--success)` (same green as before).
+  - The brand guide's "States & status" section was removed; sections renumbered (Utilities → 09, Design tokens → 10). The Brand-tier swatches now showcase `--success` and the `--banner-*` tones.
+  - The a11y gate no longer checks status-icon glyph contrast (tokens removed).
+
 ## 1.3.0
 
 ### Minor Changes

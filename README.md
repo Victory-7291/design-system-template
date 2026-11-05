@@ -1,24 +1,19 @@
 # Design System Starter Template
 
-This is a design system starter template built to stop AI assistants from degrading UI quality during automated coding. Use it as the frontend foundation for a new product, or as an isolated design system workspace inside an enterprise monorepo.
+An anti-slop frontend foundation that keeps AI-assisted codebases visually consistent — usable standalone for a new product, or as an isolated design-system workspace inside an enterprise monorepo.
 
-The template makes Tailwind CSS v4 the single source of truth for design tokens. It ships the full shadcn/ui registry, template-level components and CSS surface helpers, an air-gapped local variable font, an OKLCH color system, a single-knob radius scale, and an automated gate pipeline enforced locally and in CI.
+## 1. Introduction
+
+AI coding assistants degrade UI quality iteration by iteration: they emit raw hex colors, arbitrary bracket values (`w-[347px]`), off-scale font sizes, and low-density "slop" layouts, because design rules written in Figma, PDFs, or wikis exert no force on generated code. A design decision only holds when a mechanical gate blocks non-compliant code from merging. This template therefore makes the code itself the design specification and enforces it with automated quality gates that run locally and in CI:
+
+- **Token-first architecture** — Tailwind CSS v4 is the single source of truth: every color (OKLCH), radius (one-knob multiplicative ladder), and motion value is a native CSS custom property in `src/index.css`; there is no intermediate token pipeline.
+- **Full shadcn/ui registry** — 60+ CLI-injected primitives kept in stock upstream form and re-synced weekly via a Dependabot-style PR workflow, plus template-authored components and CSS surface helpers (`.banner-tone`, `.card-interactive`) layered without touching `ui/` source.
+- **Hard quality gates** — token gates that reject hardcoded colors, raw timings, and off-ladder font sizes; mathematical WCAG 2.1 AA + APCA contrast verification on every semantic pair in both themes; static and axe-core accessibility audits; XSS-hardened brand-asset validation; and pixel-exact (`maxDiffPixels: 0`) dual-theme Playwright visual regression.
+- **Air-gapped assets** — Inter variable fonts pinned locally and 90 structurally validated brand logos; no runtime third-party font or image requests.
+- **One-command scaffolding** — published as an npm package (`npx create-design-system-template@latest`) with standalone and monorepo-package modes.
+- **Living brand guide** — every component, token, and utility ships a working demo on the brand page; if it cannot earn a demo, it does not belong in the template.
 
 The repository is self-contained: architectural principles, design tokens, typography specifications, and quality gate standards are all defined in this document.
-
-## 1. Motivation
-
-With AI coding assistants such as Cursor, Claude Code, and GitHub Copilot writing frontend code, UI quality deteriorates rapidly across iterations. The cause is that large language models lack persistent spatial awareness and long-term memory; they optimize for local token probabilities. Common failure modes:
-
-1. **Color drift**: models introduce raw hex literals (`#3b82f6`, `#18181b`) or ad-hoc `rgba(...)` calls. These bypass theme variables, break dark mode, and let primary colors and background tints diverge across pages.
-2. **Arbitrary bracket proliferation**: to nudge a card into place or align table items, models emit arbitrary Tailwind classes (`w-[347px]`, `p-[13px]`, `rounded-[11px]`, `text-[13px]`). This destroys the 4px/8px spacing rhythm and produces mismatched proportions.
-3. **Low-density template stacking (AI slop)**: nested cards, diffuse blur backdrops, glowing borders, and excessive whitespace. In command consoles, ticket boards, and dense data tables this slows scanning and wastes screen space.
-4. **Paper specifications do not constrain code**: design rules written in Figma, PDFs, or wikis do not stop an AI assistant. Rules hold only when mechanical gates block non-compliant code from merging.
-
-The template counters with two mechanisms:
-
-- **Tailwind CSS v4 as the single source of truth (code as design)**: there is no intermediate token pipeline. All tokens are declared directly in `src/index.css` via native CSS custom properties and `@theme inline`, so the code is the design specification.
-- **Automated hard gates**: `scripts/check-token-gates.mjs` and related audits run in pre-commit and CI. A hardcoded color, an arbitrary bracket, or an untokenized font size halts the build with actionable errors.
 
 ## 2. Structure
 

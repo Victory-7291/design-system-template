@@ -57,6 +57,9 @@ jobs:
             attempt=$((attempt + 1))
             sleep 30
           done
+          # Record the new stock state so check:ui accepts upstream's files
+          # (and still rejects hand edits made outside this workflow).
+          node scripts/check-ui-stock.mjs --write
 
       - name: Open sync PR when upstream changed
         env:

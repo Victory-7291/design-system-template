@@ -34,7 +34,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { ToggleSwitch } from "@/components/ui/toggle-switch";
+import { ToggleSwitch } from "@/components/ToggleSwitch";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const buttonVariants = ["default", "secondary", "outline", "ghost", "destructive", "link"] as const;

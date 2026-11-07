@@ -131,9 +131,9 @@ import {
   ResizablePanelGroup,
   ResizablePanel,
   ResizableHandle,
-} from "@/components/ui/resizable-panels";
-import { ToggleSwitch } from "@/components/ui/toggle-switch";
-import { RadioCardGroup } from "@/components/ui/radio-card";
+} from "@/components/ResizablePanels";
+import { ToggleSwitch } from "@/components/ToggleSwitch";
+import { RadioCardGroup } from "@/components/RadioCard";
 import { toast } from "sonner";
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 

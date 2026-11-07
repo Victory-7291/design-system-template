@@ -50,7 +50,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { RadioCard, RadioCardGroup } from "@/components/ui/radio-card";
+import { RadioCard, RadioCardGroup } from "@/components/RadioCard";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Sheet,
